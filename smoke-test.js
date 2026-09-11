@@ -21,15 +21,15 @@ const saved=check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id=
 const trip=check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripNameEdit"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="tripMap"','id="printTripBtn"']);
 check('/map',[...nav,'data-page="map"','id="mapData"','id="mapState"','id="mapTrip"','id="mapTag"','id="mapCount"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.9.0')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='2.0.0')throw new Error(`Unexpected version ${VERSION}`);
 if(!Array.isArray(COLLECTIONS)||COLLECTIONS.length!==8)throw new Error(`Expected 8 collections, found ${COLLECTIONS&&COLLECTIONS.length}`);
 for(const c of COLLECTIONS){if(!parks.filter(c.match).length)throw new Error(`Collection ${c.slug} has no parks`)}
 new Function(clientJS);
 new Function(plannerJS);
 for(const token of ['createTripBtn','mnwiTripCollections','Trip created ✓','saveParkBtn','tripParkBtn','stopMeta','stop-day','stop-note','printTripBtn','tripMap','data-page="map"','mapCount','L.map'])if(!clientJS.includes(token))throw new Error(`client.js missing ${token}`);
-for(const token of ['tripChooserModal','trip-choice','tripAddParkDirect','tripParkSearch','Add another stop'])if(!plannerJS.includes(token))throw new Error(`planner-polish.js missing ${token}`);
-const injectedSaved=injectPlanner(saved);if(!injectedSaved.includes('tripChooserModal'))throw new Error('Planner polish not injected into saved page response');
-const injectedTrip=injectPlanner(trip);if(!injectedTrip.includes('tripAddParkDirect'))throw new Error('Planner polish not injected into trip page response');
+for(const token of ['tripChooserModal','trip-choice','tripAddParkDirect','tripParkSearch','Add another stop','shareTripBtn','Copy share link','shared','importSharedTrip','Save this trip'])if(!plannerJS.includes(token))throw new Error(`planner-polish.js missing ${token}`);
+const injectedSaved=injectPlanner(saved);if(!injectedSaved.includes('tripChooserModal')||!injectedSaved.includes('importSharedTrip'))throw new Error('Planner/share polish not injected into saved page response');
+const injectedTrip=injectPlanner(trip);if(!injectedTrip.includes('tripAddParkDirect')||!injectedTrip.includes('shareTripBtn'))throw new Error('Planner/share polish not injected into trip page response');
 const siteSource=fs.readFileSync('./site.js','utf8');
 for(const legacy of ['./app-runtime.js','./decision-runtime.js','./collections-runtime.js','./parity-runtime.js'])if(siteSource.includes(legacy))throw new Error(`Canonical runtime still depends on ${legacy}`);
 if(!fs.existsSync('./park-coordinates.json'))throw new Error('Checked-in coordinate snapshot missing');
@@ -38,4 +38,4 @@ const coordinates=JSON.parse(fs.readFileSync('./park-coordinates.generated.json'
 if(coordinates.count!==116||Object.keys(coordinates.parks||{}).length!==116)throw new Error('Coordinate record count is not 116');
 for(const p of parks){const c=coordinates.parks[p.slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${p.slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load all 116 coordinates');
-console.log('Smoke tests passed: v1.9.0 trip planner polish, modal trip chooser, direct trip add, single runtime, parity, finder, collections, client JS, and 116/116 map.');
+console.log('Smoke tests passed: v2.0.0 shareable trips, import flow, planner polish, single runtime, parity, finder, collections, client JS, and 116/116 map.');
