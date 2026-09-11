@@ -1,0 +1,829 @@
+{
+  "generatedAt": "2026-09-11T22:30:36.558Z",
+  "count": 116,
+  "sources": {
+    "MN": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/bdry_dnr_lrs_prk/FeatureServer/0/query",
+    "WI": "https://dnrmaps.wi.gov/arcgis2/rest/services/PR_Recreation/PR_WSPS_Property_Info_WTM_Ext/MapServer/0/query",
+    "manual": [
+      "cross-plains",
+      "devil-s-lake",
+      "interstate-park",
+      "kohler-andrae",
+      "mill-bluff"
+    ]
+  },
+  "parks": {
+    "afton": {
+      "lat": 44.84783,
+      "lng": -92.797616,
+      "source": "Minnesota DNR",
+      "sourceName": "Afton State Park",
+      "matchScore": 100
+    },
+    "banning": {
+      "lat": 46.436383,
+      "lng": -92.73582,
+      "source": "Minnesota DNR",
+      "sourceName": "Banning State Park",
+      "matchScore": 100
+    },
+    "bear-head-lake": {
+      "lat": 47.819649,
+      "lng": -92.047714,
+      "source": "Minnesota DNR",
+      "sourceName": "Bear Head Lake State Park",
+      "matchScore": 100
+    },
+    "beaver-creek-valley": {
+      "lat": 43.64597,
+      "lng": -91.55503,
+      "source": "Minnesota DNR",
+      "sourceName": "Beaver Creek Valley State Park",
+      "matchScore": 100
+    },
+    "big-stone-lake": {
+      "lat": 45.391616,
+      "lng": -96.530369,
+      "source": "Minnesota DNR",
+      "sourceName": "Big Stone Lake State Park",
+      "matchScore": 100
+    },
+    "blue-mounds": {
+      "lat": 43.895961,
+      "lng": -96.367177,
+      "source": "Minnesota DNR",
+      "sourceName": "Blue Mounds State Park",
+      "matchScore": 100
+    },
+    "buffalo-river": {
+      "lat": 46.872847,
+      "lng": -96.474633,
+      "source": "Minnesota DNR",
+      "sourceName": "Buffalo River State Park",
+      "matchScore": 100
+    },
+    "camden": {
+      "lat": 44.355706,
+      "lng": -95.91813,
+      "source": "Minnesota DNR",
+      "sourceName": "Camden State Park",
+      "matchScore": 100
+    },
+    "carley": {
+      "lat": 44.109923,
+      "lng": -92.169432,
+      "source": "Minnesota DNR",
+      "sourceName": "Carley State Park",
+      "matchScore": 100
+    },
+    "cascade-river": {
+      "lat": 47.817423,
+      "lng": -90.053754,
+      "source": "Minnesota DNR",
+      "sourceName": "Cascade River State Park",
+      "matchScore": 100
+    },
+    "charles-a-lindbergh": {
+      "lat": 45.958865,
+      "lng": -94.38816,
+      "source": "Minnesota DNR",
+      "sourceName": "Charles A. Lindbergh State Park",
+      "matchScore": 100
+    },
+    "crow-wing": {
+      "lat": 46.264161,
+      "lng": -94.318983,
+      "source": "Minnesota DNR",
+      "sourceName": "Crow Wing State Park",
+      "matchScore": 100
+    },
+    "father-hennepin": {
+      "lat": 46.138056,
+      "lng": -93.480549,
+      "source": "Minnesota DNR",
+      "sourceName": "Father Hennepin State Park",
+      "matchScore": 100
+    },
+    "flandrau": {
+      "lat": 44.294239,
+      "lng": -94.459419,
+      "source": "Minnesota DNR",
+      "sourceName": "Flandrau State Park",
+      "matchScore": 100
+    },
+    "forestville-mystery-cave": {
+      "lat": 43.633672,
+      "lng": -92.230642,
+      "source": "Minnesota DNR",
+      "sourceName": "Forestville Mystery Cave State Park",
+      "matchScore": 100
+    },
+    "fort-ridgely": {
+      "lat": 44.447912,
+      "lng": -94.726695,
+      "source": "Minnesota DNR",
+      "sourceName": "Fort Ridgely State Park",
+      "matchScore": 100
+    },
+    "fort-snelling": {
+      "lat": 44.871374,
+      "lng": -93.195998,
+      "source": "Minnesota DNR",
+      "sourceName": "Fort Snelling State Park",
+      "matchScore": 100
+    },
+    "franz-jevne": {
+      "lat": 48.641697,
+      "lng": -94.058504,
+      "source": "Minnesota DNR",
+      "sourceName": "Franz Jevne State Park",
+      "matchScore": 100
+    },
+    "frontenac": {
+      "lat": 44.521841,
+      "lng": -92.343283,
+      "source": "Minnesota DNR",
+      "sourceName": "Frontenac State Park",
+      "matchScore": 100
+    },
+    "george-h-crosby-manitou": {
+      "lat": 47.47946,
+      "lng": -91.123019,
+      "source": "Minnesota DNR",
+      "sourceName": "George H. Crosby Manitou State Park",
+      "matchScore": 100
+    },
+    "glacial-lakes": {
+      "lat": 45.541678,
+      "lng": -95.533477,
+      "source": "Minnesota DNR",
+      "sourceName": "Glacial Lakes State Park",
+      "matchScore": 100
+    },
+    "glendalough": {
+      "lat": 46.311455,
+      "lng": -95.679968,
+      "source": "Minnesota DNR",
+      "sourceName": "Glendalough State Park",
+      "matchScore": 100
+    },
+    "gooseberry-falls": {
+      "lat": 47.139868,
+      "lng": -91.473358,
+      "source": "Minnesota DNR",
+      "sourceName": "Gooseberry Falls State Park",
+      "matchScore": 100
+    },
+    "grand-portage": {
+      "lat": 47.99894,
+      "lng": -89.593637,
+      "source": "Minnesota DNR",
+      "sourceName": "Grand Portage State Park",
+      "matchScore": 100
+    },
+    "great-river-bluffs": {
+      "lat": 43.64597,
+      "lng": -91.55503,
+      "source": "Minnesota DNR",
+      "sourceName": "Great River Bluffs State Park",
+      "matchScore": 100
+    },
+    "hayes-lake": {
+      "lat": 48.643881,
+      "lng": -95.545257,
+      "source": "Minnesota DNR",
+      "sourceName": "Hayes Lake State Park",
+      "matchScore": 100
+    },
+    "hill-annex-mine": {
+      "lat": 47.32586,
+      "lng": -93.277512,
+      "source": "Minnesota DNR",
+      "sourceName": "Hill-Annex Mine State Park",
+      "matchScore": 100
+    },
+    "interstate": {
+      "lat": 45.394925,
+      "lng": -92.667843,
+      "source": "Minnesota DNR",
+      "sourceName": "Interstate State Park",
+      "matchScore": 100
+    },
+    "itasca": {
+      "lat": 47.32586,
+      "lng": -93.277512,
+      "source": "Minnesota DNR",
+      "sourceName": "Itasca",
+      "matchScore": 100
+    },
+    "jay-cooke": {
+      "lat": 46.661604,
+      "lng": -92.399089,
+      "source": "Minnesota DNR",
+      "sourceName": "Jay Cooke State Park",
+      "matchScore": 100
+    },
+    "john-a-latsch": {
+      "lat": 44.172557,
+      "lng": -91.838351,
+      "source": "Minnesota DNR",
+      "sourceName": "John A. Latsch State Park",
+      "matchScore": 100
+    },
+    "judge-c-r-magney": {
+      "lat": 47.817423,
+      "lng": -90.053754,
+      "source": "Minnesota DNR",
+      "sourceName": "Judge C. R. Magney State Park",
+      "matchScore": 100
+    },
+    "kilen-woods": {
+      "lat": 43.732186,
+      "lng": -95.068807,
+      "source": "Minnesota DNR",
+      "sourceName": "Kilen Woods State Park",
+      "matchScore": 100
+    },
+    "lac-qui-parle": {
+      "lat": 45.021117,
+      "lng": -95.894078,
+      "source": "Minnesota DNR",
+      "sourceName": "Lac qui Parle State Park",
+      "matchScore": 100
+    },
+    "lake-bemidji": {
+      "lat": 47.540644,
+      "lng": -94.835808,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Bemidji State Park",
+      "matchScore": 100
+    },
+    "lake-bronson": {
+      "lat": 48.643881,
+      "lng": -95.545257,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Bronson State Park",
+      "matchScore": 100
+    },
+    "lake-carlos": {
+      "lat": 46.00045,
+      "lng": -95.332956,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Carlos State Park",
+      "matchScore": 100
+    },
+    "lake-louise": {
+      "lat": 43.535963,
+      "lng": -92.509183,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Louise State Park",
+      "matchScore": 100
+    },
+    "lake-maria": {
+      "lat": 45.317419,
+      "lng": -93.931675,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Maria State Park",
+      "matchScore": 100
+    },
+    "lake-shetek": {
+      "lat": 44.094796,
+      "lng": -95.680808,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Shetek State Park",
+      "matchScore": 100
+    },
+    "lake-vermilion-soudan-underground-mine": {
+      "lat": 47.816705,
+      "lng": -92.248865,
+      "source": "Minnesota DNR",
+      "sourceName": "Lake Vermilion-Soudan Underground Mine State Park",
+      "matchScore": 100
+    },
+    "maplewood": {
+      "lat": 46.549983,
+      "lng": -95.954184,
+      "source": "Minnesota DNR",
+      "sourceName": "Maplewood State Park",
+      "matchScore": 100
+    },
+    "mccarthy-beach": {
+      "lat": 47.668908,
+      "lng": -93.031549,
+      "source": "Minnesota DNR",
+      "sourceName": "McCarthy Beach State Park",
+      "matchScore": 100
+    },
+    "mille-lacs-kathio": {
+      "lat": 46.138056,
+      "lng": -93.480549,
+      "source": "Minnesota DNR",
+      "sourceName": "Mille Lacs Kathio State Park",
+      "matchScore": 100
+    },
+    "minneopa": {
+      "lat": 44.156345,
+      "lng": -94.091364,
+      "source": "Minnesota DNR",
+      "sourceName": "Minneopa State Park",
+      "matchScore": 100
+    },
+    "monson-lake": {
+      "lat": 45.31833,
+       "lng": -95.27597,
+      "source": "Minnesota DNR",
+      "sourceName": "Monson Lake State Park",
+      "matchScore": 100
+    },
+    "moose-lake": {
+      "lat": 46.436383,
+      "lng": -92.73582,
+      "source": "Minnesota DNR",
+      "sourceName": "Moose Lake State Park",
+      "matchScore": 100
+    },
+    "myre-big-island": {
+      "lat": 43.640419,
+      "lng": -93.308984,
+      "source": "Minnesota DNR",
+      "sourceName": "Myre-Big Island State Park",
+      "matchScore": 100
+    },
+    "nerstrand-big-woods": {
+      "lat": 44.341783,
+      "lng": -93.091049,
+      "source": "Minnesota DNR",
+      "sourceName": "Nerstrand Big Woods State Park",
+      "matchScore": 100
+    },
+    "old-mill": {
+      "lat": 48.361415,
+      "lng": -96.565584,
+      "source": "Minnesota DNR",
+      "sourceName": "Old Mill State Park",
+      "matchScore": 100
+    },
+    "rice-lake": {
+      "lat": 44.095572,
+      "lng": -93.063515,
+      "source": "Minnesota DNR",
+      "sourceName": "Rice Lake State Park",
+      "matchScore": 100
+    },
+    "sakatah-lake": {
+      "lat": 44.217849,
+      "lng": -93.532336,
+      "source": "Minnesota DNR",
+      "sourceName": "Sakatah Lake State Park",
+      "matchScore": 100
+    },
+    "savanna-portage": {
+      "lat": 46.7573,
+      "lng": -93.249893,
+      "source": "Minnesota DNR",
+      "sourceName": "Savanna Portage State Park",
+      "matchScore": 100
+    },
+    "scenic": {
+      "lat": 47.32586,
+      "lng": -93.277512,
+      "source": "Minnesota DNR",
+      "sourceName": "Scenic State Park",
+      "matchScore": 100
+    },
+    "schoolcraft": {
+      "lat": 47.222823,
+      "lng": -93.8066,
+      "source": "Minnesota DNR",
+      "sourceName": "Schoolcraft State Park",
+      "matchScore": 100
+    },
+    "sibley": {
+      "lat": 45.31833,
+      "lng": -95.27597,
+      "source": "Minnesota DNR",
+      "sourceName": "Sibley State Park",
+      "matchScore": 100
+    },
+    "split-rock-creek": {
+      "lat": 43.895961,
+      "lng": -96.367177,
+      "source": "Minnesota DNR",
+      "sourceName": "Split Rock Creek State Park",
+      "matchScore": 100
+    },
+    "split-rock-lighthouse": {
+      "lat": 47.205659,
+      "lng": -91.368255,
+      "source": "Minnesota DNR",
+      "sourceName": "Split Rock Lighthouse State Park",
+      "matchScore": 100
+    },
+    "st-croix": {
+      "lat": 46.012018,
+      "lng": -92.617893,
+      "source": "Minnesota DNR",
+      "sourceName": "St. Croix State Park",
+      "matchScore": 100
+    },
+    "temperance-river": {
+      "lat": 47.552671,
+      "lng": -90.877477,
+      "source": "Minnesota DNR",
+      "sourceName": "Temperance River State Park",
+      "matchScore": 100
+    },
+    "tettegouche": {
+      "lat": 47.339883,
+      "lng": -91.196354,
+      "source": "Minnesota DNR",
+      "sourceName": "Tettegouche State Park",
+      "matchScore": 100
+    },
+    "upper-sioux-agency": {
+      "lat": 45.021117,
+      "lng": -95.894078,
+      "source": "Minnesota DNR",
+      "sourceName": "State Park",
+      "matchScore": 85
+    },
+    "whitewater": {
+      "lat": 44.172557,
+      "lng": -91.838351,
+      "source": "Minnesota DNR",
+      "sourceName": "Whitewater State Park",
+      "matchScore": 100
+    },
+    "wild-river": {
+      "lat": 45.524219,
+      "lng": -92.754476,
+      "source": "Minnesota DNR",
+      "sourceName": "Wild River State Park",
+      "matchScore": 100
+    },
+    "william-o-brien": {
+      "lat": 45.225354,
+      "lng": -92.763582,
+      "source": "Minnesota DNR",
+      "sourceName": "William O'Brien State Park",
+      "matchScore": 100
+    },
+    "zippel-bay": {
+      "lat": 48.844396,
+      "lng": -94.850013,
+      "source": "Minnesota DNR",
+      "sourceName": "Zippel Bay State Park",
+      "matchScore": 100
+    },
+    "amnicon-falls": {
+      "lat": 46.616435,
+      "lng": -91.897655,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Amnicon Falls State Park",
+      "matchScore": 100
+    },
+    "aztalan": {
+      "lat": 43.065478,
+      "lng": -88.862665,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Aztalan State Park",
+      "matchScore": 100
+    },
+    "belmont-mound": {
+      "lat": 42.772373,
+      "lng": -90.349322,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Belmont Mound State Park",
+      "matchScore": 100
+    },
+    "big-bay": {
+      "lat": 46.798872,
+      "lng": -90.687187,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Big Bay State Park",
+      "matchScore": 100
+    },
+    "big-foot-beach": {
+      "lat": 42.569467,
+      "lng": -88.427477,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Big Foot Beach State Park",
+      "matchScore": 100
+    },
+    "blue-mound": {
+      "lat": 43.028499,
+      "lng": -89.847948,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Blue Mound State Park",
+      "matchScore": 100
+    },
+    "brunet-island": {
+      "lat": 45.185676,
+      "lng": -91.151602,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Brunet Island State Park",
+      "matchScore": 100
+    },
+    "buckhorn": {
+      "lat": 43.946501,
+      "lng": -90.003051,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Buckhorn State Park",
+      "matchScore": 100
+    },
+    "copper-culture": {
+      "lat": 44.887249,
+      "lng": -87.899504,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Copper Culture Mounds State Park",
+      "matchScore": 85
+    },
+    "copper-falls": {
+      "lat": 46.377537,
+      "lng": -90.645237,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Copper Falls State Park",
+      "matchScore": 100
+    },
+    "council-grounds": {
+      "lat": 45.185605,
+      "lng": -89.740464,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Council Grounds State Park",
+      "matchScore": 100
+    },
+    "cross-plains": {
+      "lat": 43.085592,
+      "lng": -89.612215,
+      "source": "Wisconsin DNR location page",
+      "sourceName": "Cross Plains State Park",
+      "matchScore": 100
+    },
+    "devil-s-ake": {
+      "lat": 43.4284,
+      "lng": -89.7322,
+      "source": "Wisconsin DNR location page",
+      "sourceName": "Devil's Lake State Park",
+      "matchScore": 100
+    },
+    "governor-dodge": {
+      "lat": 43.023999,
+      "lng": -90.107425,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Governor Dodge State Park",
+      "matchScore": 100
+    },
+    "governor-nelson": {
+      "lat": 43.13404,
+      "lng": -89.437422,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Governor Nelson State Park",
+      "matchScore": 100
+    },
+    "governor-thompson": {
+      "lat": 45.333842,
+      "lng": -88.240323,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Governor Thompson State Park",
+      "matchScore": 100
+    },
+    "harrington-beach": {
+      "lat": 43.492697,
+      "lng": -87.804691,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Harrington Beach State Park",
+      "matchScore": 100
+    },
+    "hartman-creek": {
+      "lat": 44.324306,
+      "lng": -89.215605,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Hartman Creek State Park",
+      "matchScore": 100
+    },
+    "heritage-hill": {
+      "lat": 44.474291,
+      "lng": -88.033342,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Heritage Hill State Park",
+      "matchScore": 100
+    },
+    "high-cliff": {
+      "lat": 44.15421,
+      "lng": -88.29302,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "High Cliff State Park",
+      "matchScore": 100
+    },
+    "interstate-park": {
+      "lat": 45.395413,
+      "lng": -92.649259,
+      "source": "Wisconsin DNR location page",
+      "sourceName": "Interstate State Park",
+      "matchScore": 100
+    },
+    "kinnickinnic": {
+      "lat": 44.828859,
+      "lng": -92.750679,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Kinnickinnic State Park",
+      "matchScore": 100
+    },
+    "kohler-andrae": {
+      "lat": 43.66843,
+      "lng": -87.717287,
+      "source": "Wisconsin DNR location page",
+      "sourceName": "Kohler-Andrae State Park",
+      "matchScore": 100
+    },
+    "lake-kegonsa": {
+      "lat": 42.977206,
+      "lng": -89.232876,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Lake Kegonsa State Park",
+      "matchScore": 100
+    },
+    "lake-wissota": {
+      "lat": 44.971658,
+      "lng": -91.297246,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Lake Wissota State Park",
+      "matchScore": 100
+    },
+    "lakeshore": {
+      "lat": 43.031598,
+      "lng": -87.896312,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Lakeshore State Park",
+      "matchScore": 100
+    },
+    "lizard-mound": {
+      "lat": 43.463628,
+      "lng": -88.139977,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Lizard Mound State Park",
+      "matchScore": 100
+    },
+    "lost-dauphin": {
+      "lat": 44.389191,
+      "lng": -88.124419,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Lost Dauphin State Park",
+      "matchScore": 100
+    },
+    "merrick": {
+      "lat": 44.154388,
+      "lng": -91.752308,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Merrick State Park",
+      "matchScore": 100
+    },
+    "mill-bluff": {
+      "lat": 43.9411,
+      "lng": -90.3189,
+      "source": "Wisconsin DNR address / validated geocode",
+      "sourceName": "Mill Bluff State Park",
+      "matchScore": 100
+    },
+    "mirror-lake": {
+      "lat": 43.565143,
+      "lng": -89.813114,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Mirror Lake State Park",
+      "matchScore": 100
+    },
+    "natural-bridge": {
+      "lat": 43.344614,
+      "lng": -89.929909,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Natural Bridge State Park",
+      "matchScore": 100
+    },
+    "nelson-dewey": {
+      "lat": 42.737328,
+      "lng": -91.022179,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Nelson Dewey State Park",
+      "matchScore": 100
+    },
+    "new-glarus-woods": {
+      "lat": 42.784535,
+      "lng": -89.632866,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "New Glarus Woods State Park",
+      "matchScore": 100
+    },
+    "newport": {
+      "lat": 45.236658,
+      "lng": -86.994491,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Newport State Park",
+      "matchScore": 100
+    },
+    "pattison": {
+      "lat": 46.534177,
+      "lng": -92.115252,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Pattison State Park",
+      "matchScore": 100
+    },
+    "peninsula": {
+      "lat": 45.149472,
+      "lng": -87.218365,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Peninsula State Park",
+      "matchScore": 100
+    },
+    "perrot": {
+      "lat": 44.019613,
+      "lng": -91.467594,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Perrot State Park",
+      "matchScore": 100
+    },
+    "potawatomi": {
+      "lat": 44.863567,
+      "lng": -87.420699,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Potawatomi State Park",
+      "matchScore": 100
+    },
+    "rib-mountain": {
+      "lat": 44.920511,
+      "lng": -89.686453,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Rib Mountain State Park",
+      "matchScore": 100
+    },
+    "roche-a-cri": {
+      "lat": 44.003715,
+      "lng": -89.819697,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Roche-A-Cri State Park",
+      "matchScore": 100
+    },
+    "rock-island": {
+      "lat": 45.416302,
+      "lng": -86.819552,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Rock Island State Park",
+      "matchScore": 100
+    },
+    "rocky-arbor": {
+      "lat": 43.64356,
+      "lng": -89.806762,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Rocky Arbor State Park",
+      "matchScore": 100
+    },
+    "straight-lake": {
+      "lat": 45.602791,
+      "lng": -92.40992,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Straight Lake Wilderness State Park",
+      "matchScore": 85
+    },
+    "tower-hill": {
+      "lat": 43.148771,
+      "lng": -90.044022,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Tower Hill State Park",
+      "matchScore": 100
+    },
+    "whitefish-dunes": {
+      "lat": 44.924833,
+      "lng": -87.196664,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Whitefish Dunes State Park",
+      "matchScore": 100
+    },
+    "wildcat-mountain": {
+      "lat": 43.699473,
+      "lng": -90.563667,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Wildcat Mountain State Park",
+      "matchScore": 100
+    },
+    "willow-river": {
+      "lat": 45.017748,
+      "lng": -92.695672,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Willow River State Park",
+      "matchScore": 100
+    },
+    "wyalusing": {
+      "lat": 42.980325,
+      "lng": -91.117927,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Wyalusing State Park",
+      "matchScore": 100
+    },
+    "yellowstone-lake": {
+      "lat": 42.770831,
+      "lng": -89.967166,
+      "source": "Wisconsin DNR GIS",
+      "sourceName": "Yellowstone Lake State Park",
+      "matchScore": 100
+    }
+  }
+}
