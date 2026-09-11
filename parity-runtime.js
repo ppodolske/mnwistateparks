@@ -3,10 +3,11 @@ const fs=require('fs');
 const path=require('path');
 const base=require('./collections-runtime.js');
 
-const VERSION='1.6.0';
+const VERSION='1.6.1';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
+const GENERATED_COORDS=path.join(__dirname,'park-coordinates.generated.json');
 
 const esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c));
 const sourceText=p=>[p.review,p.pros,p.cons,p.criticalFactors].join(' ');
@@ -72,7 +73,7 @@ function serveStatic(pathname,res){
   res.writeHead(200,{'content-type':type,'cache-control':'public,max-age=2592000,immutable'});fs.createReadStream(file).pipe(res);return true;
 }
 
-function createServer(){return http.createServer((req,res)=>{let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}if(serveStatic(url.pathname,res))return;if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(base.clientJS)}if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,parks:base.parks.length,collections:base.COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology'],mapCoordinates:coords?Object.keys(coords.parks).length:0}))}const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.body)})}
+function createServer(){return http.createServer((req,res)=>{let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}if(serveStatic(url.pathname,res))return;if(url.pathname==='/coordinate-snapshot.json'){if(!fs.existsSync(GENERATED_COORDS)){res.writeHead(404,{'content-type':'application/json'});return res.end(JSON.stringify({error:'coordinate snapshot unavailable'}))}res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});return fs.createReadStream(GENERATED_COORDS).pipe(res)}if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(base.clientJS)}if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,parks:base.parks.length,collections:base.COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology'],mapCoordinates:coords?Object.keys(coords.parks).length:0}))}const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.body)})}
 
 if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT}`));
 module.exports={...base,VERSION,renderPath,createServer,practical};
