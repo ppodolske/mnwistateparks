@@ -3,10 +3,12 @@ const fs=require('fs');
 const path=require('path');
 const base=require('./app.js');
 
-const VERSION='1.7.0';
+const VERSION='1.9.0';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
+const PLANNER_FILE=path.join(__dirname,'planner-polish.js');
+const plannerJS=fs.readFileSync(PLANNER_FILE,'utf8');
 
 const EXPERIENCE_RULES=[
   ['Waterfalls',/waterfall|\bfalls\b/i],['Lakes',/\blake\b|\blakes\b|lake superior|lake michigan|mille lacs/i],['Rivers',/\briver\b|\brivers\b|mississippi|st\. croix/i],['Beaches',/\bbeach\b|\bbeaches\b|swimming pond/i],['Bridges',/\bbridge\b|\bbridges\b|suspension bridge/i],['Camping',/campground|campsite|camping|cart-in|walk-in|walk-to|hike-in|teepee/i],['Private campsites',/private site|private campsite|privacy.*site|sites.*privacy/i],['Hammocking',/hammock/i],['History',/history|historical|ccc|interpretive|lighthouse|burial mound|effigy mound/i],['Lookout towers',/lookout tower|observation tower|fire tower/i],['Boardwalks',/boardwalk/i],['Dark sky',/dark sky|night sky|stargaz/i],['Wildlife',/loon|bear|bison|wildlife|deer|bird/i],['Scenic views',/scenic|scenery|views|overlook|sunset|sunrise|foliage/i],['Prairie',/prairie/i],['Rock formations',/rock face|rock faces|bluff|cave|geology|natural bridge|quartzite|sandstone|dolomite/i]
@@ -120,13 +122,17 @@ function serveStatic(pathname,res){
   const ext=path.extname(file).toLowerCase(),type=ext==='.jpg'||ext==='.jpeg'?'image/jpeg':ext==='.png'?'image/png':'application/octet-stream';
   res.writeHead(200,{'content-type':type,'cache-control':'public,max-age=2592000,immutable'});fs.createReadStream(file).pipe(res);return true;
 }
+function injectPlanner(html){
+  const safe=plannerJS.replace(/<\/script/gi,'<\\/script');
+  return html.includes('</body>')?html.replace('</body>',`<script>${safe}</script></body>`):html;
+}
 function createServer(){
   return http.createServer((req,res)=>{let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}
     if(serveStatic(url.pathname,res))return;
     if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(clientJS)}
-    if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'single-runtime',parks:base.parks.length,collections:COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology'],mapCoordinates:coords?Object.keys(coords.parks).length:0,clientScript:'repaired-in-canonical-runtime'}))}
-    const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.body);
+    if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'single-runtime',parks:base.parks.length,collections:COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology','trip-chooser-modal','direct-trip-add'],mapCoordinates:coords?Object.keys(coords.parks).length:0,clientScript:'repaired-in-canonical-runtime'}))}
+    const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.status===200?injectPlanner(out.body):out.body);
   });
 }
 if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (single runtime)`));
-module.exports={...base,VERSION,clientJS,renderPath,createServer,EXPERIENCE_RULES,PRACTICAL_RULES,COLLECTIONS,exp,practical,repairClientJS};
+module.exports={...base,VERSION,clientJS,plannerJS,renderPath,createServer,EXPERIENCE_RULES,PRACTICAL_RULES,COLLECTIONS,exp,practical,repairClientJS,injectPlanner};
