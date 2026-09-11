@@ -6,9 +6,11 @@
   const encodeShare=value=>{const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
   const decodeShare=value=>{try{const base=value.replace(/-/g,'+').replace(/_/g,'/');const pad='='.repeat((4-base.length%4)%4);const raw=atob(base+pad);const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}catch{return null}};
   const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch{}ta.remove();return ok}};
+  const kmBetween=(a,b)=>{const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b.lat-a.lat),dLng=rad(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLng/2)**2;return 2*R*Math.asin(Math.sqrt(x))};
+  const mapsUrl=stops=>{if(!stops.length)return'';if(stops.length===1)return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(stops[0].lat+','+stops[0].lng);const origin=stops[0],destination=stops[stops.length-1],middle=stops.slice(1,-1);let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin.lat+','+origin.lng)+'&destination='+encodeURIComponent(destination.lat+','+destination.lng)+'&travelmode=driving';if(middle.length)url+='&waypoints='+encodeURIComponent(middle.map(p=>p.lat+','+p.lng).join('|'));return url};
 
   const style=document.createElement('style');
-  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel,.shared-trip-panel{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}.shared-trip-list{display:grid;gap:8px;margin:16px 0}.shared-trip-stop{background:#fff;border:1px solid #d7dde1;padding:10px 12px}.share-status{font-size:12px;color:#47745b;margin-left:8px}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}.share-status{display:block;margin:8px 0 0}}';
+  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel,.shared-trip-panel,.trip-route-overview{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}.shared-trip-list{display:grid;gap:8px;margin:16px 0}.shared-trip-stop{background:#fff;border:1px solid #d7dde1;padding:10px 12px}.share-status{font-size:12px;color:#47745b;margin-left:8px}.route-days{display:grid;gap:12px;margin-top:16px}.route-day{background:#fff;border:1px solid #d7dde1;padding:14px}.route-day-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.route-day h3{margin:0}.route-day-meta{font-size:11px;color:#667;text-align:right}.route-stops{margin:10px 0 12px;padding-left:22px}.route-stops li{margin:4px 0}.route-note{font-size:11px;color:#667;margin:8px 0 0}.route-link-disabled{font-size:11px;color:#667}.trip-route-overview .button{display:inline-block}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}.share-status{display:block;margin:8px 0 0}.route-day-head{display:block}.route-day-meta{text-align:left;margin-top:4px}}';
   document.head.appendChild(style);
 
   function ensureModal(){
@@ -102,6 +104,32 @@
         const ok=await copyText(url);status.textContent=ok?'Share link copied ✓':'Could not copy the link.';
       };
     }
+
+    const summary=document.getElementById('tripSummary');
+    let routePanel=document.getElementById('tripRouteOverview');
+    if(summary&&!routePanel){
+      routePanel=document.createElement('section');
+      routePanel.id='tripRouteOverview';
+      routePanel.className='trip-route-overview';
+      summary.insertAdjacentElement('afterend',routePanel);
+    }
+    const drawRouteOverview=()=>{
+      if(!routePanel)return;
+      const trip=read(TRIPS).find(t=>t.id===id);
+      if(!trip){routePanel.innerHTML='';return}
+      const ordered=(trip.parks||[]).map(slug=>parks.find(p=>p.slug===slug)).filter(Boolean);
+      if(!ordered.length){routePanel.innerHTML='<div class="kicker blue">DAY-BY-DAY</div><h2>Route overview</h2><p>Add parks to build a day-by-day itinerary.</p>';return}
+      const groups=[];
+      for(const p of ordered){const raw=String((trip.stopMeta&&trip.stopMeta[p.slug]||{}).day||'').trim(),key=raw||'Unassigned';let g=groups.find(x=>x.key===key);if(!g){g={key,stops:[]};groups.push(g)}g.stops.push(p)}
+      groups.sort((a,b)=>{if(a.key==='Unassigned')return 1;if(b.key==='Unassigned')return-1;const an=Number(a.key),bn=Number(b.key);if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;return a.key.localeCompare(b.key,undefined,{numeric:true})});
+      const cards=groups.map(g=>{let km=0;for(let i=1;i<g.stops.length;i++)if(Number.isFinite(g.stops[i-1].lat)&&Number.isFinite(g.stops[i-1].lng)&&Number.isFinite(g.stops[i].lat)&&Number.isFinite(g.stops[i].lng))km+=kmBetween(g.stops[i-1],g.stops[i]);const mapped=g.stops.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));const label=g.key==='Unassigned'?'Unassigned stops':'Day '+esc(g.key);const route=mapped.length&&mapped.length<=10?'<a class="button ghost" target="_blank" rel="noopener" href="'+mapsUrl(mapped)+'">Open in Google Maps</a>':mapped.length>10?'<span class="route-link-disabled">Split this day into 10 or fewer stops to open it as one Google Maps route.</span>':'';return '<article class="route-day"><div class="route-day-head"><h3>'+label+'</h3><div class="route-day-meta">'+g.stops.length+' stop'+(g.stops.length===1?'':'s')+(g.stops.length>1?' · ~'+Math.round(km)+' km straight-line':'')+'</div></div><ol class="route-stops">'+g.stops.map(p=>'<li>'+esc(p.name)+' <small>'+esc(p.city)+', '+esc(p.state)+'</small></li>').join('')+'</ol>'+route+(g.stops.length>1?'<p class="route-note">Distance is geographic straight-line distance between consecutive parks, not driving distance. Google Maps opens externally for road routing and does not add an API cost to this site.</p>':'')+'</article>'}).join('');
+      routePanel.innerHTML='<div class="kicker blue">DAY-BY-DAY</div><h2>Route overview</h2><p>Stops stay in your planned order and are grouped by the Day field.</p><div class="route-days">'+cards+'</div>';
+    };
+    drawRouteOverview();
+    const tripStops=document.getElementById('tripStops');
+    if(tripStops)new MutationObserver(()=>setTimeout(drawRouteOverview,0)).observe(tripStops,{childList:true,subtree:true});
+    document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('stop-day'))setTimeout(drawRouteOverview,0)});
+
     const stopsSection=document.getElementById('tripStops')?.closest('.planner-section');
     if(stopsSection&&parks.length&&!document.getElementById('tripAddParkDirect')){
       const panel=document.createElement('section');
