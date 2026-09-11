@@ -7,10 +7,11 @@
   const decodeShare=value=>{try{const base=value.replace(/-/g,'+').replace(/_/g,'/');const pad='='.repeat((4-base.length%4)%4);const raw=atob(base+pad);const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}catch{return null}};
   const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch{}ta.remove();return ok}};
   const kmBetween=(a,b)=>{const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b.lat-a.lat),dLng=rad(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLng/2)**2;return 2*R*Math.asin(Math.sqrt(x))};
-  const mapsUrl=stops=>{if(!stops.length)return'';if(stops.length===1)return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(stops[0].lat+','+stops[0].lng);const origin=stops[0],destination=stops[stops.length-1],middle=stops.slice(1,-1);let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin.lat+','+origin.lng)+'&destination='+encodeURIComponent(destination.lat+','+destination.lng)+'&travelmode=driving';if(middle.length)url+='&waypoints='+encodeURIComponent(middle.map(p=>p.lat+','+p.lng).join('|'));return url};
+  const placeQuery=p=>{const raw=String(p.name||'').trim();const parkName=/\bpark\b/i.test(raw)?raw:raw+' State Park';return [parkName,p.city,p.state].filter(Boolean).join(', ')};
+  const mapsUrl=stops=>{if(!stops.length)return'';if(stops.length===1)return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(placeQuery(stops[0]));const origin=placeQuery(stops[0]),destination=placeQuery(stops[stops.length-1]),middle=stops.slice(1,-1).map(placeQuery);let url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(destination)+'&travelmode=driving';if(middle.length)url+='&waypoints='+encodeURIComponent(middle.join('|'));return url};
 
   const style=document.createElement('style');
-  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel,.shared-trip-panel,.trip-route-overview{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}.shared-trip-list{display:grid;gap:8px;margin:16px 0}.shared-trip-stop{background:#fff;border:1px solid #d7dde1;padding:10px 12px}.share-status{font-size:12px;color:#47745b;margin-left:8px}.route-days{display:grid;gap:12px;margin-top:16px}.route-day{background:#fff;border:1px solid #d7dde1;padding:14px}.route-day-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.route-day h3{margin:0}.route-day-meta{font-size:11px;color:#667;text-align:right}.route-stops{margin:10px 0 12px;padding-left:22px}.route-stops li{margin:4px 0}.route-note{font-size:11px;color:#667;margin:8px 0 0}.route-link-disabled{font-size:11px;color:#667}.trip-route-overview .button{display:inline-block}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}.share-status{display:block;margin:8px 0 0}.route-day-head{display:block}.route-day-meta{text-align:left;margin-top:4px}}';
+  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel,.shared-trip-panel,.trip-route-overview,.day-plan-help{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}.shared-trip-list{display:grid;gap:8px;margin:16px 0}.shared-trip-stop{background:#fff;border:1px solid #d7dde1;padding:10px 12px}.share-status{font-size:12px;color:#47745b;margin-left:8px}.route-days{display:grid;gap:12px;margin-top:16px}.route-day{background:#fff;border:1px solid #d7dde1;padding:14px}.route-day-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.route-day h3{margin:0}.route-day-meta{font-size:11px;color:#667;text-align:right}.route-stops{margin:10px 0 12px;padding-left:22px}.route-stops li{margin:4px 0}.route-note{font-size:11px;color:#667;margin:8px 0 0}.route-link-disabled{font-size:11px;color:#667}.trip-route-overview .button{display:inline-block}.day-plan-help{border-left:4px solid #00558a}.day-plan-help h2{margin-top:4px}.day-plan-steps{margin:12px 0 16px;padding-left:22px}.day-plan-steps li{margin:7px 0}.day-plan-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.day-save-status{font-size:12px;color:#47745b}.stop-day{max-width:110px;font-weight:700}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}.share-status{display:block;margin:8px 0 0}.route-day-head{display:block}.route-day-meta{text-align:left;margin-top:4px}}';
   document.head.appendChild(style);
 
   function ensureModal(){
@@ -54,34 +55,16 @@
       document.querySelectorAll('.add-saved-trip').forEach(btn=>{
         btn.onclick=()=>{
           const trips=read(TRIPS);
-          if(!trips.length){
-            location.hash='create-trip';
-            const input=document.getElementById('tripName');
-            if(input)input.focus();
-            return;
-          }
-          const slug=btn.dataset.slug;
-          const list=modal.querySelector('#tripChooserList');
-          const status=modal.querySelector('#tripChooserStatus');
-          status.textContent='';
+          if(!trips.length){location.hash='create-trip';const input=document.getElementById('tripName');if(input)input.focus();return}
+          const slug=btn.dataset.slug,list=modal.querySelector('#tripChooserList'),status=modal.querySelector('#tripChooserStatus');status.textContent='';
           list.innerHTML=trips.map(t=>'<button type="button" class="trip-choice" data-id="'+esc(t.id)+'"><strong>'+esc(t.name)+'</strong><span>'+((t.parks||[]).length)+' parks'+(t.date?' · '+esc(t.date):'')+'</span></button>').join('');
-          list.querySelectorAll('.trip-choice').forEach(choice=>choice.onclick=()=>{
-            const current=read(TRIPS);
-            const trip=current.find(t=>t.id===choice.dataset.id);
-            if(!trip)return;
-            trip.parks=[...new Set([...(trip.parks||[]),slug])];
-            trip.stopMeta=trip.stopMeta||{};
-            write(TRIPS,current);
-            status.textContent='Added to '+trip.name+' ✓';
-            setTimeout(()=>modal.classList.remove('open'),450);
-          });
+          list.querySelectorAll('.trip-choice').forEach(choice=>choice.onclick=()=>{const current=read(TRIPS),trip=current.find(t=>t.id===choice.dataset.id);if(!trip)return;trip.parks=[...new Set([...(trip.parks||[]),slug])];trip.stopMeta=trip.stopMeta||{};write(TRIPS,current);status.textContent='Added to '+trip.name+' ✓';setTimeout(()=>modal.classList.remove('open'),450)});
           modal.classList.add('open');
         };
       });
     }
     wireSavedButtons();
-    const savedRoot=document.getElementById('savedRoot');
-    if(savedRoot)new MutationObserver(wireSavedButtons).observe(savedRoot,{childList:true,subtree:true});
+    const savedRoot=document.getElementById('savedRoot');if(savedRoot)new MutationObserver(wireSavedButtons).observe(savedRoot,{childList:true,subtree:true});
   }
 
   const tripPage=document.querySelector('[data-page="trip"]');
@@ -92,70 +75,40 @@
     const toolbar=tripPage.querySelector('.trip-toolbar');
     if(toolbar&&!document.getElementById('shareTripBtn')){
       const btn=document.createElement('button');btn.id='shareTripBtn';btn.type='button';btn.className='button ghost';btn.textContent='Copy share link';
-      const status=document.createElement('span');status.id='shareTripStatus';status.className='share-status';
-      toolbar.appendChild(btn);toolbar.appendChild(status);
-      btn.onclick=async()=>{
-        const trip=read(TRIPS).find(t=>t.id===id);
-        if(!trip){status.textContent='Trip could not be found.';return}
-        const snapshot={name:trip.name||'Shared trip',date:trip.date||'',notes:trip.notes||'',parks:[...(trip.parks||[])],stopMeta:trip.stopMeta||{}};
-        const token=encodeShare(snapshot);
-        const url=location.origin+'/saved?shared='+encodeURIComponent(token);
-        if(url.length>12000){status.textContent='This trip is too large for a share link.';return}
-        const ok=await copyText(url);status.textContent=ok?'Share link copied ✓':'Could not copy the link.';
-      };
+      const status=document.createElement('span');status.id='shareTripStatus';status.className='share-status';toolbar.appendChild(btn);toolbar.appendChild(status);
+      btn.onclick=async()=>{const trip=read(TRIPS).find(t=>t.id===id);if(!trip){status.textContent='Trip could not be found.';return}const snapshot={name:trip.name||'Shared trip',date:trip.date||'',notes:trip.notes||'',parks:[...(trip.parks||[])],stopMeta:trip.stopMeta||{}},token=encodeShare(snapshot),url=location.origin+'/saved?shared='+encodeURIComponent(token);if(url.length>12000){status.textContent='This trip is too large for a share link.';return}const ok=await copyText(url);status.textContent=ok?'Share link copied ✓':'Could not copy the link.'};
     }
 
     const summary=document.getElementById('tripSummary');
     let routePanel=document.getElementById('tripRouteOverview');
-    if(summary&&!routePanel){
-      routePanel=document.createElement('section');
-      routePanel.id='tripRouteOverview';
-      routePanel.className='trip-route-overview';
-      summary.insertAdjacentElement('afterend',routePanel);
-    }
+    if(summary&&!routePanel){routePanel=document.createElement('section');routePanel.id='tripRouteOverview';routePanel.className='trip-route-overview';summary.insertAdjacentElement('afterend',routePanel)}
     const drawRouteOverview=()=>{
-      if(!routePanel)return;
-      const trip=read(TRIPS).find(t=>t.id===id);
-      if(!trip){routePanel.innerHTML='';return}
-      const ordered=(trip.parks||[]).map(slug=>parks.find(p=>p.slug===slug)).filter(Boolean);
-      if(!ordered.length){routePanel.innerHTML='<div class="kicker blue">DAY-BY-DAY</div><h2>Route overview</h2><p>Add parks to build a day-by-day itinerary.</p>';return}
-      const groups=[];
-      for(const p of ordered){const raw=String((trip.stopMeta&&trip.stopMeta[p.slug]||{}).day||'').trim(),key=raw||'Unassigned';let g=groups.find(x=>x.key===key);if(!g){g={key,stops:[]};groups.push(g)}g.stops.push(p)}
+      if(!routePanel)return;const trip=read(TRIPS).find(t=>t.id===id);if(!trip){routePanel.innerHTML='';return}
+      const ordered=(trip.parks||[]).map(slug=>parks.find(p=>p.slug===slug)).filter(Boolean);if(!ordered.length){routePanel.innerHTML='<div class="kicker blue">DAY-BY-DAY</div><h2>Route overview</h2><p>Add parks to build a day-by-day itinerary.</p>';return}
+      const groups=[];for(const p of ordered){const raw=String((trip.stopMeta&&trip.stopMeta[p.slug]||{}).day||'').trim(),key=raw||'Unassigned';let g=groups.find(x=>x.key===key);if(!g){g={key,stops:[]};groups.push(g)}g.stops.push(p)}
       groups.sort((a,b)=>{if(a.key==='Unassigned')return 1;if(b.key==='Unassigned')return-1;const an=Number(a.key),bn=Number(b.key);if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;return a.key.localeCompare(b.key,undefined,{numeric:true})});
-      const cards=groups.map(g=>{let km=0;for(let i=1;i<g.stops.length;i++)if(Number.isFinite(g.stops[i-1].lat)&&Number.isFinite(g.stops[i-1].lng)&&Number.isFinite(g.stops[i].lat)&&Number.isFinite(g.stops[i].lng))km+=kmBetween(g.stops[i-1],g.stops[i]);const mapped=g.stops.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));const label=g.key==='Unassigned'?'Unassigned stops':'Day '+esc(g.key);const route=mapped.length&&mapped.length<=10?'<a class="button ghost" target="_blank" rel="noopener" href="'+mapsUrl(mapped)+'">Open in Google Maps</a>':mapped.length>10?'<span class="route-link-disabled">Split this day into 10 or fewer stops to open it as one Google Maps route.</span>':'';return '<article class="route-day"><div class="route-day-head"><h3>'+label+'</h3><div class="route-day-meta">'+g.stops.length+' stop'+(g.stops.length===1?'':'s')+(g.stops.length>1?' · ~'+Math.round(km)+' km straight-line':'')+'</div></div><ol class="route-stops">'+g.stops.map(p=>'<li>'+esc(p.name)+' <small>'+esc(p.city)+', '+esc(p.state)+'</small></li>').join('')+'</ol>'+route+(g.stops.length>1?'<p class="route-note">Distance is geographic straight-line distance between consecutive parks, not driving distance. Google Maps opens externally for road routing and does not add an API cost to this site.</p>':'')+'</article>'}).join('');
+      const cards=groups.map(g=>{let km=0;for(let i=1;i<g.stops.length;i++)if(Number.isFinite(g.stops[i-1].lat)&&Number.isFinite(g.stops[i-1].lng)&&Number.isFinite(g.stops[i].lat)&&Number.isFinite(g.stops[i].lng))km+=kmBetween(g.stops[i-1],g.stops[i]);const mapped=g.stops.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng)),label=g.key==='Unassigned'?'Unassigned stops':'Day '+esc(g.key),route=mapped.length&&mapped.length<=10?'<a class="button ghost" target="_blank" rel="noopener" href="'+mapsUrl(mapped)+'">Open in Google Maps</a>':mapped.length>10?'<span class="route-link-disabled">Split this day into 10 or fewer stops to open it as one Google Maps route.</span>':'';return '<article class="route-day"><div class="route-day-head"><h3>'+label+'</h3><div class="route-day-meta">'+g.stops.length+' stop'+(g.stops.length===1?'':'s')+(g.stops.length>1?' · ~'+Math.round(km)+' km straight-line':'')+'</div></div><ol class="route-stops">'+g.stops.map(p=>'<li>'+esc(p.name)+' <small>'+esc(p.city)+', '+esc(p.state)+'</small></li>').join('')+'</ol>'+route+(g.stops.length>1?'<p class="route-note">Distance is geographic straight-line distance between consecutive parks, not driving distance. Google Maps opens externally using park names for road routing.</p>':'')+'</article>'}).join('');
       routePanel.innerHTML='<div class="kicker blue">DAY-BY-DAY</div><h2>Route overview</h2><p>Stops stay in your planned order and are grouped by the Day field.</p><div class="route-days">'+cards+'</div>';
     };
     drawRouteOverview();
-    const tripStops=document.getElementById('tripStops');
-    if(tripStops)new MutationObserver(()=>setTimeout(drawRouteOverview,0)).observe(tripStops,{childList:true,subtree:true});
-    document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('stop-day'))setTimeout(drawRouteOverview,0)});
 
     const stopsSection=document.getElementById('tripStops')?.closest('.planner-section');
+    if(stopsSection&&!document.getElementById('dayPlanHelp')){
+      const help=document.createElement('section');help.id='dayPlanHelp';help.className='day-plan-help';
+      help.innerHTML='<div class="kicker blue">PLAN YOUR DAYS</div><h2>Assign each park to a trip day</h2><ol class="day-plan-steps"><li>In the <b>Stops</b> list below, enter <b>1</b>, <b>2</b>, <b>3</b>, etc. in each park\'s <b>Day</b> field.</li><li>Keep the parks in the order you plan to visit them using the ↑ and ↓ controls.</li><li>When you are finished, press <b>Save day changes</b>. The route overview above will regroup automatically.</li></ol><div class="day-plan-actions"><button id="saveDayAssignmentsBtn" class="button blue" type="button">Save day changes</button><span id="daySaveStatus" class="day-save-status"></span></div>';
+      stopsSection.parentNode.insertBefore(help,stopsSection);
+      help.querySelector('#saveDayAssignmentsBtn').onclick=()=>{const trips=read(TRIPS),trip=trips.find(t=>t.id===id),status=help.querySelector('#daySaveStatus');if(!trip){status.textContent='Trip could not be found.';return}trip.stopMeta=trip.stopMeta||{};document.querySelectorAll('.stop-day').forEach(input=>{const slug=input.dataset.slug;trip.stopMeta[slug]={...(trip.stopMeta[slug]||{}),day:input.value.trim()}});document.querySelectorAll('.stop-note').forEach(input=>{const slug=input.dataset.slug;trip.stopMeta[slug]={...(trip.stopMeta[slug]||{}),note:input.value}});write(TRIPS,trips);status.textContent='Day assignments saved ✓';drawRouteOverview();setTimeout(()=>status.textContent='',2200)};
+    }
+    const improveDayInputs=()=>document.querySelectorAll('.stop-day').forEach(input=>{input.type='number';input.min='1';input.step='1';input.inputMode='numeric';input.placeholder='1';input.setAttribute('aria-label','Trip day number')});
+    improveDayInputs();
+    const tripStops=document.getElementById('tripStops');if(tripStops)new MutationObserver(()=>{improveDayInputs();setTimeout(drawRouteOverview,0)}).observe(tripStops,{childList:true,subtree:true});
+    document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('stop-day'))setTimeout(drawRouteOverview,0)});
+
     if(stopsSection&&parks.length&&!document.getElementById('tripAddParkDirect')){
-      const panel=document.createElement('section');
-      panel.className='trip-add-panel';
-      panel.innerHTML='<div class="kicker blue">ADD A PARK</div><h2>Add another stop</h2><div class="trip-add-row"><label><span class="field-label">Park</span><input id="tripParkSearch" list="tripParkOptions" placeholder="Start typing a park name"></label><datalist id="tripParkOptions"></datalist><button id="tripAddParkDirect" class="button blue" type="button">Add park</button></div><div id="tripAddParkStatus" class="status-note"></div>';
-      stopsSection.parentNode.insertBefore(panel,stopsSection);
-      const input=panel.querySelector('#tripParkSearch');
-      const datalist=panel.querySelector('#tripParkOptions');
-      datalist.innerHTML=parks.map(p=>'<option value="'+esc(p.name)+'">'+esc(p.city)+', '+esc(p.state)+'</option>').join('');
-      const add=()=>{
-        const status=panel.querySelector('#tripAddParkStatus');
-        const park=parks.find(p=>p.name.toLowerCase()===input.value.trim().toLowerCase());
-        if(!park){status.textContent='Choose a park from the list first.';return}
-        const trips=read(TRIPS);
-        const trip=trips.find(t=>t.id===id);
-        if(!trip){status.textContent='Trip could not be found.';return}
-        trip.parks=trip.parks||[];
-        if(trip.parks.includes(park.slug)){status.textContent=park.name+' is already in this trip.';return}
-        trip.parks.push(park.slug);
-        trip.stopMeta=trip.stopMeta||{};
-        write(TRIPS,trips);
-        status.textContent='Added '+park.name+' ✓';
-        setTimeout(()=>location.reload(),350);
-      };
-      panel.querySelector('#tripAddParkDirect').onclick=add;
-      input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
+      const panel=document.createElement('section');panel.className='trip-add-panel';panel.innerHTML='<div class="kicker blue">ADD A PARK</div><h2>Add another stop</h2><div class="trip-add-row"><label><span class="field-label">Park</span><input id="tripParkSearch" list="tripParkOptions" placeholder="Start typing a park name"></label><datalist id="tripParkOptions"></datalist><button id="tripAddParkDirect" class="button blue" type="button">Add park</button></div><div id="tripAddParkStatus" class="status-note"></div>';stopsSection.parentNode.insertBefore(panel,stopsSection);
+      const input=panel.querySelector('#tripParkSearch'),datalist=panel.querySelector('#tripParkOptions');datalist.innerHTML=parks.map(p=>'<option value="'+esc(p.name)+'">'+esc(p.city)+', '+esc(p.state)+'</option>').join('');
+      const add=()=>{const status=panel.querySelector('#tripAddParkStatus'),park=parks.find(p=>p.name.toLowerCase()===input.value.trim().toLowerCase());if(!park){status.textContent='Choose a park from the list first.';return}const trips=read(TRIPS),trip=trips.find(t=>t.id===id);if(!trip){status.textContent='Trip could not be found.';return}trip.parks=trip.parks||[];if(trip.parks.includes(park.slug)){status.textContent=park.name+' is already in this trip.';return}trip.parks.push(park.slug);trip.stopMeta=trip.stopMeta||{};write(TRIPS,trips);status.textContent='Added '+park.name+' ✓';setTimeout(()=>location.reload(),350)};
+      panel.querySelector('#tripAddParkDirect').onclick=add;input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
     }
   }
 })();
