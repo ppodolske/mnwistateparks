@@ -9,22 +9,9 @@ const IMAGE_DIR=path.join(PUBLIC,'images');
 const VERSION='1.3.1';
 
 function repairClientJS(source){
-  let out='',quote=null,escaped=false;
-  for(let i=0;i<source.length;i++){
-    const ch=source[i];
-    if(quote){
-      if(escaped){out+=ch;escaped=false;continue;}
-      if(ch==='\\'){out+=ch;escaped=true;continue;}
-      if(ch===quote){out+=ch;quote=null;continue;}
-      if(ch==='\n'){out+='\\n';continue;}
-      if(ch==='\r'){continue;}
-      out+=ch;
-    }else{
-      if(ch==="'"||ch==='"'||ch==='`'){quote=ch;out+=ch;continue;}
-      out+=ch;
-    }
-  }
-  return out;
+  return source
+    .replace(".join('\n')", ".join('\\\\n')")
+    .replace("prompt('Add to which trip?\n'+options+'\n\nEnter the number:')", "prompt('Add to which trip?\\\\n'+options+'\\\\n\\\\nEnter the number:')");
 }
 
 const clientJS=repairClientJS(app.clientJS);
