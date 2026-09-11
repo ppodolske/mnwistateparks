@@ -1,0 +1,51 @@
+(()=>{
+  const TRIPS='mnwiTripCollections';
+  const read=()=>{try{return JSON.parse(localStorage.getItem(TRIPS)||'[]')}catch{return[]}};
+  const write=v=>localStorage.setItem(TRIPS,JSON.stringify(v));
+  const esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const page=document.querySelector('[data-page="trip"]');
+  if(!page)return;
+  const id=page.dataset.tripId;
+  const dataNode=document.getElementById('parksData');
+  const parks=dataNode?JSON.parse(dataNode.textContent):[];
+  const getTrip=()=>read().find(t=>t.id===id);
+  const placeQuery=p=>{const n=/\bpark\b/i.test(p.name)?p.name:p.name+' State Park';return [n,p.city,p.state].filter(Boolean).join(', ')};
+  const mapsUrl=stops=>{if(!stops.length)return'';if(stops.length===1)return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(placeQuery(stops[0]));const origin=placeQuery(stops[0]),destination=placeQuery(stops[stops.length-1]),mid=stops.slice(1,-1).map(placeQuery);let u='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(destination)+'&travelmode=driving';if(mid.length)u+='&waypoints='+encodeURIComponent(mid.join('|'));return u};
+  const grouped=trip=>{const out=[];(trip.parks||[]).map(s=>parks.find(p=>p.slug===s)).filter(Boolean).forEach(p=>{const d=String((trip.stopMeta&&trip.stopMeta[p.slug]||{}).day||'').trim()||'Unassigned';let g=out.find(x=>x.key===d);if(!g){g={key:d,stops:[]};out.push(g)}g.stops.push(p)});out.sort((a,b)=>{if(a.key==='Unassigned')return 1;if(b.key==='Unassigned')return-1;return Number(a.key)-Number(b.key)||a.key.localeCompare(b.key,undefined,{numeric:true})});return out};
+
+  const css=document.createElement('style');
+  css.textContent='.camp-details{grid-column:2/-1;background:#f7f7f4;border:1px solid #e1e4e6;padding:10px;display:grid;grid-template-columns:1.5fr auto 1fr 1fr;gap:9px;align-items:end}.camp-details label span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#667;margin-bottom:4px}.camp-details input[type="text"]{width:100%;border:1px solid #d7dde1;padding:9px;background:#fff;font:inherit}.camp-toggle{display:flex;gap:7px;align-items:center;padding:9px 0;white-space:nowrap}.camp-toggle input{width:auto}.camp-hidden{display:none}@media(max-width:700px){.camp-details{grid-column:1/-1;grid-template-columns:1fr}.camp-toggle{padding:3px 0}}';
+  document.head.appendChild(css);
+
+  function persistDetail(slug,patch){const trips=read(),trip=trips.find(t=>t.id===id);if(!trip)return;trip.stopMeta=trip.stopMeta||{};trip.stopMeta[slug]={...(trip.stopMeta[slug]||{}),...patch};write(trips)}
+  function decorateStops(){
+    const trip=getTrip();if(!trip)return;
+    document.querySelectorAll('.trip-stop').forEach(stop=>{
+      const day=stop.querySelector('.stop-day');if(!day)return;const slug=day.dataset.slug;if(stop.querySelector('.camp-details'))return;const meta=trip.stopMeta&&trip.stopMeta[slug]||{};
+      const box=document.createElement('div');box.className='camp-details';
+      box.innerHTML='<label><span>Park / entrance address</span><input type="text" class="park-address" data-slug="'+esc(slug)+'" value="'+esc(meta.address||'')+'" placeholder="Street address or park entrance"></label><label class="camp-toggle"><input type="checkbox" class="camping-here" data-slug="'+esc(slug)+'" '+(meta.camping?'checked':'')+'> Camping here</label><label class="camp-extra '+(meta.camping?'':'camp-hidden')+'"><span>Campground / loop</span><input type="text" class="campground-loop" data-slug="'+esc(slug)+'" value="'+esc(meta.campground||'')+'" placeholder="e.g. Lakeview Loop"></label><label class="camp-extra '+(meta.camping?'':'camp-hidden')+'"><span>Campsite</span><input type="text" class="campsite-number" data-slug="'+esc(slug)+'" value="'+esc(meta.campsite||'')+'" placeholder="e.g. Site 24"></label>';
+      const metaBox=stop.querySelector('.stop-meta');(metaBox||stop.lastElementChild).insertAdjacentElement('afterend',box);
+    });
+  }
+  document.addEventListener('change',e=>{
+    const el=e.target,slug=el&&el.dataset&&el.dataset.slug;if(!slug)return;
+    if(el.classList.contains('park-address'))persistDetail(slug,{address:el.value.trim()});
+    if(el.classList.contains('campground-loop'))persistDetail(slug,{campground:el.value.trim()});
+    if(el.classList.contains('campsite-number'))persistDetail(slug,{campsite:el.value.trim()});
+    if(el.classList.contains('camping-here')){persistDetail(slug,{camping:el.checked});const box=el.closest('.camp-details');box.querySelectorAll('.camp-extra').forEach(x=>x.classList.toggle('camp-hidden',!el.checked))}
+  });
+  const stops=document.getElementById('tripStops');if(stops)new MutationObserver(()=>setTimeout(decorateStops,0)).observe(stops,{childList:true,subtree:true});
+  decorateStops();
+
+  function persistAll(){document.querySelectorAll('.camp-details').forEach(box=>{const a=box.querySelector('.park-address'),c=box.querySelector('.camping-here'),g=box.querySelector('.campground-loop'),s=box.querySelector('.campsite-number');if(a)persistDetail(a.dataset.slug,{address:a.value.trim(),camping:Boolean(c&&c.checked),campground:g?g.value.trim():'',campsite:s?s.value.trim():''})})}
+  const saveDays=document.getElementById('saveDayAssignmentsBtn');if(saveDays)saveDays.addEventListener('click',persistAll,true);
+  const saveTrip=document.getElementById('saveTripBtn');if(saveTrip)saveTrip.addEventListener('click',persistAll,true);
+
+  function exportCompact(){
+    persistAll();const trip=getTrip();if(!trip)return;const groups=grouped(trip),ordered=(trip.parks||[]).map(s=>parks.find(p=>p.slug===s)).filter(Boolean),assigned=groups.filter(g=>g.key!=='Unassigned').length;
+    const days=groups.map(g=>'<section class="day"><div class="day-head"><h2>'+(g.key==='Unassigned'?'Unassigned stops':'Day '+esc(g.key))+'</h2><span>'+g.stops.length+' stop'+(g.stops.length===1?'':'s')+'</span></div><a class="route" href="'+mapsUrl(g.stops)+'">'+(g.stops.length===1?'Open park in Google Maps ↗':'Open day route in Google Maps ↗')+'</a>'+g.stops.map((p,i)=>{const m=trip.stopMeta&&trip.stopMeta[p.slug]||{},camp=m.camping?'<div class="camp"><b>Camping:</b> '+esc([m.campground,m.campsite].filter(Boolean).join(' · ')||'Yes')+'</div>':'';return '<article class="park">'+(p.image?'<img src="'+location.origin+esc(p.image)+'" alt="">':'')+'<div class="copy"><div class="title"><b>'+(i+1)+'. '+esc(p.name)+'</b><span>'+esc(p.city)+', '+esc(p.state)+'</span></div>'+(m.address?'<div class="address"><b>Address:</b> '+esc(m.address)+'</div>':'')+camp+(m.note?'<div class="note"><b>Trip note:</b> '+esc(m.note)+'</div>':'')+(p.criticalFactors?'<div class="critical"><b>Critical factor:</b> '+esc(p.criticalFactors)+'</div>':'')+'</div></article>'}).join('')+'</section>').join('');
+    const html='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(trip.name||'Trip')+' — Trip Plan</title><style>@page{margin:11mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;color:#15212b;background:#fff;font-size:10.5px}.cover{border-top:5px solid #00558a;border-bottom:1px solid #d9dfe3;padding:10mm 0 7mm;margin-bottom:7mm}.brand{font-size:8px;letter-spacing:.16em;font-weight:800;color:#00558a}.cover h1{font-size:30px;line-height:1;margin:7px 0 5px}.meta{color:#64727e;font-size:11px}.cover-grid{display:flex;gap:28px;margin-top:10px}.cover-grid strong{font-size:18px;color:#00558a}.cover-grid span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#64727e}.trip-notes{margin:8px 0 0;max-width:680px;line-height:1.35}.day{margin:0 0 8mm;break-inside:auto}.day-head{display:flex;justify-content:space-between;align-items:end;border-bottom:2px solid #00558a;padding-bottom:4px;margin-bottom:5px}.day h2{font-size:19px;margin:0}.day-head span{color:#64727e;font-size:9px}.route{display:inline-block;color:#00558a;text-decoration:none;font-weight:800;font-size:8px;text-transform:uppercase;margin:0 0 5px}.park{display:grid;grid-template-columns:31mm 1fr;border:1px solid #d9dfe3;margin:0 0 5px;break-inside:avoid}.park img{width:31mm;height:24mm;object-fit:cover}.copy{padding:6px 8px;line-height:1.28}.title{display:flex;gap:8px;justify-content:space-between;align-items:baseline}.title b{font-size:13px}.title span{font-size:8px;color:#64727e;white-space:nowrap}.address,.camp,.note,.critical{margin-top:4px;font-size:9px}.camp{background:#f4f1e9;padding:4px 6px;border-left:3px solid #00558a}.critical{color:#7d4b36}.footer{border-top:1px solid #d9dfe3;padding-top:5px;color:#64727e;font-size:7px;margin-top:4mm}.print-note{font-size:8px;color:#64727e;margin-bottom:5mm}@media print{.print-note{display:none}.cover{page-break-after:avoid}.day{page-break-before:auto}}@media(max-width:600px){.park{grid-template-columns:1fr}.park img{width:100%;height:150px}.title{display:block}.title span{display:block;margin-top:2px}}</style></head><body><header class="cover"><div class="brand">MINNESOTA + WISCONSIN STATE PARKS</div><h1>'+esc(trip.name||'Trip Plan')+'</h1><div class="meta">'+(trip.date?esc(trip.date):'Trip plan')+'</div>'+(trip.notes?'<div class="trip-notes">'+esc(trip.notes)+'</div>':'')+'<div class="cover-grid"><div><strong>'+ordered.length+'</strong><span>Parks</span></div><div><strong>'+assigned+'</strong><span>Assigned days</span></div><div><strong>'+groups.length+'</strong><span>Itinerary groups</span></div></div></header><main><p class="print-note">Use Print / Save as PDF to create the PDF.</p>'+days+'<footer class="footer">Generated from the MN & WI State Parks trip planner. Verify current conditions, closures, reservations and access before travel.</footer></main><script>addEventListener("load",()=>setTimeout(()=>print(),500));<\/script></body></html>';
+    const w=window.open('','_blank');if(!w){alert('Please allow pop-ups to export the trip PDF.');return}w.document.open();w.document.write(html);w.document.close();
+  }
+  const printBtn=document.getElementById('printTripBtn');if(printBtn){printBtn.textContent='Export trip PDF';printBtn.onclick=exportCompact}
+})();
