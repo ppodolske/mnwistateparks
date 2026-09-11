@@ -3,7 +3,7 @@ const fs=require('fs');
 const path=require('path');
 const base=require('./app.js');
 
-const VERSION='1.9.0';
+const VERSION='1.9.1';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
@@ -130,7 +130,7 @@ function createServer(){
   return http.createServer((req,res)=>{let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}
     if(serveStatic(url.pathname,res))return;
     if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(clientJS)}
-    if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'single-runtime',parks:base.parks.length,collections:COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology','trip-chooser-modal','direct-trip-add'],mapCoordinates:coords?Object.keys(coords.parks).length:0,clientScript:'repaired-in-canonical-runtime'}))}
+    if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'single-runtime',parks:base.parks.length,collections:COLLECTIONS.length,features:['saved-parks','compare','critical-factors-compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections','practical-tags','methodology','trip-chooser-modal','direct-trip-add','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save'],mapCoordinates:coords?Object.keys(coords.parks).length:0,clientScript:'repaired-in-canonical-runtime'}))}
     const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.status===200?injectPlanner(out.body):out.body);
   });
 }
