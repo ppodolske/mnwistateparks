@@ -6,6 +6,7 @@ const app=require('./app.js');
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
+const VERSION='1.3.1';
 
 function repairClientJS(source){
   let out='',quote=null,escaped=false;
@@ -53,7 +54,7 @@ function createServer(){
       res.writeHead(200,{'content-type':'application/json'});
       return res.end(JSON.stringify({
         ok:true,
-        version:app.VERSION,
+        version:VERSION,
         parks:app.parks.length,
         parkImages:app.parks.filter(p=>p.image&&fs.existsSync(path.join(PUBLIC,p.image.replace(/^\//,'')))).length,
         features:['saved-parks','compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map'],
@@ -68,7 +69,7 @@ function createServer(){
 }
 
 if(require.main===module){
-  createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${app.VERSION} on ${PORT} (runtime client repair active)`));
+  createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (runtime client repair active)`));
 }
 
-module.exports={...app,clientJS,createServer,repairClientJS};
+module.exports={...app,VERSION,clientJS,createServer,repairClientJS};
