@@ -1,5 +1,5 @@
 const fs=require('fs');
-const {VERSION,parks,renderPath,clientJS,loadCoords,COLLECTIONS}=require('./parity-runtime.js');
+const {VERSION,parks,renderPath,clientJS,loadCoords,COLLECTIONS,practical}=require('./parity-runtime.js');
 function check(path,need=[]){const out=renderPath(new URL(path,'http://localhost'));if(out.status!==200)throw new Error(`${path} returned ${out.status}`);for(const token of need){if(!out.body.includes(token))throw new Error(`${path} missing ${token}`)}return out.body}
 const nav=['href="/parks"','href="/explore"','href="/map"','href="/project"','href="/saved"','href="/about"'];
 for(const p of ['/','/parks','/explore','/map','/project','/saved','/about'])check(p,nav);
@@ -9,8 +9,10 @@ const collectionsCount=(explore.match(/Browse collections/g)||[]).length;if(coll
 check('/find',[...nav,'FIND A PARK','Find good fits','Things you want to avoid']);
 check('/collections',[...nav,'COLLECTIONS','Browse the project by theme.','Waterfall stops','Five-pine entries']);
 check('/collections/waterfall-stops',[...nav,'WATERFALLS','Waterfall stops','In this collection']);
-const park=check('/parks/tettegouche',[...nav,'id="saveParkBtn"','Save park','id="tripParkBtn"','Add to trip','data-park-slug="tettegouche"']);
-if(!park.includes('PRACTICAL NOTES FROM THE REVIEW'))throw new Error('Park detail practical tags missing');
+check('/parks/tettegouche',[...nav,'id="saveParkBtn"','Save park','id="tripParkBtn"','Add to trip','data-park-slug="tettegouche"']);
+const practicalPark=parks.find(p=>practical(p).length>0);if(!practicalPark)throw new Error('No park has derived practical tags');
+const practicalTags=practical(practicalPark);const practicalHtml=check(`/parks/${practicalPark.slug}`,[...nav,'PRACTICAL NOTES FROM THE REVIEW']);
+for(const tag of practicalTags){if(!practicalHtml.includes(tag))throw new Error(`Practical tag ${tag} missing from ${practicalPark.slug}`)}
 const compare=check('/compare?parks=tettegouche,bear-head-lake',['Compare Parks','Critical factors']);
 if((compare.match(/Critical factors/g)||[]).length!==1)throw new Error('Compare Critical factors row duplicated');
 check('/about',[...nav,'HOW THE REVIEWS WORK','Not a leaderboard.','IDEAL TRIP','Current conditions can change.']);
@@ -31,4 +33,4 @@ const slugs=new Set(parks.map(p=>p.slug)),coordSlugs=Object.keys(coordinates.par
 if(coordSlugs.length!==116)throw new Error(`Coordinate record count is ${coordSlugs.length}, expected 116`);
 for(const slug of slugs){const c=coordinates.parks[slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load all 116 coordinates');
-console.log('Smoke tests passed: v1.6.0 parity polish, practical tags, Critical Factors compare, methodology, collections, finder, trips, 116/116 map.');
+console.log(`Smoke tests passed: v1.6.0 parity polish, practical tags verified on ${practicalPark.slug}, Critical Factors compare, methodology, collections, finder, trips, 116/116 map.`);
