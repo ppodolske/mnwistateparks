@@ -1,1 +1,1 @@
-{"name":"mn-wi-state-parks","version":"1.0.0","private":true,"main":"planning-entry.js","scripts":{"start":"node planning-entry.js"},"engines":{"node":">=20"}}
+{"name":"mn-wi-state-parks","version":"1.0.1","private":true,"main":"app-v101.js","scripts":{"start":"node app-v101.js","test":"node smoke-test.js"},"engines":{"node":">=20"}}
