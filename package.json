@@ -1,1 +1,1 @@
-{"name":"mn-wi-state-parks","version":"0.8.0","private":true,"main":"map-entry.js","scripts":{"start":"node map-entry.js"},"engines":{"node":">=20"}}
+{"name":"mn-wi-state-parks","version":"0.8.1","private":true,"main":"map-entry.js","scripts":{"start":"node map-entry.js"},"engines":{"node":">=20"}}
