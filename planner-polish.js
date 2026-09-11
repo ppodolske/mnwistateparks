@@ -3,9 +3,12 @@
   const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
   const esc=s=>String(s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const encodeShare=value=>{const bytes=new TextEncoder().encode(JSON.stringify(value));let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+  const decodeShare=value=>{try{const base=value.replace(/-/g,'+').replace(/_/g,'/');const pad='='.repeat((4-base.length%4)%4);const raw=atob(base+pad);const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}catch{return null}};
+  const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch{}ta.remove();return ok}};
 
   const style=document.createElement('style');
-  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}}';
+  style.textContent='.trip-modal{display:none;position:fixed;inset:0;background:rgba(12,27,38,.58);z-index:9999;align-items:center;justify-content:center;padding:20px}.trip-modal.open{display:flex}.trip-modal-card{position:relative;background:#fff;width:min(520px,100%);max-height:80vh;overflow:auto;padding:26px;border:1px solid #d7dde1;box-shadow:0 18px 60px rgba(0,0,0,.25)}.trip-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;cursor:pointer}.trip-choice-list{display:grid;gap:10px;margin-top:18px}.trip-choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid #d7dde1;background:#fff;padding:14px;cursor:pointer}.trip-choice:hover{border-color:#00558a;background:#f7fbfd}.trip-choice strong{display:block}.trip-choice span{font-size:11px;color:#667}.trip-add-panel,.shared-trip-panel{margin:0 0 28px;background:#f4f1e9;padding:22px}.trip-add-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.trip-add-row input{width:100%;border:1px solid #d7dde1;padding:10px;font:inherit;background:#fff}.shared-trip-list{display:grid;gap:8px;margin:16px 0}.shared-trip-stop{background:#fff;border:1px solid #d7dde1;padding:10px 12px}.share-status{font-size:12px;color:#47745b;margin-left:8px}@media(max-width:600px){.trip-add-row{grid-template-columns:1fr}.trip-choice{display:block}.trip-choice span{display:block;margin-top:4px}.share-status{display:block;margin:8px 0 0}}';
   document.head.appendChild(style);
 
   function ensureModal(){
@@ -25,6 +28,26 @@
   const savedPage=document.querySelector('[data-page="saved"]');
   if(savedPage){
     const modal=ensureModal();
+    const params=new URLSearchParams(location.search);
+    const shared=decodeShare(params.get('shared')||'');
+    if(shared&&typeof shared==='object'&&Array.isArray(shared.parks)&&typeof shared.name==='string'){
+      const dataNode=document.getElementById('parksData');
+      const parks=dataNode?JSON.parse(dataNode.textContent):[];
+      const validSlugs=shared.parks.filter(slug=>parks.some(p=>p.slug===slug)).slice(0,116);
+      const panel=document.createElement('section');
+      panel.className='shared-trip-panel';
+      panel.innerHTML='<div class="kicker blue">SHARED TRIP</div><h2>'+esc(shared.name)+'</h2>'+(shared.date?'<p><b>Date:</b> '+esc(shared.date)+'</p>':'')+(shared.notes?'<p>'+esc(shared.notes)+'</p>':'')+'<div class="shared-trip-list">'+validSlugs.map((slug,i)=>{const p=parks.find(x=>x.slug===slug);const meta=shared.stopMeta&&shared.stopMeta[slug]||{};return '<div class="shared-trip-stop"><b>'+(i+1)+'. '+esc(p?p.name:slug)+'</b>'+(meta.day?' · Day '+esc(meta.day):'')+(meta.note?'<div>'+esc(meta.note)+'</div>':'')+'</div>'}).join('')+'</div><button id="importSharedTrip" type="button" class="button blue">Save this trip</button><span id="sharedTripStatus" class="share-status"></span>';
+      const intro=savedPage.querySelector('.page-intro');
+      if(intro)intro.insertAdjacentElement('afterend',panel);else savedPage.prepend(panel);
+      panel.querySelector('#importSharedTrip').onclick=()=>{
+        const trips=read(TRIPS);
+        const copy={id:'trip-'+Date.now(),name:shared.name.trim()||'Shared trip',date:shared.date||'',notes:shared.notes||'',parks:validSlugs,stopMeta:{}};
+        for(const slug of validSlugs){const meta=shared.stopMeta&&shared.stopMeta[slug];if(meta&&typeof meta==='object')copy.stopMeta[slug]={day:String(meta.day||''),note:String(meta.note||'')}}
+        trips.push(copy);write(TRIPS,trips);
+        panel.querySelector('#sharedTripStatus').textContent='Saved to your trips ✓';
+        setTimeout(()=>location.href='/trip?id='+encodeURIComponent(copy.id),450);
+      };
+    }
     function wireSavedButtons(){
       document.querySelectorAll('.add-saved-trip').forEach(btn=>{
         btn.onclick=()=>{
@@ -64,6 +87,21 @@
     const dataNode=document.getElementById('parksData');
     const parks=dataNode?JSON.parse(dataNode.textContent):[];
     const id=tripPage.dataset.tripId;
+    const toolbar=tripPage.querySelector('.trip-toolbar');
+    if(toolbar&&!document.getElementById('shareTripBtn')){
+      const btn=document.createElement('button');btn.id='shareTripBtn';btn.type='button';btn.className='button ghost';btn.textContent='Copy share link';
+      const status=document.createElement('span');status.id='shareTripStatus';status.className='share-status';
+      toolbar.appendChild(btn);toolbar.appendChild(status);
+      btn.onclick=async()=>{
+        const trip=read(TRIPS).find(t=>t.id===id);
+        if(!trip){status.textContent='Trip could not be found.';return}
+        const snapshot={name:trip.name||'Shared trip',date:trip.date||'',notes:trip.notes||'',parks:[...(trip.parks||[])],stopMeta:trip.stopMeta||{}};
+        const token=encodeShare(snapshot);
+        const url=location.origin+'/saved?shared='+encodeURIComponent(token);
+        if(url.length>12000){status.textContent='This trip is too large for a share link.';return}
+        const ok=await copyText(url);status.textContent=ok?'Share link copied ✓':'Could not copy the link.';
+      };
+    }
     const stopsSection=document.getElementById('tripStops')?.closest('.planner-section');
     if(stopsSection&&parks.length&&!document.getElementById('tripAddParkDirect')){
       const panel=document.createElement('section');
