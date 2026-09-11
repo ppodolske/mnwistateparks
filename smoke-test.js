@@ -1,15 +1,18 @@
 const fs=require('fs');
-const {VERSION,parks,renderPath,clientJS,loadCoords}=require('./app-runtime.js');
+const {VERSION,parks,renderPath,clientJS,loadCoords}=require('./decision-runtime.js');
 function check(path,need=[]){const out=renderPath(new URL(path,'http://localhost'));if(out.status!==200)throw new Error(`${path} returned ${out.status}`);for(const token of need){if(!out.body.includes(token))throw new Error(`${path} missing ${token}`)}}
 const nav=['href="/parks"','href="/explore"','href="/map"','href="/project"','href="/saved"','href="/about"'];
 for(const p of ['/','/parks','/explore','/map','/project','/saved','/about'])check(p,nav);
+check('/explore',[...nav,'href="/find"','Find a park for my trip']);
+check('/find',[...nav,'FIND A PARK','Find good fits','Things you want to avoid']);
+check('/find?state=MN&trip=Weekend&experience=Waterfalls&go=1',[...nav,'MATCHES','These are filtered fits, not a best-to-worst ranking.']);
 check('/parks/tettegouche',[...nav,'id="saveParkBtn"','Save park','id="tripParkBtn"','Add to trip','data-park-slug="tettegouche"']);
 check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id="tripName"','id="tripRoot"','Trip collections']);
 check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripNameEdit"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="tripMap"','id="printTripBtn"']);
 check('/compare?parks=tettegouche,bear-head-lake',['Compare Parks']);
 check('/map',[...nav,'data-page="map"','id="mapData"','id="mapState"','id="mapTrip"','id="mapTag"','id="mapCount"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.3.1')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='1.4.0')throw new Error(`Unexpected version ${VERSION}`);
 new Function(clientJS);
 for(const token of ['createTripBtn','mnwiTripCollections','Trip created ✓','saveParkBtn','tripParkBtn','stopMeta','stop-day','stop-note','printTripBtn','tripMap','data-page="map"','mapCount','L.map'])if(!clientJS.includes(token))throw new Error(`client.js missing ${token}`);
 if(!fs.existsSync('./park-coordinates.generated.json'))throw new Error('Coordinate build output missing');
@@ -19,4 +22,4 @@ const slugs=new Set(parks.map(p=>p.slug)),coordSlugs=Object.keys(coordinates.par
 if(coordSlugs.length!==116)throw new Error(`Coordinate record count is ${coordSlugs.length}, expected 116`);
 for(const slug of slugs){const c=coordinates.parks[slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load all 116 coordinates');
-console.log('Smoke tests passed: v1.3.1 repaired client JS, richer trip planning, 116/116 static map, canonical navigation, save/compare.');
+console.log('Smoke tests passed: v1.4.0 guided park finder, richer trip planning, 116/116 static map, canonical navigation, save/compare.');
