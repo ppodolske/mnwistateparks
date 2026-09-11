@@ -21,7 +21,7 @@ const saved=check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id=
 const trip=check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripNameEdit"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="tripMap"','id="printTripBtn"']);
 check('/map',[...nav,'data-page="map"','id="mapData"','id="mapState"','id="mapTrip"','id="mapTag"','id="mapCount"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.9.0')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='1.9.1')throw new Error(`Unexpected version ${VERSION}`);
 if(!Array.isArray(COLLECTIONS)||COLLECTIONS.length!==8)throw new Error(`Expected 8 collections, found ${COLLECTIONS&&COLLECTIONS.length}`);
 for(const c of COLLECTIONS){if(!parks.filter(c.match).length)throw new Error(`Collection ${c.slug} has no parks`)}
 new Function(clientJS);
@@ -40,4 +40,4 @@ const coordinates=JSON.parse(fs.readFileSync('./park-coordinates.generated.json'
 if(coordinates.count!==116||Object.keys(coordinates.parks||{}).length!==116)throw new Error('Coordinate record count is not 116');
 for(const p of parks){const c=coordinates.parks[p.slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${p.slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load all 116 coordinates');
-console.log('Smoke tests passed: name-based Google Maps links, clear day assignment workflow, explicit day save, route overview, shareable trips, planner polish, and 116/116 map.');
+console.log('Smoke tests passed: v1.9.1 name-based Google Maps links, clear day assignment workflow, explicit day save, route overview, shareable trips, planner polish, and 116/116 map.');
