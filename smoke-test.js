@@ -21,7 +21,7 @@ check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id="tripName"',
 check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripNameEdit"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="tripMap"','id="printTripBtn"']);
 check('/map',[...nav,'data-page="map"','id="mapData"','id="mapState"','id="mapTrip"','id="mapTag"','id="mapCount"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.6.0')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='1.6.1')throw new Error(`Unexpected version ${VERSION}`);
 if(!Array.isArray(COLLECTIONS)||COLLECTIONS.length!==8)throw new Error(`Expected 8 collections, found ${COLLECTIONS&&COLLECTIONS.length}`);
 for(const c of COLLECTIONS){const matches=parks.filter(c.match);if(!matches.length)throw new Error(`Collection ${c.slug} has no parks`)}
 new Function(clientJS);
@@ -33,4 +33,4 @@ const slugs=new Set(parks.map(p=>p.slug)),coordSlugs=Object.keys(coordinates.par
 if(coordSlugs.length!==116)throw new Error(`Coordinate record count is ${coordSlugs.length}, expected 116`);
 for(const slug of slugs){const c=coordinates.parks[slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load all 116 coordinates');
-console.log(`Smoke tests passed: v1.6.0 parity polish, practical tags verified on ${practicalPark.slug}, Critical Factors compare, methodology, collections, finder, trips, 116/116 map.`);
+console.log(`Smoke tests passed: v1.6.1 snapshot migration, parity polish, practical tags verified on ${practicalPark.slug}, Critical Factors compare, methodology, collections, finder, trips, 116/116 map.`);
