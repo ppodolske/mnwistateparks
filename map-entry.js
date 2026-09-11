@@ -1,7 +1,6 @@
 const http = require('http');
 const zlib = require('zlib');
 const parks = JSON.parse(zlib.gunzipSync(Buffer.from(require('./data1.js')+require('./data2.js')+require('./data3.js')+require('./data4.js'),'base64')).toString());
-const baseCreateServer = http.createServer.bind(http);
 const originalCreateServer = http.createServer;
 
 const esc = s => String(s ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] || c));
@@ -18,8 +17,7 @@ const wikiTitle = p => {
     'interstate-mn':'Interstate State Park (Minnesota)',
     'interstate-wi':'Interstate State Park (Wisconsin)'
   };
-  if (overrides[p.slug]) return overrides[p.slug];
-  return p.name;
+  return overrides[p.slug] || p.name;
 };
 
 function mapPage(){
@@ -33,6 +31,18 @@ const map=L.map('map',{zoomControl:true}).setView([45.7,-91.1],6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
 const layer=L.layerGroup().addTo(map); let enriched=[];
 function wikiBatches(items,size=45){const out=[];for(let i=0;i<items.length;i+=size)out.push(items.slice(i,i+size));return out}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function nominatimFallback(p){
+  const cacheKey='parkcoord:'+p.slug;
+  try{const cached=localStorage.getItem(cacheKey);if(cached)return JSON.parse(cached)}catch{}
+  const stateName=p.state==='MN'?'Minnesota':'Wisconsin';
+  const q=encodeURIComponent(p.name+', '+p.city+', '+stateName+', USA');
+  try{
+    const data=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=us&q='+q,{headers:{'Accept':'application/json'}}).then(r=>r.json());
+    if(data&&data[0]){const c={lat:Number(data[0].lat),lng:Number(data[0].lon)};try{localStorage.setItem(cacheKey,JSON.stringify(c))}catch{};return c}
+  }catch(e){}
+  return null;
+}
 async function loadCoords(){
  const coords=new Map();
  for(const batch of wikiBatches(PARKS)){
@@ -47,6 +57,17 @@ async function loadCoords(){
    }
  }
  enriched=PARKS.map(p=>({...p,coord:coords.get(p.wikiTitle)||null}));
+ let missing=enriched.filter(p=>!p.coord);
+ if(missing.length){
+   const loading=document.getElementById('loading');
+   loading.textContent='Locating '+missing.length+' remaining parks…';
+   for(const p of missing){
+     const c=await nominatimFallback(p);
+     if(c)p.coord=c;
+     render();
+     await sleep(1100);
+   }
+ }
  document.getElementById('loading').style.display='none';
  const mapped=enriched.filter(p=>p.coord).length; document.getElementById('mapped-note').textContent='of '+mapped+' located';
  render();
@@ -78,8 +99,13 @@ http.createServer = function(listener){
     const oldEnd=res.end.bind(res);
     res.end=(body,enc,cb)=>{
       const ct=String(res.getHeader('content-type')||'');
-      if(ct.includes('text/html')&&typeof body==='string'){
-        body=body.replace('<a href="/explore">Explore</a><a href="/about">About</a>','<a href="/explore">Explore</a><a href="/map">Map</a><a href="/about">About</a>');
+      if(ct.includes('text/html') && body!=null){
+        const wasBuffer=Buffer.isBuffer(body);
+        let html=wasBuffer?body.toString('utf8'):String(body);
+        if(!html.includes('href="/map"')){
+          html=html.replace('<a href="/explore">Explore</a><a href="/about">About</a>','<a href="/explore">Explore</a><a href="/map">Map</a><a href="/about">About</a>');
+        }
+        body=wasBuffer?Buffer.from(html,'utf8'):html;
       }
       return oldEnd(body,enc,cb);
     };
