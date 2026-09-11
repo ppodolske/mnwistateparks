@@ -3,7 +3,7 @@ const fs=require('fs');
 const path=require('path');
 const base=require('./decision-runtime.js');
 
-const VERSION='1.5.0';
+const VERSION='1.5.1';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
@@ -15,127 +15,22 @@ const tags=(p,rules)=>rules.filter(([,re])=>re.test(sourceText(p))).map(([name])
 const exp=p=>tags(p,base.EXPERIENCE_RULES);
 
 const COLLECTIONS=[
-  {
-    slug:'waterfall-stops',
-    title:'Waterfall stops',
-    kicker:'WATERFALLS',
-    description:'Parks where waterfalls are part of the experience described in the original review.',
-    note:'Useful for building a trip around falls without treating every waterfall park as interchangeable.',
-    match:p=>exp(p).includes('Waterfalls')
-  },
-  {
-    slug:'dark-sky-parks',
-    title:'Dark-sky parks',
-    kicker:'NIGHT SKY',
-    description:'Parks whose original review mentions dark skies, night skies, or stargazing.',
-    note:'A focused set for trips where the evening experience matters as much as the daytime stop.',
-    match:p=>exp(p).includes('Dark sky')
-  },
-  {
-    slug:'camping-weekends',
-    title:'Camping weekends',
-    kicker:'WEEKEND CAMPING',
-    description:'Weekend-designated parks whose reviews also mention camping or campsites.',
-    note:'A practical starting point for overnight trips rather than day-trip-only browsing.',
-    match:p=>p.idealTrip.toLowerCase()==='weekend'&&exp(p).includes('Camping')
-  },
-  {
-    slug:'beaches-and-swimming',
-    title:'Beaches & swimming',
-    kicker:'WATER DAYS',
-    description:'Parks where the review mentions beaches, swimming areas, or swimming ponds.',
-    note:'Best used as a browse set; conditions and swimming access should still be checked with the relevant DNR.',
-    match:p=>exp(p).includes('Beaches')
-  },
-  {
-    slug:'history-in-the-landscape',
-    title:'History in the landscape',
-    kicker:'HISTORY',
-    description:'Parks where historical sites, CCC-era features, interpretation, lighthouses, or mounds are part of the reviewed experience.',
-    note:'For trips where the story of the place matters alongside scenery and hiking.',
-    match:p=>exp(p).includes('History')
-  },
-  {
-    slug:'scenic-views',
-    title:'Scenic views & overlooks',
-    kicker:'SCENERY',
-    description:'Parks whose reviews call out scenic views, overlooks, sunsets, sunrises, or fall color.',
-    note:'A broad visual collection rather than a ranking of which view is “best.”',
-    match:p=>exp(p).includes('Scenic views')
-  },
-  {
-    slug:'on-the-way',
-    title:'Good “On the Way” stops',
-    kicker:'ROAD TRIP STOPS',
-    description:'Every park classified in the original booklet as an “On the Way” trip.',
-    note:'These are parks the booklet framed as useful add-ons or stops rather than destination weekends.',
-    match:p=>p.idealTrip.toLowerCase()==='on the way'
-  },
-  {
-    slug:'five-pine-parks',
-    title:'Five-pine entries',
-    kicker:'5 PINE',
-    description:'Parks given a 5.0-pine rating in the original booklet.',
-    note:'This is not a leaderboard. The pine rating reflects how well each park delivers its own experience, not a universal ranking across parks.',
-    match:p=>Number(p.rating)===5
-  }
+  {slug:'waterfall-stops',title:'Waterfall stops',kicker:'WATERFALLS',description:'Parks where waterfalls are part of the experience described in the original review.',note:'Useful for building a trip around falls without treating every waterfall park as interchangeable.',match:p=>exp(p).includes('Waterfalls')},
+  {slug:'dark-sky-parks',title:'Dark-sky parks',kicker:'NIGHT SKY',description:'Parks whose original review mentions dark skies, night skies, or stargazing.',note:'A focused set for trips where the evening experience matters as much as the daytime stop.',match:p=>exp(p).includes('Dark sky')},
+  {slug:'camping-weekends',title:'Camping weekends',kicker:'WEEKEND CAMPING',description:'Weekend-designated parks whose reviews also mention camping or campsites.',note:'A practical starting point for overnight trips rather than day-trip-only browsing.',match:p=>p.idealTrip.toLowerCase()==='weekend'&&exp(p).includes('Camping')},
+  {slug:'beaches-and-swimming',title:'Beaches & swimming',kicker:'WATER DAYS',description:'Parks where the review mentions beaches, swimming areas, or swimming ponds.',note:'Best used as a browse set; conditions and swimming access should still be checked with the relevant DNR.',match:p=>exp(p).includes('Beaches')},
+  {slug:'history-in-the-landscape',title:'History in the landscape',kicker:'HISTORY',description:'Parks where historical sites, CCC-era features, interpretation, lighthouses, or mounds are part of the reviewed experience.',note:'For trips where the story of the place matters alongside scenery and hiking.',match:p=>exp(p).includes('History')},
+  {slug:'scenic-views',title:'Scenic views & overlooks',kicker:'SCENERY',description:'Parks whose reviews call out scenic views, overlooks, sunsets, sunrises, or fall color.',note:'A broad visual collection rather than a ranking of which view is “best.”',match:p=>exp(p).includes('Scenic views')},
+  {slug:'on-the-way',title:'Good “On the Way” stops',kicker:'ROAD TRIP STOPS',description:'Every park classified in the original booklet as an “On the Way” trip.',note:'These are parks the booklet framed as useful add-ons or stops rather than destination weekends.',match:p=>p.idealTrip.toLowerCase()==='on the way'},
+  {slug:'five-pine-parks',title:'Five-pine entries',kicker:'5 PINE',description:'Parks given a 5.0-pine rating in the original booklet.',note:'This is not a leaderboard. The pine rating reflects how well each park delivers its own experience, not a universal ranking across parks.',match:p=>Number(p.rating)===5}
 ];
 
-function injectMain(html,main,title){
-  const start=html.indexOf('<main');
-  const end=html.lastIndexOf('</main>');
-  if(start<0||end<0)return html;
-  let out=html.slice(0,start)+main+html.slice(end+7);
-  if(title)out=out.replace(/<title>[^<]*<\/title>/,`<title>${esc(title)}</title>`);
-  return out;
-}
-
-function parkCard(p,reason){
-  return `<article class="park-card"><a href="/parks/${p.slug}">${p.image?`<div class="card-photo"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"></div>`:''}<div class="card-body"><div class="eyebrow">${esc(p.city)}, ${esc(p.state)}</div><h3>${esc(clean(p))}</h3><div class="trip">${esc(p.idealTrip)}</div>${reason?`<p style="margin-top:10px;font-size:12px">${esc(reason)}</p>`:''}<span class="button blue" style="display:inline-block;margin-top:10px">Read review</span></div></a></article>`;
-}
-
-function collectionsPage(){
-  const cards=COLLECTIONS.map(c=>{
-    const matches=base.parks.filter(c.match);
-    const hero=matches.find(p=>p.image)||matches[0];
-    return `<a class="experience-card" href="/collections/${c.slug}" style="display:block;position:relative;overflow:hidden">${hero&&hero.image?`<div style="height:150px;margin:-18px -18px 16px"><img src="${esc(hero.image)}" alt="" style="width:100%;height:100%;object-fit:cover"></div>`:''}<span>${esc(c.kicker)}</span><b>${esc(c.title)}</b><p style="margin:8px 0 12px">${esc(c.description)}</p><strong>${matches.length}</strong><span>parks</span></a>`;
-  }).join('');
-  const main=`<main class="narrow"><section class="page-intro"><div class="kicker blue">COLLECTIONS</div><h1>Browse the project by theme.</h1><p>These are editorial groupings built from the original reviews, Ideal Trip labels, and derived experience tags. They are not rankings.</p></section><div class="experience-grid">${cards}</div><section class="section"><div class="empty-state"><h3>Collections explain a trip idea, not a winner.</h3><p>Open any collection to see the parks that fit that theme, then use the original review to decide whether the park fits your trip.</p></div></section></main>`;
-  return injectMain(base.renderPath(new URL('/explore','http://localhost')).body,main,'Collections | MN & WI State Parks');
-}
-
-function collectionPage(slug){
-  const c=COLLECTIONS.find(x=>x.slug===slug);
-  if(!c)return null;
-  const matches=base.parks.filter(c.match);
-  const main=`<main class="narrow"><section class="page-intro"><a href="/collections" class="back">← All collections</a><div class="kicker blue">${esc(c.kicker)}</div><h1>${esc(c.title)}</h1><p>${esc(c.description)}</p><p class="source-note">${esc(c.note)}</p></section><section class="section"><div class="section-head"><div><div class="kicker blue">${matches.length} PARKS</div><h2>In this collection</h2></div></div><div class="cards browse-cards">${matches.map(p=>parkCard(p,`${p.idealTrip} · ${Number(p.rating).toFixed(1)} pine`)).join('')}</div></section></main>`;
-  return injectMain(base.renderPath(new URL('/explore','http://localhost')).body,main,`${c.title} | MN & WI State Parks`);
-}
-
-function renderPath(url){
-  if(url.pathname==='/collections')return{status:200,body:collectionsPage()};
-  if(url.pathname.startsWith('/collections/')){
-    const slug=url.pathname.replace(/^\/collections\//,'').replace(/\/$/,'');
-    const body=collectionPage(slug);
-    if(body)return{status:200,body};
-  }
-  const out=base.renderPath(url);
-  if(url.pathname==='/explore'&&out.status===200){
-    out.body=out.body.replace('</section><div class="experience-grid">','<div class="actions" style="margin-top:18px"><a class="button blue" href="/find">Find a park for my trip</a><a class="button ghost" href="/collections">Browse collections</a></div></section><div class="experience-grid">');
-  }
-  return out;
-}
-
-function serveStatic(pathname,res){
-  if(!pathname.startsWith('/images/'))return false;
-  const file=path.normalize(path.join(PUBLIC,pathname.replace(/^\//,'')));
-  if(!file.startsWith(IMAGE_DIR)||!fs.existsSync(file))return false;
-  const ext=path.extname(file).toLowerCase();
-  const type=ext==='.jpg'||ext==='.jpeg'?'image/jpeg':ext==='.png'?'image/png':'application/octet-stream';
-  res.writeHead(200,{'content-type':type,'cache-control':'public,max-age=2592000,immutable'});fs.createReadStream(file).pipe(res);return true;
-}
-
+function injectMain(html,main,title){const start=html.indexOf('<main'),end=html.lastIndexOf('</main>');if(start<0||end<0)return html;let out=html.slice(0,start)+main+html.slice(end+7);if(title)out=out.replace(/<title>[^<]*<\/title>/,`<title>${esc(title)}</title>`);return out}
+function parkCard(p,reason){return `<article class="park-card"><a href="/parks/${p.slug}">${p.image?`<div class="card-photo"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"></div>`:''}<div class="card-body"><div class="eyebrow">${esc(p.city)}, ${esc(p.state)}</div><h3>${esc(clean(p))}</h3><div class="trip">${esc(p.idealTrip)}</div>${reason?`<p style="margin-top:10px;font-size:12px">${esc(reason)}</p>`:''}<span class="button blue" style="display:inline-block;margin-top:10px">Read review</span></div></a></article>`}
+function collectionsPage(){const cards=COLLECTIONS.map(c=>{const matches=base.parks.filter(c.match),hero=matches.find(p=>p.image)||matches[0];return `<a class="experience-card" href="/collections/${c.slug}" style="display:block;position:relative;overflow:hidden">${hero&&hero.image?`<div style="height:150px;margin:-18px -18px 16px"><img src="${esc(hero.image)}" alt="" style="width:100%;height:100%;object-fit:cover"></div>`:''}<span>${esc(c.kicker)}</span><b>${esc(c.title)}</b><p style="margin:8px 0 12px">${esc(c.description)}</p><strong>${matches.length}</strong><span>parks</span></a>`}).join('');const main=`<main class="narrow"><section class="page-intro"><div class="kicker blue">COLLECTIONS</div><h1>Browse the project by theme.</h1><p>These are editorial groupings built from the original reviews, Ideal Trip labels, and derived experience tags. They are not rankings.</p></section><div class="experience-grid">${cards}</div><section class="section"><div class="empty-state"><h3>Collections explain a trip idea, not a winner.</h3><p>Open any collection to see the parks that fit that theme, then use the original review to decide whether the park fits your trip.</p></div></section></main>`;return injectMain(base.renderPath(new URL('/explore','http://localhost')).body,main,'Collections | MN & WI State Parks')}
+function collectionPage(slug){const c=COLLECTIONS.find(x=>x.slug===slug);if(!c)return null;const matches=base.parks.filter(c.match),main=`<main class="narrow"><section class="page-intro"><a href="/collections" class="back">← All collections</a><div class="kicker blue">${esc(c.kicker)}</div><h1>${esc(c.title)}</h1><p>${esc(c.description)}</p><p class="source-note">${esc(c.note)}</p></section><section class="section"><div class="section-head"><div><div class="kicker blue">${matches.length} PARKS</div><h2>In this collection</h2></div></div><div class="cards browse-cards">${matches.map(p=>parkCard(p,`${p.idealTrip} · ${Number(p.rating).toFixed(1)} pine`)).join('')}</div></section></main>`;return injectMain(base.renderPath(new URL('/explore','http://localhost')).body,main,`${c.title} | MN & WI State Parks`)}
+function renderPath(url){if(url.pathname==='/collections')return{status:200,body:collectionsPage()};if(url.pathname.startsWith('/collections/')){const slug=url.pathname.replace(/^\/collections\//,'').replace(/\/$/,'');const body=collectionPage(slug);if(body)return{status:200,body}}const out=base.renderPath(url);if(url.pathname==='/explore'&&out.status===200){const existing='<div class="actions" style="margin-top:18px"><a class="button blue" href="/find">Find a park for my trip</a></div>';const combined='<div class="actions" style="margin-top:18px"><a class="button blue" href="/find">Find a park for my trip</a><a class="button ghost" href="/collections">Browse collections</a></div>';out.body=out.body.replace(existing,combined)}return out}
+function serveStatic(pathname,res){if(!pathname.startsWith('/images/'))return false;const file=path.normalize(path.join(PUBLIC,pathname.replace(/^\//,'')));if(!file.startsWith(IMAGE_DIR)||!fs.existsSync(file))return false;const ext=path.extname(file).toLowerCase(),type=ext==='.jpg'||ext==='.jpeg'?'image/jpeg':ext==='.png'?'image/png':'application/octet-stream';res.writeHead(200,{'content-type':type,'cache-control':'public,max-age=2592000,immutable'});fs.createReadStream(file).pipe(res);return true}
 function createServer(){return http.createServer((req,res)=>{let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}if(serveStatic(url.pathname,res))return;if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(base.clientJS)}if(url.pathname==='/health'){const coords=base.loadCoords();res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,version:VERSION,parks:base.parks.length,collections:COLLECTIONS.length,features:['saved-parks','compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','print-trip','static-map','guided-park-finder','curated-collections'],mapCoordinates:coords?Object.keys(coords.parks).length:0}))}const out=renderPath(url);res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});res.end(out.body)})}
-
 if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT}`));
 module.exports={...base,VERSION,COLLECTIONS,renderPath,createServer};
