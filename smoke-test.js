@@ -1,3 +1,4 @@
+const fs=require('fs');
 const {VERSION,parks,renderPath,clientJS}=require('./app.js');
 function check(path,need=[]){const out=renderPath(new URL(path,'http://localhost'));if(out.status!==200)throw new Error(`${path} returned ${out.status}`);for(const token of need){if(!out.body.includes(token))throw new Error(`${path} missing ${token}`)}}
 const nav=['href="/parks"','href="/explore"','href="/map"','href="/project"','href="/saved"','href="/about"'];
@@ -11,4 +12,10 @@ if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}
 if(VERSION!=='1.1.1')throw new Error(`Unexpected version ${VERSION}`);
 new Function(clientJS);
 for(const token of ['createTripBtn','mnwiTripCollections','Trip created ✓','saveParkBtn','tripParkBtn'])if(!clientJS.includes(token))throw new Error(`client.js missing ${token}`);
-console.log('Smoke tests passed: v1.1.1, 116 parks, canonical navigation, parseable client JS, save/compare, trip creation, and trip editing routes.');
+if(!fs.existsSync('./park-coordinates.generated.json'))throw new Error('Coordinate build output missing');
+const coordinates=JSON.parse(fs.readFileSync('./park-coordinates.generated.json','utf8'));
+if(coordinates.count!==116)throw new Error(`Coordinate file count is ${coordinates.count}, expected 116`);
+const slugs=new Set(parks.map(p=>p.slug)),coordSlugs=Object.keys(coordinates.parks||{});
+if(coordSlugs.length!==116)throw new Error(`Coordinate record count is ${coordSlugs.length}, expected 116`);
+for(const slug of slugs){const c=coordinates.parks[slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing/invalid coordinate for ${slug}`)}
+console.log('Smoke tests passed: v1.1.1 plus authoritative 116/116 coordinate build.');
