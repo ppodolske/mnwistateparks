@@ -1,1 +1,1 @@
-{"name":"mn-wi-state-parks","version":"1.6.0","private":true,"main":"parity-runtime.js","scripts":{"coordinates":"node snapshot-coordinates.js","test":"node smoke-test.js","prestart":"npm run coordinates && npm test","start":"node parity-runtime.js"},"engines":{"node":">=20"}}
+{"name":"mn-wi-state-parks","version":"1.6.1","private":true,"main":"parity-runtime.js","scripts":{"coordinates":"node snapshot-coordinates.js","test":"node smoke-test.js","prestart":"npm run coordinates && npm test","start":"node parity-runtime.js"},"engines":{"node":">=20"}}
