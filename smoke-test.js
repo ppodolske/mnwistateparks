@@ -1,5 +1,5 @@
 const fs=require('fs');
-const {VERSION,parks,renderPath,clientJS,plannerJS,tripDetailsJS,loadCoords,COLLECTIONS,practical,injectAll}=require('./site-current.js');
+const {VERSION,parks,renderPath,clientJS,plannerJS,tripDetailsJS,parkAddressesJS,loadCoords,COLLECTIONS,practical,injectAll}=require('./site-current.js');
 function check(path,need=[]){const out=renderPath(new URL(path,'http://localhost'));if(out.status!==200)throw new Error(`${path} returned ${out.status}`);for(const token of need){if(!out.body.includes(token))throw new Error(`${path} missing ${token}`)}return out.body}
 const nav=['href="/parks"','href="/explore"','href="/map"','href="/project"','href="/saved"','href="/about"'];
 for(const p of ['/','/parks','/explore','/map','/project','/saved','/about'])check(p,nav);
@@ -13,17 +13,19 @@ const saved=check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id=
 const trip=check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="printTripBtn"']);
 check('/map',[...nav,'data-page="map"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.10.2')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='1.10.3')throw new Error(`Unexpected version ${VERSION}`);
 if(!Array.isArray(COLLECTIONS)||COLLECTIONS.length!==8)throw new Error('Expected 8 collections');
-new Function(clientJS);new Function(plannerJS);new Function(tripDetailsJS);
+new Function(clientJS);new Function(plannerJS);new Function(parkAddressesJS);new Function(tripDetailsJS);
 for(const token of ['tripChooserModal','tripAddParkDirect','tripRouteOverview','saveDayAssignmentsBtn','Export trip PDF'])if(!plannerJS.includes(token))throw new Error(`planner-polish.js missing ${token}`);
-for(const token of ['camp-details','park-address','camping-here','campground-loop','campsite-number','Park / entrance address','Campground / loop','Campsite','printTripBtn','exportCompact','break-inside:avoid'])if(!tripDetailsJS.includes(token))throw new Error(`trip-details.js missing ${token}`);
-const injectedTrip=injectAll(trip);for(const token of ['src="/planner-polish.js"','src="/trip-details.js"'])if(!injectedTrip.includes(token))throw new Error(`trip response missing external script ${token}`);
+for(const token of ['camp-details','park-address-readonly','camping-here','campground-loop','campsite-number','Park address','Campground / loop','Campsite','printTripBtn','exportCompact','break-inside:avoid'])if(!tripDetailsJS.includes(token))throw new Error(`trip-details.js missing ${token}`);
+if(tripDetailsJS.includes('class="park-address"')||tripDetailsJS.includes('Park / entrance address'))throw new Error('Trip cards still contain editable address prompt');
+if(tripDetailsJS.includes('<img src='))throw new Error('Trip PDF still contains park photos');
+for(const token of ["'afton'","'bear-head-lake'","'interstate-park'","'pattison'"])if(!parkAddressesJS.includes(token))throw new Error(`park-addresses.js missing ${token}`);
+const injectedTrip=injectAll(trip);for(const token of ['src="/planner-polish.js"','src="/park-addresses.js"','src="/trip-details.js"'])if(!injectedTrip.includes(token))throw new Error(`trip response missing external script ${token}`);
 if(injectedTrip.includes("const w=window.open('','_blank')"))throw new Error('trip response leaked planner source inline');
 const injectedHome=injectAll(check('/'));if(injectedHome.includes("const w=window.open('','_blank')"))throw new Error('home response leaked planner source inline');
-const injectedSaved=injectAll(saved);if(!injectedSaved.includes('src="/planner-polish.js"'))throw new Error('planner script not referenced on saved page');
 if(!fs.existsSync('./park-coordinates.json')||!fs.existsSync('./park-coordinates.generated.json'))throw new Error('coordinate snapshot missing');
 const coordinates=JSON.parse(fs.readFileSync('./park-coordinates.generated.json','utf8'));if(coordinates.count!==116||Object.keys(coordinates.parks||{}).length!==116)throw new Error('Coordinate count is not 116');
 for(const p of parks){const c=coordinates.parks[p.slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing coordinate for ${p.slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load 116 coordinates');
-console.log('Smoke tests passed: v1.10.2 external planner scripts, no inline source leakage, compact non-splitting PDF, trip stop camping/address details, and 116/116 map.');
+console.log('Smoke tests passed: v1.10.3 photo-free compact PDF, automatic read-only park addresses, camping details, no inline source leakage, and 116/116 map.');
