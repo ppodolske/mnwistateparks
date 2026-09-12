@@ -19,7 +19,7 @@ function createServer(){
     if(url.pathname==='/health'){
       const coords=previous.loadCoords();
       res.writeHead(200,{'content-type':'application/json'});
-      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime-v1223-preston-hub-link-wrapper',parks:previous.parks.length,collections:previous.COLLECTIONS.length,parkReferenceRecords:Object.keys(previous.parkDetails||{}).length,mapCoordinates:coords?Object.keys(coords.parks||{}).length:0,features:['trip-workspace-cleanup','park-reference-details','first-class-day-management','consolidated-trip-logistics','route-intelligence','readiness-qa','download-only-pdf-export','export-state-synchronization','preston-run-header-link']}));
+      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime-v1223-preston-hub-link-wrapper',parks:previous.parks.length,collections:previous.COLLECTIONS.length,parkReferenceRecords:Object.keys(previous.parkDetails||{}).length,mapCoordinates:coords?Object.keys(coords.parks||{}).length:0,features:['trip-workspace-cleanup','park-reference-details','first-class-day-management','consolidated-trip-logistics','route-intelligence','readiness-qa','download-only-pdf-export','export-state-synchronization','preston-run-footer-link']}));
     }
     const end=res.end;
     res.end=function(body,...args){
@@ -37,5 +37,5 @@ function createServer(){
   return server;
 }
 
-if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (Preston.run header link release)`));
+if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (Preston.run footer link release)`));
 module.exports={...previous,VERSION,parksHubLinkJS,createServer};
