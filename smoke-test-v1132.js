@@ -16,7 +16,7 @@ for(const key of ['governor-thompson|WI','nelson-dewey|WI','whitefish-dunes|WI',
 for(const token of ['TRIP BOOKLET · UNASSIGNED STOPS','These stops are not assigned to a numbered trip day.','data-unassigned','What to expect'])assert(tripBookletDaysJS.includes(token),`Daily booklet missing ${token}`);
 for(const token of ['splitDayPages','continued','All stops are unassigned','Desktop printing: disable browser headers/footers'])assert(tripBookletExportJS.includes(token),`Booklet export missing ${token}`);
 assert(!tripBookletExportJS.includes('alert("For a clean booklet PDF'), 'Blocking print alert must be removed');
-for(const token of ['TripBookletReviewSource','PARK_REVIEW_TEXT','data-source-review'])assert(tripBookletReviewSourceJS.includes(token),`Review source patch missing ${token}`);
+for(const token of ['TripBookletReviewSource','PARK_REVIEW_TEXT','dataset.sourceReview','what to expect'])assert(tripBookletReviewSourceJS.includes(token),`Review source patch missing ${token}`);
 const tripHtml=check('/trip?id=test-trip',['data-page="trip"','id="printTripBtn"']);const injected=injectAll(tripHtml);
 for(const src of ['/park-review-text-1.js','/park-review-text-2.js','/park-review-text-3.js','/park-review-text-4.js','/trip-booklet-days.js','/trip-booklet-review-source.js','/trip-booklet-export.js'])assert(injected.includes(`src="${src}"`),`Injected trip missing ${src}`);
 assert(injected.indexOf('src="/park-review-text-4.js"')<injected.indexOf('src="/trip-booklet-days.js"'),'Review data must load before daily pages');
