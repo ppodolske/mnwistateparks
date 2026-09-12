@@ -1,0 +1,175 @@
+@media screen {
+:root{
+  --yellowstone-blue:#0067A2;
+  --yellowstone-sand:#DFCB91;
+  --yellowstone-orange:#CB7223;
+  --yellowstone-teal:#289A84;
+  --yellowstone-sky:#7FA4C2;
+  --yellowstone-earth:#AF7E56;
+  --yellowstone-ink:#1F2B31;
+  --yellowstone-muted:#687178;
+  --yellowstone-paper:#F8F5ED;
+  --yellowstone-surface:#FFFFFF;
+  --yellowstone-line:#DDD8CA;
+  --blue:var(--yellowstone-blue);
+  --blue-dark:#004C78;
+  --blue-deep:#16333F;
+  --cream:var(--yellowstone-paper);
+  --ink:var(--yellowstone-ink);
+  --muted:var(--yellowstone-muted);
+  --line:var(--yellowstone-line);
+  --green:var(--yellowstone-teal);
+  --rust:var(--yellowstone-orange);
+}
+html,body{background:var(--yellowstone-paper);color:var(--yellowstone-ink)}
+body{font-family:"Fredoka",Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.6}
+body p,body li,body input,body select,body textarea,body button{font-family:"Fredoka",Arial,sans-serif}
+
+/* DISPLAY TYPE */
+h1,h2,h3,.brand,.hero h1,.park-hero h1,.page-intro h1,.intro h2,.section h2,.card-body h3,.trip-grid b,.experience-card b,.review-grid article h2,.prose h2,.route-day h3,.trip-name,.day-title,.booklet-title{
+  font-family:"Bebas Neue","Arial Narrow",sans-serif!important;
+  font-weight:400!important;
+  letter-spacing:.015em;
+  line-height:.96;
+}
+.eyebrow,.kicker,.rating,.pines,.rating-number,.trip,.tag-pill,.chip,.fact>b,.filters label span,.results-row,.trip-pill,.app-kicker,.route-status,.route-label,.day-date,.readiness-badge,.preston-footer-home,.section-label{
+  font-family:"PT Serif",Georgia,serif!important;
+}
+
+/* HEADER */
+.site-header{height:76px;background:rgba(248,245,237,.96);border-bottom:1px solid var(--yellowstone-line);backdrop-filter:blur(10px);position:sticky;top:0}
+.brand{font-size:29px;line-height:.82;color:var(--yellowstone-blue);letter-spacing:.025em}
+.brand span{font-family:"PT Serif",Georgia,serif;font-size:9px;letter-spacing:.18em;margin-top:4px;color:var(--yellowstone-orange)}
+.site-header nav{gap:25px;font-family:"PT Serif",Georgia,serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.site-header nav a{position:relative;padding:6px 0}
+.site-header nav a::after{content:"";position:absolute;height:2px;left:0;right:100%;bottom:0;background:var(--yellowstone-orange);transition:right .16s ease}
+.site-header nav a:hover{color:var(--yellowstone-blue)}
+.site-header nav a:hover::after{right:0}
+
+/* HERO */
+.hero{min-height:660px;background-color:#16333f;background-image:linear-gradient(90deg,rgba(17,43,52,.90) 0%,rgba(17,43,52,.66) 46%,rgba(17,43,52,.13) 100%),var(--hero);padding-top:102px}
+.hero-wash{background:linear-gradient(0deg,rgba(15,36,43,.52),transparent 52%)}
+.hero-content{max-width:780px}
+.hero h1{font-size:clamp(64px,7.4vw,104px);line-height:.86;letter-spacing:.005em;margin-bottom:24px}
+.hero h1 em{color:var(--yellowstone-sand)}
+.hero p{font-size:15px;line-height:1.65;max-width:620px;color:#f6f3eb;margin-bottom:28px}
+.kicker{font-size:11px;letter-spacing:.11em;color:var(--yellowstone-sand)}
+.hero-count{background:rgba(0,103,162,.88);border-top:4px solid var(--yellowstone-orange);border-radius:14px;padding:24px 26px;box-shadow:0 16px 45px rgba(0,0,0,.16)}
+.hero-count>strong{font-family:"Bebas Neue",sans-serif;font-size:72px;letter-spacing:.02em}
+.hero-count>span,.hero-count div{font-family:"PT Serif",Georgia,serif}
+
+/* BUTTONS */
+.button{font-family:"Fredoka",Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:.035em;text-transform:none;border-radius:8px;padding:12px 18px;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease}
+.button:hover{transform:translateY(-1px)}
+.button.blue,.route-day .button.ghost,.trip-toolbar .button.ghost{background:var(--yellowstone-orange);border:1px solid var(--yellowstone-orange);color:white;box-shadow:0 5px 14px rgba(203,114,35,.17)}
+.button.blue:hover,.route-day .button.ghost:hover,.trip-toolbar .button.ghost:hover{background:#ad5c18;border-color:#ad5c18}
+.button.light{background:#fff;color:var(--yellowstone-blue);border:1px solid rgba(255,255,255,.75)}
+.button.ghost{border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:8px}
+
+/* HOME CONTENT */
+.stat-band{border-left:0;gap:1px;background:var(--yellowstone-line);margin-top:0}
+.stat-band div{background:var(--yellowstone-surface);border:0;padding:25px 30px}
+.stat-band strong{font-family:"Bebas Neue",sans-serif;font-size:42px;color:var(--yellowstone-blue)}
+.stat-band span{font-family:"PT Serif",Georgia,serif;font-size:10px;letter-spacing:.07em;color:var(--yellowstone-muted)}
+.section{padding:76px 0}
+.intro{gap:76px}
+.intro h2,.section h2,.page-intro h1{font-size:clamp(42px,5vw,66px)}
+.intro p,.page-intro p,.booklet p,.prose p{font-size:15px;line-height:1.65;color:#45535a}
+.trip-band{background:#005a8d}
+.trip-band .section{padding:48px 0}
+.trip-grid{border-color:rgba(223,203,145,.42);border-radius:14px;overflow:hidden}
+.trip-grid a{border-right-color:rgba(223,203,145,.28)}
+.trip-grid a:hover{background:rgba(223,203,145,.11)}
+.trip-grid b{font-size:27px}
+.trip-grid span{font-size:12px;line-height:1.5;color:#e8f2f6}
+
+/* CARDS */
+.cards{gap:24px}
+.park-card{background:var(--yellowstone-surface);border:1px solid var(--yellowstone-line);border-radius:14px;overflow:hidden;box-shadow:0 3px 14px rgba(31,43,49,.035);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.park-card:hover{transform:translateY(-4px);border-color:rgba(0,103,162,.30);box-shadow:0 15px 34px rgba(31,43,49,.11)}
+.card-photo{height:235px;background:#dfe9ef}
+.card-body{padding:18px 20px 21px}
+.card-body h3{font-size:28px;line-height:.95;margin:7px 0 13px;color:var(--yellowstone-ink)}
+.eyebrow{font-size:10px;letter-spacing:.05em;color:var(--yellowstone-orange)}
+.rating{gap:8px;color:var(--yellowstone-blue)}
+.pines{font-size:15px}
+.rating-number{font-size:11px;color:#5f686c}
+.trip{margin-top:12px;background:rgba(223,203,145,.42);color:#614f2c;border-radius:999px;padding:5px 10px;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+
+/* BROWSE + FILTERS */
+.page-intro{padding:66px 0 34px}
+.filters{background:rgba(223,203,145,.23);border:1px solid rgba(175,126,86,.24);border-radius:14px;padding:18px;gap:12px}
+.filters label span{font-size:10px;letter-spacing:.045em;color:#6b6257}
+.filters input,.filters select{height:42px;border:1px solid var(--yellowstone-line);border-radius:8px;background:white;padding:0 11px;font-size:13px;color:var(--yellowstone-ink)}
+.filters input:focus,.filters select:focus{outline:2px solid rgba(0,103,162,.18);border-color:var(--yellowstone-blue)}
+.filter-chips{gap:8px;margin:16px 0 28px}
+.chip{border:1px solid var(--yellowstone-line);border-radius:999px;background:white;padding:7px 11px;font-size:11px;font-weight:400}
+.chip:hover,.chip.active{border-color:var(--yellowstone-blue);background:rgba(127,164,194,.14);color:var(--yellowstone-blue)}
+.tag-pill{border-radius:999px;background:rgba(127,164,194,.14);border-color:rgba(0,103,162,.20);color:#004c78;font-size:11px;font-weight:400}
+.tag-pill.warn{background:rgba(203,114,35,.10);border-color:rgba(203,114,35,.25);color:#85450e}
+.explore-band{background:rgba(223,203,145,.14)}
+.experience-card{border:1px solid var(--yellowstone-line);border-radius:14px;background:white;padding:20px;box-shadow:0 2px 10px rgba(31,43,49,.03)}
+.experience-card b{font-size:25px;color:var(--yellowstone-blue)}
+.experience-card span{font-size:12px}
+.experience-card strong{font-family:"Bebas Neue",sans-serif;font-size:32px;color:var(--yellowstone-orange)}
+.discovery-note{background:rgba(223,203,145,.22);border-left-color:var(--yellowstone-orange);border-radius:0 12px 12px 0;font-size:13px}
+
+/* PARK DETAIL */
+.park-hero{min-height:560px;background-image:linear-gradient(90deg,rgba(18,42,50,.90),rgba(18,42,50,.46) 55%,rgba(18,42,50,.12)),var(--park-photo)}
+.park-hero h1{font-size:clamp(62px,7.2vw,100px);letter-spacing:.005em;line-height:.86}
+.park-hero .rating-number{color:#f1eee5}
+.trip-pill{font-family:"PT Serif",Georgia,serif;border-radius:999px;border-color:rgba(223,203,145,.65);background:rgba(223,203,145,.12);font-size:10px;letter-spacing:.04em}
+.review-grid{gap:70px;padding:68px 0}
+.review-grid article h2{font-size:46px}
+.review{font-size:15px;line-height:1.65;max-width:720px;color:#35434a}
+.source-note{font-size:11px;color:var(--yellowstone-muted)}
+.timing-note{background:rgba(223,203,145,.22);border-radius:12px;padding:18px 20px}
+.timing-note strong{font-family:"PT Serif",Georgia,serif;color:var(--yellowstone-orange);font-size:10px;letter-spacing:.05em}
+.timing-note p{font-size:13px;line-height:1.55}
+.fact{padding-bottom:21px;margin-bottom:21px;border-bottom-color:var(--yellowstone-line)}
+.fact>b{font-size:10px;letter-spacing:.055em;color:var(--yellowstone-orange)}
+.fact span:not(.pines):not(.half-pine):not(.rating-number){border-radius:999px;border-color:var(--yellowstone-line);padding:5px 9px;font-size:11px}
+.fact.good span:not(.pines):not(.half-pine):not(.rating-number){border-color:rgba(40,154,132,.26);background:rgba(40,154,132,.09)}
+.fact.watch span:not(.pines):not(.half-pine):not(.rating-number){border-color:rgba(203,114,35,.25);background:rgba(203,114,35,.08)}
+.fact p{font-size:14px;line-height:1.55}
+.fact small{font-size:11px}
+.park-nav{border-top-color:var(--yellowstone-line)}
+.park-nav a span{font-family:"PT Serif",Georgia,serif;font-size:9px}
+.park-nav a strong{font-family:"Bebas Neue",sans-serif;font-size:23px;color:var(--yellowstone-blue)}
+
+/* TRIP WORKSPACE */
+[data-page="trip"] .page-intro p,[data-page="trip"] .panel p,[data-page="trip"] .route-day p,[data-page="trip"] .trip-card p{font-size:13px;line-height:1.52}
+[data-page="trip"] .panel,[data-page="trip"] .trip-card,[data-page="trip"] .route-day,[data-page="trip"] .day-card,[data-page="trip"] .trip-section{border-radius:14px;border-color:var(--yellowstone-line);box-shadow:0 3px 14px rgba(31,43,49,.035)}
+[data-page="trip"] input,[data-page="trip"] select,[data-page="trip"] textarea{font-size:13px;border-radius:8px;border-color:var(--yellowstone-line)}
+[data-page="trip"] .route-status,[data-page="trip"] .readiness-badge,[data-page="trip"] .status-chip{font-family:"PT Serif",Georgia,serif;font-size:10px;border-radius:999px}
+[data-page="trip"] .ready,[data-page="trip"] .status-ready{color:#176b5b;background:rgba(40,154,132,.10);border-color:rgba(40,154,132,.28)}
+[data-page="trip"] .warning,[data-page="trip"] .status-warning,[data-page="trip"] .incomplete{color:#8b480f;background:rgba(203,114,35,.10);border-color:rgba(203,114,35,.28)}
+[data-page="trip"] .day-title,[data-page="trip"] .route-day h3{font-size:25px;color:var(--yellowstone-ink)}
+
+/* FOOTER */
+.site-footer{background:#16333f;color:white;border-top:5px solid var(--yellowstone-orange);padding-top:30px;padding-bottom:30px}
+.site-footer span,.site-footer small{font-size:11px;color:#dce8e9}
+.preston-footer-home{border-top-color:rgba(223,203,145,.25)!important}
+.preston-footer-home a{color:var(--yellowstone-sand)!important}
+
+@media(max-width:900px){
+  body{font-size:14px}
+  .hero p,.intro p,.page-intro p,.booklet p,.prose p,.review{font-size:14px}
+  .site-header{position:relative}
+  .hero{min-height:625px}
+  .card-body h3{font-size:26px}
+}
+@media(max-width:600px){
+  .site-header{height:70px;background:var(--yellowstone-paper)}
+  .brand{font-size:25px}
+  .site-header nav{gap:13px;font-size:9px}
+  .hero h1{font-size:58px}
+  .hero p{font-size:14px}
+  .page-intro h1{font-size:46px}
+  .park-hero h1{font-size:56px}
+  .review{font-size:14px}
+  .section{padding:58px 0}
+  .card-photo{height:220px}
+  [data-page="trip"] .panel p,[data-page="trip"] .route-day p,[data-page="trip"] .trip-card p{font-size:12px}
+}
+}
