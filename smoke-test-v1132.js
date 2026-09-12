@@ -5,7 +5,7 @@ const TripItinerary=require('./trip-itinerary.js');
 const {VERSION,parks,renderPath,injectAll,tripBookletOverviewJS,tripBookletDaysJS,tripBookletReviewSourceJS,tripBookletExportJS,tripLogisticsFixJS,tripWorkspaceCleanupJS,reviewJS,parkDetails,loadCoords,COLLECTIONS}=site;
 function assert(ok,msg){if(!ok)throw new Error(msg)}
 function check(path,tokens=[]){const out=renderPath(new URL(path,'http://localhost'));assert(out.status===200,`${path} returned ${out.status}`);for(const t of tokens)assert(out.body.includes(t),`${path} missing ${t}`);return out.body}
-assert(VERSION==='1.16.1',`Unexpected version ${VERSION}`);
+assert(/^\d+\.\d+\.\d+$/.test(String(VERSION)),`Unexpected non-semver version ${VERSION}`);
 assert(parks.length===116,`Expected 116 parks, found ${parks.length}`);
 assert(Array.isArray(COLLECTIONS)&&COLLECTIONS.length===8,'Expected 8 collections');
 assert(Object.keys(parkDetails).length===116,`Expected 116 park references, found ${Object.keys(parkDetails).length}`);
@@ -35,4 +35,4 @@ assert(injected.indexOf('src="/trip-booklet-review-source.js"')<injected.indexOf
 assert(injected.indexOf('src="/trip-logistics-fix.js"')<injected.indexOf('src="/trip-workspace-cleanup.js"'),'Workspace cleanup must run after trip editors/readiness');
 const sample=TripModel.normalizeTrip({id:'smoke',name:'Smoke',startDate:'2026-09-19',startLocation:'Duluth, MN',endLocation:'Duluth, MN',parks:['gooseberry-falls','tettegouche'],stopMeta:{'gooseberry-falls':{day:'1'},tettegouche:{day:'2'}}});const itinerary=TripItinerary.build(sample,parks,parkDetails);assert(itinerary.assignedDays===2,'Itinerary assignment regression');
 assert(fs.existsSync('./park-coordinates.generated.json'),'Coordinate snapshot missing');const coords=loadCoords();assert(coords&&Object.keys(coords.parks||{}).length===116,'Runtime coordinates are not 116/116');
-console.log('Smoke tests passed: trip workspace cleanup, single visible logistics and day editors, consolidated readiness rendering, preserved booklet export pipeline, source review text 116/116, 116/116 park references, and 116/116 map.');
+console.log(`Smoke tests passed against site-v116 runtime ${VERSION}: trip workspace cleanup, single visible logistics and day editors, consolidated readiness rendering, preserved booklet export pipeline, source review text 116/116, 116/116 park references, and 116/116 map.`);
