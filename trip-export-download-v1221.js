@@ -9,7 +9,7 @@
   const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}};
   const getTrip=()=>read().find(t=>t.id===id);
   const safeName=s=>String(s||'trip').trim().replace(/[^a-z0-9 _-]+/gi,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||'trip';
-  const collectStyles=()=>[...document.querySelectorAll('style')].map(s=>s.textContent||'').join('\n');
+  const collectStyles=()=>[...document.querySelectorAll('style')].filter(s=>!s.id.startsWith('parks-yellowstone-theme-')&&!s.dataset.pdfDownload).map(s=>s.textContent||'').join('\n');
   let loadingLibrary=null;
 
   function loadPDFLibrary(){
@@ -62,7 +62,7 @@
     root.style.cssText='position:absolute;left:-12000px;top:0;background:#fff;color:#15212b;width:'+(paper.value==='LETTER'?'215.9mm':'210mm')+';font-family:Arial,Helvetica,sans-serif;';
     const style=document.createElement('style');
     style.dataset.pdfDownload='true';
-    style.textContent=collectStyles()+`\n.pdf-download-detailed .booklet-overview,.pdf-download-detailed .booklet-day-page,.pdf-download-detailed .booklet-route-page,.pdf-download-detailed .booklet-reference-page,.pdf-download-detailed .booklet-notes-page{display:block!important;max-width:none!important;width:auto!important;margin-left:0!important;margin-right:0!important;box-shadow:none!important}.pdf-download-detailed .booklet-pagination-status,.pdf-download-detailed .booklet-export-controls{display:none!important}.pdf-download-detailed .booklet-day-page,.pdf-download-detailed .booklet-route-page,.pdf-download-detailed .booklet-reference-page,.pdf-download-detailed .booklet-notes-page{break-before:page;page-break-before:always}.pdf-download-detailed .booklet-stop-card,.pdf-download-detailed .booklet-camp,.pdf-download-detailed .booklet-critical,.pdf-download-detailed .booklet-day-notes,.pdf-download-detailed .booklet-logistics-panel,.pdf-download-detailed .booklet-reference-row{break-inside:avoid;page-break-inside:avoid}`;
+    style.textContent=collectStyles()+`\n.pdf-download-root,.pdf-download-root *{font-family:Arial,Helvetica,sans-serif!important}.pdf-download-detailed .booklet-overview,.pdf-download-detailed .booklet-day-page,.pdf-download-detailed .booklet-route-page,.pdf-download-detailed .booklet-reference-page,.pdf-download-detailed .booklet-notes-page{display:block!important;max-width:none!important;width:auto!important;margin-left:0!important;margin-right:0!important;box-shadow:none!important}.pdf-download-detailed .booklet-pagination-status,.pdf-download-detailed .booklet-export-controls{display:none!important}.pdf-download-detailed .booklet-day-page,.pdf-download-detailed .booklet-route-page,.pdf-download-detailed .booklet-reference-page,.pdf-download-detailed .booklet-notes-page{break-before:page;page-break-before:always}.pdf-download-detailed .booklet-stop-card,.pdf-download-detailed .booklet-camp,.pdf-download-detailed .booklet-critical,.pdf-download-detailed .booklet-day-notes,.pdf-download-detailed .booklet-logistics-panel,.pdf-download-detailed .booklet-reference-row{break-inside:avoid;page-break-inside:avoid}`;
     document.head.appendChild(style);document.body.appendChild(root);
     return {root,cleanup:()=>{root.remove();style.remove()}};
   }
@@ -76,7 +76,7 @@
     root.innerHTML=doc.body.innerHTML.replace(/<script[\s\S]*?<\/script>/gi,'');
     root.style.cssText='position:absolute;left:-12000px;top:0;background:#fff;color:#15212b;width:'+(paper.value==='LETTER'?'191.9mm':'186mm')+';font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.35;';
     const style=document.createElement('style');style.dataset.pdfDownload='true';
-    style.textContent=[...doc.querySelectorAll('style')].map(s=>s.textContent||'').join('\n')+'\n.pdf-download-compact .cp-refs{break-before:page;page-break-before:always}.pdf-download-compact .cp-stop,.pdf-download-compact .cp-route,.pdf-download-compact .cp-logistics>div,.pdf-download-compact tr{break-inside:avoid;page-break-inside:avoid}';
+    style.textContent=[...doc.querySelectorAll('style')].map(s=>s.textContent||'').join('\n')+'\n.pdf-download-root,.pdf-download-root *{font-family:Arial,Helvetica,sans-serif!important}.pdf-download-compact .cp-refs{break-before:page;page-break-before:always}.pdf-download-compact .cp-stop,.pdf-download-compact .cp-route,.pdf-download-compact .cp-logistics>div,.pdf-download-compact tr{break-inside:avoid;page-break-inside:avoid}';
     document.head.appendChild(style);document.body.appendChild(root);
     return {root,cleanup:()=>{root.remove();style.remove()}};
   }
