@@ -11,7 +11,10 @@ assert(download.includes('TripDayEditor?.persist?.(false)'),'download export mus
 assert(download.includes("new CustomEvent('trip-days-changed'"),'download export must emit current day-change event');
 assert(download.includes("new CustomEvent('trip-logistics-saved'"),'download export must emit current logistics-save event');
 assert(download.includes("legacy.id='saveTripDetailsBtn'"),'download export must trigger the legacy booklet refresh bridge');
-assert(download.indexOf('await synchronizeExportState()')<download.indexOf('makeCompactRoot()'),'state synchronization must occur before export root creation');
+const downloadFn=download.slice(download.indexOf('async function download()'),download.indexOf("button.textContent='Download PDF'"));
+const syncAt=downloadFn.indexOf('await synchronizeExportState()');
+const compactAt=downloadFn.indexOf("mode.value==='compact'?makeCompactRoot():makeDetailedRoot()");
+assert(syncAt>=0&&compactAt>=0&&syncAt<compactAt,'state synchronization must occur before export root creation inside download()');
 assert(overview.includes("saveTripDetailsBtn"),'overview must listen to refresh bridge');
 assert(days.includes("saveTripDetailsBtn"),'day pages must listen to refresh bridge');
 assert(route.includes("saveTripDetailsBtn"),'route page must listen to refresh bridge');
