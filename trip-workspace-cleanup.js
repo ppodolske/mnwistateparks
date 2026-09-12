@@ -27,7 +27,6 @@
       if(nav)nav.innerHTML='<a href="#tripNextActions">Next actions</a><a href="#workspaceLogistics">Trip details</a><a href="#workspaceItinerary">Itinerary</a><a href="#workspaceExport">Export</a>';
     }
 
-    // Canonical working order: summary → next actions → trip details → itinerary → export.
     let anchor=intro;
     for(const el of [summary,next,logistics,itinerary,exportSection]){
       if(!el||!anchor)continue;
@@ -45,19 +44,12 @@
       const head=itinerary.querySelector('.trip-workspace-section-head h2');
       if(head)head.textContent='Day-by-day itinerary';
       const help=itinerary.querySelector('.trip-workspace-section-head p');
-      if(help)help.textContent='Resolve any unassigned parks first, then order stops, add notes and capture camping details by day.';
+      if(help)help.textContent='Build the day structure, resolve unassigned parks, then order stops, add notes and capture camping details.';
     }
 
-    // The day editor remains the canonical assigned-stop editor. v1.17 adds a dedicated
-    // unassigned queue immediately above it rather than treating Unassigned as a fake day.
     const dayEditor=document.getElementById('tripDayEditor');
     if(dayEditor&&itinerary&&!itinerary.contains(dayEditor))itinerary.appendChild(dayEditor);
 
-    document.querySelectorAll('.trip-day-editor-head p').forEach(p=>{
-      p.textContent='Change stop order, notes and camping details directly in the itinerary.';
-    });
-
-    // Canonical readiness renderer is the logistics/readiness implementation from v1.15.1+.
     if(window.TripLogisticsFix?.renderReadiness){
       window.TripNextActions=window.TripNextActions||{};
       window.TripNextActions.render=window.TripLogisticsFix.renderReadiness;
@@ -71,12 +63,12 @@
   setTimeout(removeRedundant,600);
   document.addEventListener('trip-logistics-saved',()=>setTimeout(removeRedundant,60));
   document.addEventListener('click',e=>{
-    if(e.target&&['saveTripDayEditor','saveTripLogisticsBtn','saveTripLocationsBtn'].includes(e.target.id))setTimeout(removeRedundant,180);
+    if(e.target&&['saveTripDayEditor','saveTripLogisticsBtn','saveTripLocationsBtn','addTripDay'].includes(e.target.id))setTimeout(removeRedundant,180);
   });
   window.TripWorkspaceCleanup={apply:removeRedundant};
 })();
 
-// v1.17.0 — dedicated unassigned-stop workflow.
+// v1.17+ — dedicated unassigned-stop workflow, integrated with v1.18 explicit days.
 (()=>{
   const page=document.querySelector('[data-page="trip"]');
   if(!page)return;
@@ -108,13 +100,12 @@
 
   function getTrip(){return read().find(t=>t.id===id)}
   function assignedDays(trip){
+    const count=window.TripItinerary?.dayCount?.(trip)||0;
+    if(count)return Array.from({length:count},(_,i)=>String(i+1));
     const vals=(trip.parks||[]).map(slug=>String(trip.stopMeta?.[slug]?.day||'').trim()).filter(Boolean);
-    return [...new Set(vals)].sort((a,b)=>{const an=Number(a),bn=Number(b);if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;return a.localeCompare(b,undefined,{numeric:true})});
+    return [...new Set(vals)].sort((a,b)=>Number(a)-Number(b)||a.localeCompare(b,undefined,{numeric:true}));
   }
-  function nextDay(trip){
-    const nums=assignedDays(trip).map(Number).filter(n=>Number.isFinite(n)&&n>=1);
-    return String(nums.length?Math.max(...nums)+1:1);
-  }
+  function nextDay(trip){return String((window.TripItinerary?.dayCount?.(trip)||assignedDays(trip).length)+1)}
   function unassignedSlugs(trip){return (trip.parks||[]).filter(slug=>bySlug.has(slug)&&!String(trip.stopMeta?.[slug]?.day||'').trim())}
   function persistOpenEdits(){try{window.TripDayEditor?.persist?.(false)}catch{}}
   function refresh(){
@@ -128,6 +119,7 @@
     const trips=read(),trip=trips.find(t=>t.id===id);if(!trip)return;
     trip.stopMeta=trip.stopMeta||{};
     fn(trip);
+    window.TripItinerary?.ensureDayCount?.(trip);
     write(trips);
     refresh();
     const status=document.getElementById('tripUnassignedStatus');
@@ -138,8 +130,7 @@
     mutate(slug,trip=>{trip.stopMeta[slug]={...(trip.stopMeta[slug]||{}),day:String(day).trim()}},'Park assigned to Day '+day+' ✓');
   }
   function createDay(slug){
-    const trip=getTrip();if(!trip)return;const day=nextDay(trip);
-    assign(slug,day);
+    mutate(slug,trip=>{const day=window.TripItinerary?.addDayToTrip?.(trip)||Number(nextDay(trip));trip.stopMeta[slug]={...(trip.stopMeta[slug]||{}),day:String(day)}},'New day created and park assigned ✓');
   }
   function removeStop(slug){
     const p=bySlug.get(slug);if(!p)return;
@@ -160,7 +151,7 @@
     if(!slugs.length){root?.remove();return}
     if(!root){root=document.createElement('section');root.id='tripUnassignedWorkflow';root.className='trip-unassigned';const editor=document.getElementById('tripDayEditor');if(editor&&editor.parentElement===itinerary)itinerary.insertBefore(root,editor);else itinerary.appendChild(root)}
     const days=assignedDays(trip);
-    root.innerHTML='<div class="trip-unassigned-head"><div><div class="kicker blue">UNASSIGNED STOPS</div><h3>Decide where these parks belong.</h3><p>New parks stay here until you assign them to an existing day, create a new day for them, or remove them from the trip. This section disappears when everything is assigned.</p></div><div class="trip-unassigned-count">'+slugs.length+'</div></div><div class="trip-unassigned-list">'+slugs.map(slug=>cardHtml(slug,days)).join('')+'</div><div id="tripUnassignedStatus" class="trip-unassigned-status"></div>';
+    root.innerHTML='<div class="trip-unassigned-head"><div><div class="kicker blue">UNASSIGNED STOPS</div><h3>Decide where these parks belong.</h3><p>Assign a park to any existing day, create a new day for it, or remove it from the trip. Empty days are available here too.</p></div><div class="trip-unassigned-count">'+slugs.length+'</div></div><div class="trip-unassigned-list">'+slugs.map(slug=>cardHtml(slug,days)).join('')+'</div><div id="tripUnassignedStatus" class="trip-unassigned-status"></div>';
     root.querySelectorAll('.assign-existing').forEach(btn=>btn.addEventListener('click',()=>{const card=btn.closest('.trip-unassigned-stop'),sel=card.querySelector('.trip-unassigned-day');assign(card.dataset.slug,sel?.value)}));
     root.querySelectorAll('.create-day').forEach(btn=>btn.addEventListener('click',()=>createDay(btn.closest('.trip-unassigned-stop').dataset.slug)));
     root.querySelectorAll('.remove-stop').forEach(btn=>btn.addEventListener('click',()=>removeStop(btn.closest('.trip-unassigned-stop').dataset.slug)));
