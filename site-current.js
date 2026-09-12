@@ -3,7 +3,7 @@ const fs=require('fs');
 const path=require('path');
 const site=require('./site.js');
 
-const VERSION='1.15.0';
+const VERSION='1.15.1';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
@@ -18,6 +18,7 @@ const TRIP_BOOKLET_NOTES_FILE=path.join(__dirname,'trip-booklet-notes.js');
 const TRIP_BOOKLET_PAGINATION_FILE=path.join(__dirname,'trip-booklet-pagination.js');
 const TRIP_BOOKLET_EXPORT_FILE=path.join(__dirname,'trip-booklet-export.js');
 const TRIP_BOOKLET_REVIEW_SOURCE_FILE=path.join(__dirname,'trip-booklet-review-source.js');
+const TRIP_LOGISTICS_FIX_FILE=path.join(__dirname,'trip-logistics-fix.js');
 const REVIEW_FILES=[1,2,3,4].map(n=>path.join(__dirname,`park-review-text-${n}.js`));
 const PLANNER_FILE=path.join(__dirname,'planner-polish.js');
 const TRIP_DETAILS_FILE=path.join(__dirname,'trip-details.js');
@@ -35,6 +36,7 @@ const tripBookletNotesJS=fs.readFileSync(TRIP_BOOKLET_NOTES_FILE,'utf8');
 const tripBookletPaginationJS=fs.readFileSync(TRIP_BOOKLET_PAGINATION_FILE,'utf8');
 const tripBookletExportJS=fs.readFileSync(TRIP_BOOKLET_EXPORT_FILE,'utf8');
 const tripBookletReviewSourceJS=fs.readFileSync(TRIP_BOOKLET_REVIEW_SOURCE_FILE,'utf8');
+const tripLogisticsFixJS=fs.readFileSync(TRIP_LOGISTICS_FIX_FILE,'utf8');
 const reviewJS=REVIEW_FILES.map(f=>fs.readFileSync(f,'utf8'));
 const plannerJS=fs.readFileSync(PLANNER_FILE,'utf8');
 const tripDetailsJS=fs.readFileSync(TRIP_DETAILS_FILE,'utf8');
@@ -53,7 +55,7 @@ function serveStatic(pathname,res){
   fs.createReadStream(file).pipe(res);return true;
 }
 function injectAll(html){
-  const scripts='<script src="/trip-model.js" defer></script><script src="/trip-itinerary.js" defer></script><script src="/planner-polish.js" defer></script><script src="/park-details.js" defer></script><script src="/park-details-extra.js" defer></script><script src="/park-addresses-current.js" defer></script><script src="/trip-details.js" defer></script><script src="/trip-itinerary-ui.js" defer></script><script src="/trip-booklet-overview.js" defer></script><script src="/park-review-text-1.js" defer></script><script src="/park-review-text-2.js" defer></script><script src="/park-review-text-3.js" defer></script><script src="/park-review-text-4.js" defer></script><script src="/trip-booklet-days.js" defer></script><script src="/trip-booklet-review-source.js" defer></script><script src="/trip-booklet-route.js" defer></script><script src="/trip-booklet-reference.js" defer></script><script src="/trip-booklet-notes.js" defer></script><script src="/trip-booklet-pagination.js" defer></script><script src="/trip-booklet-export.js" defer></script>';
+  const scripts='<script src="/trip-model.js" defer></script><script src="/trip-itinerary.js" defer></script><script src="/planner-polish.js" defer></script><script src="/park-details.js" defer></script><script src="/park-details-extra.js" defer></script><script src="/park-addresses-current.js" defer></script><script src="/trip-details.js" defer></script><script src="/trip-itinerary-ui.js" defer></script><script src="/trip-booklet-overview.js" defer></script><script src="/park-review-text-1.js" defer></script><script src="/park-review-text-2.js" defer></script><script src="/park-review-text-3.js" defer></script><script src="/park-review-text-4.js" defer></script><script src="/trip-booklet-days.js" defer></script><script src="/trip-booklet-review-source.js" defer></script><script src="/trip-booklet-route.js" defer></script><script src="/trip-booklet-reference.js" defer></script><script src="/trip-booklet-notes.js" defer></script><script src="/trip-booklet-pagination.js" defer></script><script src="/trip-booklet-export.js" defer></script><script src="/trip-logistics-fix.js" defer></script>';
   return html.includes('</body>')?html.replace('</body>',scripts+'</body>'):html;
 }
 function createServer(){
@@ -73,6 +75,7 @@ function createServer(){
     if(url.pathname==='/trip-booklet-notes.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripBookletNotesJS)}
     if(url.pathname==='/trip-booklet-pagination.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripBookletPaginationJS)}
     if(url.pathname==='/trip-booklet-export.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripBookletExportJS)}
+    if(url.pathname==='/trip-logistics-fix.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripLogisticsFixJS)}
     if(url.pathname==='/park-coordinates.json'){
       const coords=site.loadCoords();
       res.writeHead(coords?200:503,{'content-type':'application/json; charset=utf-8','cache-control':'no-cache'});
@@ -86,7 +89,7 @@ function createServer(){
     if(url.pathname==='/health'){
       const coords=site.loadCoords();
       res.writeHead(200,{'content-type':'application/json'});
-      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,parkReferenceRecords:Object.keys(parkDetails).length,features:['saved-parks','compare','trip-collections','trip-data-model-v2','trip-itinerary-model','itinerary-summary-ui','trip-workspace-layout','booklet-hidden-in-workspace','trip-next-actions','trip-readiness-state','action-linked-workspace','trip-booklet-overview','trip-booklet-overview-single-page','trip-booklet-daily-pages','trip-booklet-route-page','trip-booklet-reference-page','trip-booklet-notes-page','booklet-logistics-reference','booklet-trip-highlights','booklet-handwriting-space','booklet-numbered-stop-map','booklet-route-order','booklet-pagination-engine','booklet-no-split-stop-cards','booklet-a4-letter-metrics','booklet-pdf-export','booklet-export-mode','compact-export-mode','booklet-paper-selector','booklet-render-repair','booklet-mobile-export-polish','booklet-unassigned-semantics','booklet-continuation-headers','booklet-source-review-text','booklet-physical-write-lines','booklet-section-owned-pagination','booklet-park-tags','booklet-critical-factors','editable-trip-start-location','editable-trip-end-location','day-date-calculation','day-start-location','day-overnight-location','trip-route-links','park-reference-data','park-reference-coverage-116','trip-day-planner','trip-stop-notes','trip-stop-details-editor','trip-map','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','google-maps-place-link','camping-details','campground-name','campground-loop','campsite-number','reservation-details','check-in-out','trip-start-end-dates','trip-locations','emergency-contact','lodging-notes','resupply-notes','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
+      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,parkReferenceRecords:Object.keys(parkDetails).length,features:['saved-parks','compare','trip-collections','trip-data-model-v2','trip-itinerary-model','itinerary-summary-ui','trip-workspace-layout','booklet-hidden-in-workspace','trip-next-actions','trip-readiness-state','action-linked-workspace','trip-logistics-save-fix','same-start-end-default','optional-different-end','optional-emergency-contact','trip-booklet-overview','trip-booklet-overview-single-page','trip-booklet-daily-pages','trip-booklet-route-page','trip-booklet-reference-page','trip-booklet-notes-page','booklet-logistics-reference','booklet-trip-highlights','booklet-handwriting-space','booklet-numbered-stop-map','booklet-route-order','booklet-pagination-engine','booklet-no-split-stop-cards','booklet-a4-letter-metrics','booklet-pdf-export','booklet-export-mode','compact-export-mode','booklet-paper-selector','booklet-render-repair','booklet-mobile-export-polish','booklet-unassigned-semantics','booklet-continuation-headers','booklet-source-review-text','booklet-physical-write-lines','booklet-section-owned-pagination','booklet-park-tags','booklet-critical-factors','editable-trip-start-location','editable-trip-end-location','day-date-calculation','day-start-location','day-overnight-location','trip-route-links','park-reference-data','park-reference-coverage-116','trip-day-planner','trip-stop-notes','trip-stop-details-editor','trip-map','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','google-maps-place-link','camping-details','campground-name','campground-loop','campsite-number','reservation-details','check-in-out','trip-start-end-dates','trip-locations','emergency-contact','lodging-notes','resupply-notes','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
     }
     const out=site.renderPath(url);
     res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});
@@ -94,4 +97,4 @@ function createServer(){
   });
 }
 if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (current runtime)`));
-module.exports={...site,VERSION,tripModelJS,tripItineraryJS,tripItineraryUIJS,tripBookletOverviewJS,tripBookletDaysJS,tripBookletReviewSourceJS,reviewJS,tripBookletRouteJS,tripBookletReferenceJS,tripBookletNotesJS,tripBookletPaginationJS,tripBookletExportJS,plannerJS,tripDetailsJS,parkDetailsJS,parkDetailsExtraJS,parkAddressesCurrentJS,parkDetails,injectAll,createServer};
+module.exports={...site,VERSION,tripModelJS,tripItineraryJS,tripItineraryUIJS,tripBookletOverviewJS,tripBookletDaysJS,tripBookletReviewSourceJS,reviewJS,tripBookletRouteJS,tripBookletReferenceJS,tripBookletNotesJS,tripBookletPaginationJS,tripBookletExportJS,tripLogisticsFixJS,plannerJS,tripDetailsJS,parkDetailsJS,parkDetailsExtraJS,parkAddressesCurrentJS,parkDetails,injectAll,createServer};
