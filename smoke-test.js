@@ -1,5 +1,5 @@
 const fs=require('fs');
-const {VERSION,parks,renderPath,clientJS,tripModelJS,plannerJS,tripDetailsJS,parkDetailsJS,parkAddressesJS,parkDetails,loadCoords,COLLECTIONS,practical,injectAll}=require('./site-current.js');
+const {VERSION,parks,renderPath,clientJS,tripModelJS,plannerJS,tripDetailsJS,parkDetailsJS,parkDetailsExtraJS,parkAddressesCurrentJS,parkDetails,loadCoords,COLLECTIONS,practical,injectAll}=require('./site-current.js');
 const TripModel=require('./trip-model.js');
 function check(path,need=[]){const out=renderPath(new URL(path,'http://localhost'));if(out.status!==200)throw new Error(`${path} returned ${out.status}`);for(const token of need){if(!out.body.includes(token))throw new Error(`${path} missing ${token}`)}return out.body}
 const nav=['href="/parks"','href="/explore"','href="/map"','href="/project"','href="/saved"','href="/about"'];
@@ -14,9 +14,9 @@ const saved=check('/saved',[...nav,'data-page="saved"','id="createTripBtn"','id=
 const trip=check('/trip?id=test-trip',[...nav,'data-page="trip"','id="tripStops"','id="saveTripBtn"','id="tripSummary"','id="printTripBtn"']);
 check('/map',[...nav,'data-page="map"','All 116 parks.']);
 if(parks.length!==116)throw new Error(`Expected 116 parks, found ${parks.length}`);
-if(VERSION!=='1.11.1')throw new Error(`Unexpected version ${VERSION}`);
+if(VERSION!=='1.11.2')throw new Error(`Unexpected version ${VERSION}`);
 if(!Array.isArray(COLLECTIONS)||COLLECTIONS.length!==8)throw new Error('Expected 8 collections');
-new Function(clientJS);new Function(tripModelJS);new Function(plannerJS);new Function(parkDetailsJS);new Function(parkAddressesJS);new Function(tripDetailsJS);
+new Function(clientJS);new Function(tripModelJS);new Function(plannerJS);new Function(parkDetailsJS);new Function(parkDetailsExtraJS);new Function(parkAddressesCurrentJS);new Function(tripDetailsJS);
 if(TripModel.SCHEMA_VERSION!==2)throw new Error('Unexpected trip schema version');
 const migrated=TripModel.normalizeTrip({id:'legacy',name:'Legacy',date:'2026-09-19',notes:'keep me',parks:['afton','interstate-park'],stopMeta:{afton:{day:'1',note:'old note',camping:true,campground:'Afton Camp',campsite:'15'}}});
 if(migrated.startDate!=='2026-09-19'||migrated.notes!=='keep me'||migrated.parks.length!==2)throw new Error('Legacy trip fields were not preserved');
@@ -27,15 +27,15 @@ for(const token of ['tripChooserModal','tripAddParkDirect','tripRouteOverview','
 for(const token of ['camp-details','park-address-readonly','camping-here','campground-loop','campsite-number','Park address','Campground / loop','Campsite','printTripBtn','exportCompact','break-inside:avoid'])if(!tripDetailsJS.includes(token))throw new Error(`trip-details.js missing ${token}`);
 if(tripDetailsJS.includes('class="park-address"')||tripDetailsJS.includes('Park / entrance address'))throw new Error('Trip cards still contain editable address prompt');
 if(tripDetailsJS.includes('<img src='))throw new Error('Trip PDF still contains park photos');
-for(const slug of ['afton','bear-head-lake','interstate-park','pattison']){const d=parkDetails[slug];if(!d||!d.address||!d.mapsQuery||!d.source||!d.sourceUrl)throw new Error(`park-details missing required reference data for ${slug}`)}
-if(Object.keys(parkDetails).length<50)throw new Error('Expected at least 50 sourced park reference records in v1.11.1 foundation');
-const injectedTrip=injectAll(trip);for(const token of ['src="/trip-model.js"','src="/planner-polish.js"','src="/park-details.js"','src="/park-addresses.js"','src="/trip-details.js"'])if(!injectedTrip.includes(token))throw new Error(`trip response missing external script ${token}`);
+for(const p of parks){const d=parkDetails[p.slug];if(!d||!d.address||!d.mapsQuery||!d.source||!d.sourceUrl||!d.addressType)throw new Error(`park-details missing required reference data for ${p.slug}`)}
+if(Object.keys(parkDetails).length!==116)throw new Error(`Expected 116 sourced park reference records, found ${Object.keys(parkDetails).length}`);
+const injectedTrip=injectAll(trip);for(const token of ['src="/trip-model.js"','src="/planner-polish.js"','src="/park-details.js"','src="/park-details-extra.js"','src="/park-addresses-current.js"','src="/trip-details.js"'])if(!injectedTrip.includes(token))throw new Error(`trip response missing external script ${token}`);
 if(injectedTrip.indexOf('src="/trip-model.js"')>injectedTrip.indexOf('src="/planner-polish.js"'))throw new Error('Trip model must load before planner scripts');
-if(injectedTrip.indexOf('src="/park-details.js"')>injectedTrip.indexOf('src="/trip-details.js"'))throw new Error('Park reference data must load before trip details');
+if(injectedTrip.indexOf('src="/park-details.js"')>injectedTrip.indexOf('src="/trip-details.js"')||injectedTrip.indexOf('src="/park-details-extra.js"')>injectedTrip.indexOf('src="/trip-details.js"')||injectedTrip.indexOf('src="/park-addresses-current.js"')>injectedTrip.indexOf('src="/trip-details.js"'))throw new Error('Complete park reference data must load before trip details');
 if(injectedTrip.includes("const w=window.open('','_blank')"))throw new Error('trip response leaked planner source inline');
 const injectedHome=injectAll(check('/'));if(injectedHome.includes("const w=window.open('','_blank')"))throw new Error('home response leaked planner source inline');
 if(!fs.existsSync('./park-coordinates.json')||!fs.existsSync('./park-coordinates.generated.json'))throw new Error('coordinate snapshot missing');
 const coordinates=JSON.parse(fs.readFileSync('./park-coordinates.generated.json','utf8'));if(coordinates.count!==116||Object.keys(coordinates.parks||{}).length!==116)throw new Error('Coordinate count is not 116');
 for(const p of parks){const c=coordinates.parks[p.slug];if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lng))throw new Error(`Missing coordinate for ${p.slug}`)}
 const loaded=loadCoords();if(!loaded||Object.keys(loaded.parks).length!==116)throw new Error('runtime failed to load 116 coordinates');
-console.log(`Smoke tests passed: v1.11.1 park reference foundation (${Object.keys(parkDetails).length}/116 sourced records), trip schema v2, legacy migration, and 116/116 map.`);
+console.log('Smoke tests passed: v1.11.2 complete 116/116 park reference coverage, automatic read-only trip addresses, trip schema v2, legacy migration, and 116/116 map.');
