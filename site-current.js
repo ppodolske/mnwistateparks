@@ -3,7 +3,7 @@ const fs=require('fs');
 const path=require('path');
 const site=require('./site.js');
 
-const VERSION='1.11.2';
+const VERSION='1.11.3';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
@@ -48,7 +48,7 @@ function createServer(){
     if(url.pathname==='/health'){
       const coords=site.loadCoords();
       res.writeHead(200,{'content-type':'application/json'});
-      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,parkReferenceRecords:Object.keys(parkDetails).length,features:['saved-parks','compare','trip-collections','trip-data-model-v2','park-reference-data','park-reference-coverage-116','trip-day-planner','trip-stop-notes','trip-map','compact-trip-pdf','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','camping-details','campground-loop','campsite-number','reservation-details','check-in-out','trip-start-end-dates','trip-locations','emergency-contact','lodging-notes','resupply-notes','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
+      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,parkReferenceRecords:Object.keys(parkDetails).length,features:['saved-parks','compare','trip-collections','trip-data-model-v2','park-reference-data','park-reference-coverage-116','trip-day-planner','trip-stop-notes','trip-stop-details-editor','trip-map','compact-trip-pdf','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','google-maps-place-link','camping-details','campground-name','campground-loop','campsite-number','reservation-details','check-in-out','trip-start-end-dates','trip-locations','emergency-contact','lodging-notes','resupply-notes','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
     }
     const out=site.renderPath(url);
     res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});
