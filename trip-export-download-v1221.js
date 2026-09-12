@@ -39,6 +39,18 @@
     };
   }
 
+  function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+  async function synchronizeExportState(){
+    try{window.TripDayEditor?.persist?.(false)}catch(err){console.warn('Trip day persist before export failed',err)}
+    document.dispatchEvent(new CustomEvent('trip-days-changed',{detail:{tripId:id,source:'export-sync'}}));
+    document.dispatchEvent(new CustomEvent('trip-logistics-saved',{detail:{tripId:id,source:'export-sync'}}));
+    const legacy=document.createElement('button');
+    legacy.type='button';legacy.id='saveTripDetailsBtn';legacy.hidden=true;page.appendChild(legacy);legacy.click();legacy.remove();
+    window.TripNextActions?.render?.();
+    window.TripExportV122?.updateHint?.();
+    await delay(300);
+  }
+
   function makeDetailedRoot(){
     window.TripExportV122?.enhanceBooklet?.();
     window.TripBookletPagination?.paginate?.();
@@ -73,13 +85,15 @@
     const trip=getTrip();if(!trip)return;
     const original=button.textContent;
     button.disabled=true;button.textContent='Preparing PDF…';
-    if(hint){hint.className='booklet-export-hint';hint.textContent='Building the PDF for download…'}
+    if(hint){hint.className='booklet-export-hint';hint.textContent='Synchronizing trip details and building the PDF…'}
     let built=null;
     try{
+      await synchronizeExportState();
       await loadPDFLibrary();
       built=mode.value==='compact'?makeCompactRoot():makeDetailedRoot();
+      const currentTrip=getTrip()||trip;
       const suffix=mode.value==='compact'?'compact-plan':'trip-booklet';
-      const filename=safeName(trip.name)+'-'+suffix+'.pdf';
+      const filename=safeName(currentTrip.name)+'-'+suffix+'.pdf';
       await window.html2pdf().set(pdfOptions(filename)).from(built.root).save();
       if(hint)hint.textContent='PDF downloaded.';
     }catch(err){
@@ -101,5 +115,5 @@
   if(copy)copy.textContent='Choose the detailed booklet or compact plan, then download the finished PDF directly.';
   window.TripCompactExport=()=>{mode.value='compact';return download()};
   if(window.TripBookletExport)window.TripBookletExport.exportBooklet=()=>{mode.value='booklet';return download()};
-  window.TripPDFDownload={download,loadPDFLibrary,pdfOptions};
+  window.TripPDFDownload={download,loadPDFLibrary,pdfOptions,synchronizeExportState};
 })();
