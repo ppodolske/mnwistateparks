@@ -3,13 +3,15 @@ const fs=require('fs');
 const path=require('path');
 const site=require('./site.js');
 
-const VERSION='1.10.3';
+const VERSION='1.11.0';
 const PORT=process.env.PORT||3000;
 const PUBLIC=path.join(__dirname,'public');
 const IMAGE_DIR=path.join(PUBLIC,'images');
+const TRIP_MODEL_FILE=path.join(__dirname,'trip-model.js');
 const PLANNER_FILE=path.join(__dirname,'planner-polish.js');
 const TRIP_DETAILS_FILE=path.join(__dirname,'trip-details.js');
 const PARK_ADDRESSES_FILE=path.join(__dirname,'park-addresses.js');
+const tripModelJS=fs.readFileSync(TRIP_MODEL_FILE,'utf8');
 const plannerJS=fs.readFileSync(PLANNER_FILE,'utf8');
 const tripDetailsJS=fs.readFileSync(TRIP_DETAILS_FILE,'utf8');
 const parkAddressesJS=fs.readFileSync(PARK_ADDRESSES_FILE,'utf8');
@@ -24,7 +26,7 @@ function serveStatic(pathname,res){
   fs.createReadStream(file).pipe(res);return true;
 }
 function injectAll(html){
-  const scripts='<script src="/planner-polish.js" defer></script><script src="/park-addresses.js" defer></script><script src="/trip-details.js" defer></script>';
+  const scripts='<script src="/trip-model.js" defer></script><script src="/planner-polish.js" defer></script><script src="/park-addresses.js" defer></script><script src="/trip-details.js" defer></script>';
   return html.includes('</body>')?html.replace('</body>',scripts+'</body>'):html;
 }
 function createServer(){
@@ -32,13 +34,14 @@ function createServer(){
     let url;try{url=new URL(req.url,'http://localhost')}catch{res.writeHead(400);return res.end('Bad request')}
     if(serveStatic(url.pathname,res))return;
     if(url.pathname==='/client.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(site.clientJS)}
+    if(url.pathname==='/trip-model.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripModelJS)}
     if(url.pathname==='/planner-polish.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(plannerJS)}
     if(url.pathname==='/park-addresses.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(parkAddressesJS)}
     if(url.pathname==='/trip-details.js'){res.writeHead(200,{'content-type':'application/javascript; charset=utf-8','cache-control':'no-cache'});return res.end(tripDetailsJS)}
     if(url.pathname==='/health'){
       const coords=site.loadCoords();
       res.writeHead(200,{'content-type':'application/json'});
-      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,features:['saved-parks','compare','trip-collections','trip-day-planner','trip-stop-notes','trip-map','compact-trip-pdf','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','camping-details','campground-loop','campsite-number','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
+      return res.end(JSON.stringify({ok:true,version:VERSION,architecture:'current-runtime',parks:site.parks.length,collections:site.COLLECTIONS.length,features:['saved-parks','compare','trip-collections','trip-data-model-v2','trip-day-planner','trip-stop-notes','trip-map','compact-trip-pdf','shareable-trips','day-route-overview','name-based-map-routing','explicit-day-save','auto-park-address','camping-details','campground-loop','campsite-number','reservation-details','check-in-out','trip-start-end-dates','trip-locations','emergency-contact','lodging-notes','resupply-notes','external-planner-scripts','no-split-stop-cards','photo-free-pdf'],mapCoordinates:coords?Object.keys(coords.parks).length:0}));
     }
     const out=site.renderPath(url);
     res.writeHead(out.status,{'content-type':'text/html; charset=utf-8'});
@@ -46,4 +49,4 @@ function createServer(){
   });
 }
 if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (current runtime)`));
-module.exports={...site,VERSION,plannerJS,tripDetailsJS,parkAddressesJS,injectAll,createServer};
+module.exports={...site,VERSION,tripModelJS,plannerJS,tripDetailsJS,parkAddressesJS,injectAll,createServer};
