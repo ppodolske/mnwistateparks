@@ -1,0 +1,13 @@
+const fs=require('fs');
+const assert=(ok,msg)=>{if(!ok){console.error('Review source audit failed:',msg);process.exit(1)}};
+const site=fs.readFileSync('site-v12213.js','utf8');
+const master=fs.readFileSync('park-review-text.js','utf8');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+assert(site.includes("MASTER_REVIEW_FILE=path.join(__dirname,'park-review-text.js')"),'site must read the canonical master review file');
+assert(site.includes('park.review=review.trim()'),'canonical reviews must update the server-rendered park records');
+assert(site.includes('/park-review-text.js?v=12213'),'canonical reviews must also be injected into the browser booklet pipeline');
+assert(site.includes('trip-booklet-review-source.js'),'canonical review script must load before booklet review-source processing');
+assert(master.includes('PARK_REVIEW_TEXT'),'master review map must exist');
+assert(pkg.version==='1.22.13','package version must be 1.22.13');
+assert(pkg.main==='site-v12213.js'&&pkg.scripts.start==='node site-v12213.js','package must start v1.22.13');
+console.log('Review source audit passed: park-review-text.js is the canonical source for park pages and trip booklet reviews.');
