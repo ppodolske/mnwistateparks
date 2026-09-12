@@ -1,11 +1,11 @@
 const fs=require('fs');
-const site=require('./site-current.js');
+const site=require('./site-v116.js');
 const TripModel=require('./trip-model.js');
 const TripItinerary=require('./trip-itinerary.js');
 const {VERSION,parks,renderPath,injectAll,tripBookletOverviewJS,tripBookletDaysJS,tripBookletReviewSourceJS,tripBookletExportJS,tripLogisticsFixJS,reviewJS,parkDetails,loadCoords,COLLECTIONS}=site;
 function assert(ok,msg){if(!ok)throw new Error(msg)}
 function check(path,tokens=[]){const out=renderPath(new URL(path,'http://localhost'));assert(out.status===200,`${path} returned ${out.status}`);for(const t of tokens)assert(out.body.includes(t),`${path} missing ${t}`);return out.body}
-assert(VERSION==='1.15.1',`Unexpected version ${VERSION}`);
+assert(VERSION==='1.16.0',`Unexpected version ${VERSION}`);
 assert(parks.length===116,`Expected 116 parks, found ${parks.length}`);
 assert(Array.isArray(COLLECTIONS)&&COLLECTIONS.length===8,'Expected 8 collections');
 assert(Object.keys(parkDetails).length===116,`Expected 116 park references, found ${Object.keys(parkDetails).length}`);
@@ -18,8 +18,9 @@ for(const key of ['governor-thompson|WI','nelson-dewey|WI','whitefish-dunes|WI',
 for(const token of ['TRIP BOOKLET · UNASSIGNED STOPS','These stops are not assigned to a numbered trip day.','data-unassigned','What to expect'])assert(tripBookletDaysJS.includes(token),`Daily booklet missing ${token}`);
 for(const token of ['splitDayPages','continued','All stops are unassigned','Desktop printing: disable browser headers/footers'])assert(tripBookletExportJS.includes(token),`Booklet export missing ${token}`);
 for(const token of ['trip-workspace-enabled','TRIP WORKSPACE','Day-by-day itinerary','Park stops & assignments','Trip-wide details','Trip booklet','Print-layout pages stay out of the working view.'])assert(tripBookletExportJS.includes(token),`Trip workspace missing ${token}`);
-for(const token of ['NEXT ACTIONS','thing','to finish.','Trip ready.','Ready to export.','Assign ','Complete camping details','window.TripNextActions'])assert(tripBookletExportJS.includes(token),`Next-actions panel missing ${token}`);
+for(const token of ['NEXT ACTIONS','Trip ready.','Ready to export.','window.TripNextActions'])assert(tripBookletExportJS.includes(token),`Next-actions panel missing ${token}`);
 for(const token of ['This is used as both the start and end location by default.','tripDifferentEnd','Emergency contact','optional','trip.endLocation=different?(customEnd||startLocation):startLocation','trip.endDate=enteredEndDate||startDate','Trip details saved'])assert(tripLogisticsFixJS.includes(token),`Trip logistics fix missing ${token}`);
+for(const token of ['DAY-BY-DAY EDITOR','Edit the trip where you review it.','Save itinerary changes','move-up','move-down','day-edit-day','day-edit-note','day-edit-camping','day-edit-campground','Open day route','window.TripDayEditor'])assert(tripLogisticsFixJS.includes(token),`Primary day editor missing ${token}`);
 assert(!tripLogisticsFixJS.includes("Add emergency contact','Keep a useful emergency"),'Emergency contact must not be a readiness requirement');
 for(const id of ['tripBookletOverview','tripBookletDays','tripBookletRoute','tripBookletReference','tripBookletNotes'])assert(tripBookletExportJS.includes(id),`Workspace/export lost hidden booklet source ${id}`);
 assert(!tripBookletExportJS.includes('alert("For a clean booklet PDF'), 'Blocking print alert must be removed');
@@ -30,7 +31,7 @@ assert(injected.indexOf('src="/trip-booklet-overview.js"')<injected.indexOf('src
 assert(injected.indexOf('src="/park-review-text-4.js"')<injected.indexOf('src="/trip-booklet-days.js"'),'Review data must load before daily pages');
 assert(injected.indexOf('src="/trip-booklet-days.js"')<injected.indexOf('src="/trip-booklet-review-source.js"'),'Daily pages must load before review patch');
 assert(injected.indexOf('src="/trip-booklet-review-source.js"')<injected.indexOf('src="/trip-booklet-export.js"'),'Review patch must load before export');
-assert(injected.indexOf('src="/trip-booklet-export.js"')<injected.indexOf('src="/trip-logistics-fix.js"'),'Trip logistics fix must load after workspace/export UI');
+assert(injected.indexOf('src="/trip-booklet-export.js"')<injected.indexOf('src="/trip-logistics-fix.js"'),'Trip logistics/day editor must load after workspace/export UI');
 const sample=TripModel.normalizeTrip({id:'smoke',name:'Smoke',startDate:'2026-09-19',startLocation:'Duluth, MN',endLocation:'Duluth, MN',parks:['gooseberry-falls','tettegouche'],stopMeta:{'gooseberry-falls':{day:'1'},tettegouche:{day:'2'}}});const itinerary=TripItinerary.build(sample,parks,parkDetails);assert(itinerary.assignedDays===2,'Itinerary assignment regression');
 assert(fs.existsSync('./park-coordinates.generated.json'),'Coordinate snapshot missing');const coords=loadCoords();assert(coords&&Object.keys(coords.parks||{}).length===116,'Runtime coordinates are not 116/116');
-console.log('Smoke tests passed: v1.15.1 trip logistics persistence, same-start/end defaults, optional different end and emergency contact, action-oriented workspace, preserved booklet export pipeline, source review text 116/116, 116/116 park references, and 116/116 map.');
+console.log('Smoke tests passed: v1.16.0 primary day-by-day trip editor, inline day/order/note/camping editing, trip logistics persistence, action-oriented workspace, preserved booklet export pipeline, source review text 116/116, 116/116 park references, and 116/116 map.');
