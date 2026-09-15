@@ -5,6 +5,26 @@ const previous=require('./site-v12212.js');
 const VERSION='1.22.13';
 const PORT=process.env.PORT||3000;
 const MASTER_REVIEW_FILE=path.join(__dirname,'park-review-text.js');
+const PRODUCT_NAME='Atlas';
+const PRODUCT_SUBTITLE='Minnesota & Wisconsin State Parks';
+
+function applyAtlasBrand(html){
+  const source=Buffer.isBuffer(html)?html.toString('utf8'):String(html??'');
+  return source
+    .replace(/<title>([^<]*)<\/title>/gi,(match,title)=>{
+      let next=title;
+      if(/^State Parks\s+—\s+Minnesota (?:&amp;|&) Wisconsin$/i.test(next)){
+        next=`${PRODUCT_NAME} — ${PRODUCT_SUBTITLE}`;
+      }else{
+        next=next
+          .replace(/MN (?:&amp;|&) WI State Parks/gi,PRODUCT_NAME)
+          .replace(/Minnesota (?:&amp;|&) Wisconsin State Parks/gi,PRODUCT_NAME);
+      }
+      return `<title>${next}</title>`;
+    })
+    .replace(/<a class="brand" href="\/">STATE PARKS\.<span>MN & WI<\/span><\/a>/i,`<a class="brand" href="/">ATLAS.<span>${PRODUCT_SUBTITLE}</span></a>`)
+    .replace(/<strong>STATE PARKS\.<\/strong><span>116 parks\. Two states\. Every one visited\.<\/span>/i,`<strong>ATLAS.</strong><span>${PRODUCT_SUBTITLE} · 116 parks. Two states. Every one visited.</span>`);
+}
 
 function loadCanonicalReviews(){
   const source=fs.readFileSync(MASTER_REVIEW_FILE,'utf8');
@@ -89,6 +109,7 @@ function createServer(){
           }else{
             html+=masterScript;
           }
+          html=applyAtlasBrand(html);
           return downstreamEnd.call(this,html,...args);
         }
       }
@@ -99,5 +120,5 @@ function createServer(){
   return server;
 }
 
-if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`State Parks v${VERSION} on ${PORT} (${appliedReviewCount} canonical reviews applied)`));
-module.exports={...previous,VERSION,canonicalReviews,canonicalReviewClientJS,appliedReviewCount,createServer};
+if(require.main===module)createServer().listen(PORT,'0.0.0.0',()=>console.log(`${PRODUCT_NAME} v${VERSION} on ${PORT} (${appliedReviewCount} canonical reviews applied)`));
+module.exports={...previous,VERSION,PRODUCT_NAME,PRODUCT_SUBTITLE,applyAtlasBrand,canonicalReviews,canonicalReviewClientJS,appliedReviewCount,createServer};
