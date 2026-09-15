@@ -1,4 +1,6 @@
-# MN & WI State Parks
+# Atlas
+
+**Minnesota & Wisconsin State Parks**
 
 Public website for reviews of all 116 designated state parks in Minnesota and Wisconsin.
 
