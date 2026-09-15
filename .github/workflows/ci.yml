@@ -28,5 +28,8 @@ jobs:
       - name: Clean install
         run: npm ci --no-audit --no-fund
 
+      - name: Prepare coordinates
+        run: npm run coordinates
+
       - name: Test
         run: npm test
