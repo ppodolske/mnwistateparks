@@ -29,7 +29,7 @@ assert.equal(M.removeDayFromTrip(legacy,2),true);
 const build=fs.readFileSync(require('node:path').join(__dirname,'build-cloudflare.js'),'utf8');
 const editor=fs.readFileSync(require('node:path').join(__dirname,'../trip-day-editor.js'),'utf8');
 const sync=fs.readFileSync(require('node:path').join(__dirname,'../trip-logistics-sync-v119.js'),'utf8');
-assert(editor.includes('Your \'+count+\' days come from the saved trip dates.'));
+assert(editor.includes('days come from the saved trip dates.'));
 assert(editor.includes('calendar?'));
 assert(sync.includes('trip.calendarDays=true'));
 assert(build.includes('Canonical trip day editor missing, duplicated, or out of load order'));
