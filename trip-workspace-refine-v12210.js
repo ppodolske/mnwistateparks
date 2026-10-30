@@ -118,6 +118,8 @@
     if(!name){if(status){status.className='trip-quick-error-v12210';status.textContent='Enter a trip name.'}return false}
     if(start&&end&&end<start){if(status){status.className='trip-quick-error-v12210';status.textContent='End date cannot be before the start date.'}return false}
     trip.name=name;trip.startDate=start;trip.date=start;trip.endDate=end;
+    const span=window.TripItinerary?.dateRangeDays?.(trip)||0;
+    if(span){trip.calendarDays=true;trip.dayCount=span;trip.endDateMode='manual';}
     trip.startLocation=startLocation;trip.endLocation=different?(customEnd||startLocation):startLocation;
     write(trips);
     const oldName=document.getElementById('tripNameEdit');if(oldName)oldName.value=name;
