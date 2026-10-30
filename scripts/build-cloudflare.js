@@ -17,6 +17,9 @@ async function main() {
   fs.mkdirSync(out, {recursive: true});
   fs.cpSync(path.join(root, 'public'), out, {recursive: true});
   fs.copyFileSync(path.join(__dirname, 'trip-pdf-native.js'), path.join(out, 'trip-pdf-native.js'));
+  fs.copyFileSync(path.join(__dirname, 'trip-timeline-model.js'), path.join(out, 'trip-timeline-model.js'));
+  fs.copyFileSync(path.join(__dirname, 'trip-timeline-ui.js'), path.join(out, 'trip-timeline-ui.js'));
+  fs.copyFileSync(path.join(__dirname, 'trip-timeline.css'), path.join(out, 'trip-timeline.css'));
   const server = site.createServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
@@ -63,7 +66,7 @@ async function main() {
           throw new Error('STOP: Canonical trip day editor missing, duplicated, or out of load order');
         }
         // Cloudflare-only: load the searchable text-PDF exporter after existing scripts.
-        html = html.replace('</body>', '<script src="/trip-pdf-native.js" defer></script></body>');
+        html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
       put(url === '/' ? 'index.html' : `${url.slice(1)}/index.html`, html);

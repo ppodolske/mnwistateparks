@@ -306,6 +306,34 @@
       }
     }
     if(trip.notes)out.field('Trip-wide notes',trip.notes,{size:9.5});
+    // Atlas Timeline: document each date and its independent overnight base.
+    if(trip.timelineV1?.version===1&&window.AtlasTripTimelineModel){
+      const timeline=window.AtlasTripTimelineModel;
+      const calendar=timeline.schedule(trip);
+      if(calendar){
+        out.rule(5);
+        out.heading('Visit calendar & overnight bases',{size:15,reserve:30});
+        const dailyRoutes=timeline.routes(trip,parks,window.PARK_DETAILS||{});
+        for(let i=0;i<calendar.rows.length;i++){
+          const day=calendar.rows[i],route=dailyRoutes[i];
+          out.need(17);
+          out.paragraph(dayString(day.date)+'  |  '+(day.visits.map(v=>index.get(v.slug)?.name||v.slug).join(', ')||'No park visits'),{size:9.4,bold:true,lh:4.3,after:0});
+          const night=day.night;
+          if(night){
+            const place=night.type==='park'?(index.get(night.slug)?.name||night.slug):night.type==='other'?night.label:night.type==='conflict'?'CONFLICT - select a single overnight base':'Not decided';
+            out.paragraph('Overnight: '+place,{size:8.8,lh:4.1,after:1});
+          }
+          if(route?.url)out.link('Drive route',route.url,{size:8});
+        }
+        for(const slug of trip.parks||[]){
+          const visit=trip.timelineV1.visits?.[slug];
+          if(visit?.start&&visit?.end){
+            const name=index.get(slug)?.name||slug;
+            out.paragraph(name+': arrival '+dayString(visit.start)+', last visit '+dayString(visit.end),{size:8.5,lh:4,after:1});
+          }
+        }
+      }
+    }
     geographicOverview(out,stops,coords);
     if(stops.length){
       // Use itinerary groups, rather than suppressing day detail and flattening stops.
