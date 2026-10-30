@@ -83,7 +83,7 @@
 
   const style=document.createElement('style');
   style.textContent=`
-    #tripDayEditor .trip-day-card.warn{display:none!important}
+    #tripUnassignedWorkflow{display:none!important}
     .trip-unassigned{margin:0 0 18px;border:1px solid #d8b58d;background:#fff}
     .trip-unassigned-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:14px 16px;background:#fbf6ef;border-bottom:1px solid #ead7bf}
     .trip-unassigned-head h3{margin:2px 0 3px;font-size:18px}.trip-unassigned-head p{margin:0;font-size:10px;color:#667;line-height:1.4;max-width:560px}
