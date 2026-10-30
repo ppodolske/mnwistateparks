@@ -12,11 +12,21 @@
   function mapsDirectionsUrl(points){const pts=(points||[]).map(text).filter(Boolean).filter((p,i,a)=>i===0||p!==a[i-1]);if(pts.length<2)return'';const origin=pts[0],destination=pts[pts.length-1],mid=pts.slice(1,-1);let u='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(destination)+'&travelmode=driving';if(mid.length)u+='&waypoints='+encodeURIComponent(mid.join('|'));return u}
   function orderedStops(trip,parks){const bySlug=new Map((parks||[]).map(p=>[p.slug,p]));return (trip.parks||[]).map((slug,i)=>{const p=bySlug.get(slug);if(!p)return null;return {park:p,slug,index:i,meta:(trip.stopMeta&&trip.stopMeta[slug])||{}}}).filter(Boolean)}
   function assignedDayNumbers(trip){return Object.values(trip.stopMeta||{}).map(m=>positiveInt(m&&m.day)).filter(Boolean)}
-  function dayCount(trip){const explicit=positiveInt(trip&&trip.dayCount);const assigned=assignedDayNumbers(trip||{});return Math.max(explicit,assigned.length?Math.max(...assigned):0)}
+  // The dated trip's duration is the inclusive calendar span.
+  function dateRangeDays(trip){
+    const start=isoDate(trip&&(trip.startDate||trip.date)),end=isoDate(trip&&trip.endDate);
+    if(!start||!end||end<start)return 0;
+    const a=Date.parse(start+'T12:00:00Z'),b=Date.parse(end+'T12:00:00Z');
+    if(!Number.isFinite(a)||!Number.isFinite(b))return 0;
+    if(new Date(a).toISOString().slice(0,10)!==start||new Date(b).toISOString().slice(0,10)!==end)return 0;
+    const n=Math.round((b-a)/86400000)+1;
+    return n>=1&&n<=3660?n:0;
+  }
+  function dayCount(trip){const calendar=trip&&trip.calendarDays===true?dateRangeDays(trip):0;if(calendar)return calendar;const explicit=positiveInt(trip&&trip.dayCount);const assigned=assignedDayNumbers(trip||{});return Math.max(explicit,assigned.length?Math.max(...assigned):0)}
   function ensureDayCount(trip){if(!trip||typeof trip!=='object')return 0;const n=dayCount(trip);trip.dayCount=n;return n}
-  function addDayToTrip(trip){const n=ensureDayCount(trip)+1;trip.dayCount=n;return n}
-  function removeDayFromTrip(trip,day){const n=positiveInt(day),count=ensureDayCount(trip);if(!n||n>count)return false;trip.stopMeta=trip.stopMeta||{};for(const meta of Object.values(trip.stopMeta)){const d=positiveInt(meta&&meta.day);if(!d)continue;if(d===n)meta.day='';else if(d>n)meta.day=String(d-1)}trip.dayCount=Math.max(0,count-1);return true}
-  function moveDayInTrip(trip,day,delta){const n=positiveInt(day),count=ensureDayCount(trip),target=n+Number(delta||0);if(!n||!Number.isInteger(target)||target<1||target>count||target===n)return false;trip.stopMeta=trip.stopMeta||{};for(const meta of Object.values(trip.stopMeta)){const d=positiveInt(meta&&meta.day);if(d===n)meta.day=String(target);else if(d===target)meta.day=String(n)}return true}
+  function addDayToTrip(trip){if(trip&&trip.calendarDays===true&&dateRangeDays(trip))return false;const n=ensureDayCount(trip)+1;trip.dayCount=n;return n}
+  function removeDayFromTrip(trip,day){if(trip&&trip.calendarDays===true&&dateRangeDays(trip))return false;const n=positiveInt(day),count=ensureDayCount(trip);if(!n||n>count)return false;trip.stopMeta=trip.stopMeta||{};for(const meta of Object.values(trip.stopMeta)){const d=positiveInt(meta&&meta.day);if(!d)continue;if(d===n)meta.day='';else if(d>n)meta.day=String(d-1)}trip.dayCount=Math.max(0,count-1);return true}
+  function moveDayInTrip(trip,day,delta){if(trip&&trip.calendarDays===true&&dateRangeDays(trip))return false;const n=positiveInt(day),count=ensureDayCount(trip),target=n+Number(delta||0);if(!n||!Number.isInteger(target)||target<1||target>count||target===n)return false;trip.stopMeta=trip.stopMeta||{};for(const meta of Object.values(trip.stopMeta)){const d=positiveInt(meta&&meta.day);if(d===n)meta.day=String(target);else if(d===target)meta.day=String(n)}return true}
   function groupDays(trip,parks){const count=dayCount(trip),groups=Array.from({length:count},(_,i)=>({key:String(i+1),stops:[]})),unassigned={key:'Unassigned',stops:[]};for(const stop of orderedStops(trip,parks)){const n=positiveInt(stop.meta.day);if(n&&n<=count)groups[n-1].stops.push(stop);else unassigned.stops.push(stop)}if(unassigned.stops.length)groups.push(unassigned);return groups}
   function dayDate(trip,key,stops){if(key==='Unassigned')return'';const explicit=[...new Set((stops||[]).map(s=>isoDate(s.meta.date)).filter(Boolean))];if(explicit.length===1)return explicit[0];const n=Number(key);return Number.isFinite(n)&&n>=1?addDays(trip.startDate||trip.date||'',n-1):''}
   function campingStop(day){return [...(day.stops||[])].reverse().find(s=>s.meta&&s.meta.camping)||null}
@@ -57,5 +67,5 @@
     const routeIncompleteDays=days.filter(d=>d.key!=='Unassigned'&&d.routeStatus!=='ready').length;
     return {days,totalParks:orderedStops(trip,parks).length,assignedDays:assigned.length,plannedDays:dayCount(trip),totalGroups:groups.length,stateCount:states.size,startDate:isoDate(trip.startDate||trip.date),endDate:isoDate(trip.endDate),startLocation:text(trip.startLocation),endLocation:text(trip.endLocation),routeReadyDays,routeIncompleteDays,roadDistanceKm:null,roadDriveMinutes:null,roadMetricsSource:'Google Maps route link'}
   }
-  return {addDays,placeQuery,mapsUrl,mapsDirectionsUrl,orderedStops,assignedDayNumbers,dayCount,ensureDayCount,addDayToTrip,removeDayFromTrip,moveDayInTrip,groupDays,dayDate,campingStop,campingQuery,routePlan,build};
+  return {addDays,placeQuery,mapsUrl,mapsDirectionsUrl,orderedStops,assignedDayNumbers,dateRangeDays,dayCount,ensureDayCount,addDayToTrip,removeDayFromTrip,moveDayInTrip,groupDays,dayDate,campingStop,campingQuery,routePlan,build};
 });
