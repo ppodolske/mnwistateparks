@@ -10,7 +10,7 @@
     const trips=read(),trip=trips.find(t=>t.id===id);if(!trip)return;
     // Respect explicit calendar ranges instead of shrinking them to the old day count.
     const span=window.TripItinerary?.dateRangeDays?.(trip)||0;
-    if(span&&(trip.calendarDays===true||(trip.endDateMode!=='auto'&&span>count(trip)))){
+    if(span&&(trip.calendarDays===true||span>count(trip))){
       trip.calendarDays=true;trip.dayCount=span;trip.endDateMode='manual';write(trips);return;
     }
     const endInput=document.getElementById('tripLogEndDate');
