@@ -109,6 +109,9 @@
 (()=>{
   const page=document.querySelector('[data-page="trip"]');
   if(!page||!window.TripItinerary)return;
+  // v1.18 is the single owner of day creation, assignments and campsite editing.
+  // Retain the legacy implementation only for hosts that do not load it.
+  if(document.querySelector('script[src^="/trip-day-editor.js"]'))return;
   const KEY='mnwiTripCollections',id=page.dataset.tripId;
   const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}};
   const write=v=>localStorage.setItem(KEY,JSON.stringify(v));
