@@ -25,8 +25,8 @@ const practical=p=>tags(p,PRACTICAL_RULES);
 
 function repairClientJS(source){
   return source
-    .replace(".join('\n')", ".join('\\\\n')")
-    .replace("prompt('Add to which trip?\n'+options+'\n\nEnter the number:')", "prompt('Add to which trip?\\\\n'+options+'\\\\n\\\\nEnter the number:')");
+    .replace(".join('\n')", ".join('\\n')")
+    .replace("prompt('Add to which trip?\n'+options+'\n\nEnter the number:')", "prompt('Add to which trip?\\n'+options+'\\n\\nEnter the number:')");
 }
 const clientJS=repairClientJS(base.clientJS);
 
