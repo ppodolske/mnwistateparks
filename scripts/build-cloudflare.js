@@ -16,6 +16,7 @@ async function main() {
   fs.rmSync(out, {recursive: true, force: true});
   fs.mkdirSync(out, {recursive: true});
   fs.cpSync(path.join(root, 'public'), out, {recursive: true});
+  fs.copyFileSync(path.join(__dirname, 'trip-pdf-native.js'), path.join(out, 'trip-pdf-native.js'));
   const server = site.createServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
@@ -37,6 +38,10 @@ async function main() {
       let html = r.body;
       if (['/parks','/find','/compare','/trip'].includes(url)) {
         html = html.replace('</body>', '<script src="/cloudflare-query.js"></script></body>');
+      }
+      if (url === '/trip') {
+        // Cloudflare-only: load the text-PDF exporter after the legacy scripts.
+        html = html.replace('</body>', '<script src="/trip-pdf-native.js" defer></script></body>');
       }
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
       put(url === '/' ? 'index.html' : `${url.slice(1)}/index.html`, html);
