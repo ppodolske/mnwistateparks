@@ -40,7 +40,29 @@ async function main() {
         html = html.replace('</body>', '<script src="/cloudflare-query.js"></script></body>');
       }
       if (url === '/trip') {
-        // Cloudflare-only: load the text-PDF exporter after the legacy scripts.
+        // The original Node wrapper used to inject the canonical day editor.
+        // Some wrappers discard that injection in static snapshots. Explicitly
+        // insert it after the legacy logistics script and BEFORE workspace cleanup,
+        // which wraps the day editor and moves it into the itinerary section.
+        const canonical = '<script src="/trip-day-editor.js" defer></script>';
+        const cleanup = '<script src="/trip-workspace-cleanup.js" defer></script>';
+        // Avoid duplicate script execution if the Node wrapper starts including it.
+        html = html.replace(/<script\\b[^>]*?\\bsrc=["']\\/trip-day-editor\\.js(?:\\?[^"']*)?["'][^>]*><\\/script>/gi, '');
+        if (!html.includes(cleanup)) {
+          throw new Error('STOP: Trip workspace cleanup anchor missing; day editor cannot be ordered safely');
+        }
+        html = html.replace(cleanup, canonical + cleanup);
+        const positions = [
+          html.indexOf('/trip-itinerary.js'),
+          html.indexOf('/trip-logistics-fix.js'),
+          html.indexOf('/trip-day-editor.js'),
+          html.indexOf('/trip-workspace-cleanup.js')
+        ];
+        const refs = [...html.matchAll(/<script\\b[^>]*?\\bsrc=["']\\/trip-day-editor\\.js(?:\\?[^"']*)?["'][^>]*><\\/script>/gi)];
+        if (positions.some(p => p < 0) || positions.some((p, i) => i > 0 && p <= positions[i - 1]) || refs.length !== 1) {
+          throw new Error('STOP: Canonical trip day editor missing, duplicated, or out of load order');
+        }
+        // Cloudflare-only: load the searchable text-PDF exporter after existing scripts.
         html = html.replace('</body>', '<script src="/trip-pdf-native.js" defer></script></body>');
       }
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
