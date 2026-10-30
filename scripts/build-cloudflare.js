@@ -47,7 +47,7 @@ async function main() {
         const canonical = '<script src="/trip-day-editor.js" defer></script>';
         const cleanup = '<script src="/trip-workspace-cleanup.js" defer></script>';
         // Avoid duplicate script execution if the Node wrapper starts including it.
-        html = html.replace(/<script\\b[^>]*?\\bsrc=["']\\/trip-day-editor\\.js(?:\\?[^"']*)?["'][^>]*><\\/script>/gi, '');
+        html = html.replace(/<script\b[^>]*?\bsrc=["']\/trip-day-editor\.js(?:\?[^"']*)?["'][^>]*><\/script>/gi, '');
         if (!html.includes(cleanup)) {
           throw new Error('STOP: Trip workspace cleanup anchor missing; day editor cannot be ordered safely');
         }
@@ -58,7 +58,7 @@ async function main() {
           html.indexOf('/trip-day-editor.js'),
           html.indexOf('/trip-workspace-cleanup.js')
         ];
-        const refs = [...html.matchAll(/<script\\b[^>]*?\\bsrc=["']\\/trip-day-editor\\.js(?:\\?[^"']*)?["'][^>]*><\\/script>/gi)];
+        const refs = [...html.matchAll(/<script\b[^>]*?\bsrc=["']\/trip-day-editor\.js(?:\?[^"']*)?["'][^>]*><\/script>/gi)];
         if (positions.some(p => p < 0) || positions.some((p, i) => i > 0 && p <= positions[i - 1]) || refs.length !== 1) {
           throw new Error('STOP: Canonical trip day editor missing, duplicated, or out of load order');
         }
