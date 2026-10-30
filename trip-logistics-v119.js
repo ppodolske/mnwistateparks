@@ -90,6 +90,8 @@
     const different=Boolean(document.getElementById('tripDifferentEnd')?.checked);
     const customEnd=(document.getElementById('tripLogEndLocation')?.value||'').trim();
     trip.startDate=start;trip.date=start;trip.endDate=end;
+    const span=window.TripItinerary?.dateRangeDays?.(trip)||0;
+    if(span){trip.calendarDays=true;trip.dayCount=span;trip.endDateMode='manual';}
     trip.startLocation=startLocation;trip.endLocation=different?(customEnd||startLocation):startLocation;
     trip.emergencyContact=(document.getElementById('tripLogEmergency')?.value||'').trim();
     trip.lodgingNotes=document.getElementById('tripLogLodging')?.value||'';
