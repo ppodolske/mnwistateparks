@@ -103,6 +103,28 @@
       });
       this.y+=22;
     }
+    ruledLines(n=2,spacing=6){
+      for(let i=0;i<n;i++){
+        this.need(spacing+1);
+        setColor(this.doc,'setDrawColor',COLORS.line);
+        this.doc.line(this.left,this.y+spacing-2,this.right,this.y+spacing-2);
+        this.y+=spacing;
+      }
+      this.y+=2;
+    }
+    checkboxRow(items){
+      this.need(9);
+      let x=this.left;
+      for(const item of items){
+        const label=text(item);
+        setColor(this.doc,'setDrawColor',COLORS.muted);
+        this.doc.rect(x,this.y-2.7,2.8,2.8);
+        this.font(8,'normal',COLORS.ink);
+        this.doc.text(label,x+4.5,this.y);
+        x+=Math.min(70,Math.max(44,label.length*2.1+12));
+      }
+      this.y+=8;
+    }
     link(label,url,options={}){
       if(!escUrl(url))return;
       const s=options.size||9;
@@ -156,46 +178,86 @@
     const p=index.get(stop.slug)||stop.park;
     if(!p)return;
     const meta=stop.meta||{},ref=refs[p.slug]||{};
-    out.need(compact?27:43);
+    out.need(compact?29:55);
     out.rule(3);
-    out.heading(`${i+1}. ${p.name || stop.park.name}`,{size:13,reserve:compact?19:34});
-    const tripKind=String(p.idealTrip||'').trim();
+    out.heading(`${i+1}. ${p.name || stop.park.name}`,{size:13,reserve:compact?20:39});
     const rating=Number.isFinite(Number(p.rating))?Number(p.rating).toFixed(1)+' / 5 pine':'';
-    out.paragraph([p.city,p.state,tripKind,rating].filter(Boolean).join('   |   '),{size:9,color:COLORS.muted,after:3});
-    if(ref.address)out.field('Address',ref.address,{size:9});
+    out.paragraph([p.city,p.state,p.idealTrip,rating].filter(Boolean).join('   |   '),{size:9,color:COLORS.muted,after:3});
+    out.field('Park address',ref.address||'Address not verified',{size:9});
     if(!compact){
+      if(Array.isArray(p.experience)&&p.experience.length)out.field('Experiences',p.experience.join('  |  '),{size:8.7});
+      if(Array.isArray(p.practical)&&p.practical.length)out.field('Practical considerations',p.practical.join('  |  '),{size:8.7});
       if(p.review){out.label('What to expect');out.paragraph(p.review,{size:10.2,lh:5.1,after:3});}
       if(p.pros)out.field('Pros',p.pros,{size:9.5});
-      if(p.cons)out.field('Watch out for',p.cons,{size:9.5});
+      if(p.cons)out.field('Cons / watch out for',p.cons,{size:9.5});
       if(p.criticalFactors)out.field('Critical factors',p.criticalFactors,{size:9.5});
-    }else{
-      if(p.criticalFactors||p.cons)out.field('Watch out for',p.criticalFactors||p.cons,{size:9});
+    }else if(p.criticalFactors||p.cons){
+      out.field('Watch out for',[p.criticalFactors,p.cons].filter(Boolean).join(' | '),{size:9});
     }
-    const campground=meta.camping?[meta.campground,meta.loop,meta.campsite].filter(Boolean).join(' / ')||'Camping planned':'';
-    if(campground)out.field('Camping',campground,{size:9});
+    const camp=meta.camping?[meta.campground,meta.loop,meta.campsite].filter(Boolean).join(' / ')||'Camping planned':'';
+    if(camp)out.field('Campground / site',camp,{size:9});
     if(meta.reservation)out.field('Reservation',meta.reservation,{size:9});
-    if(meta.notes||meta.note)out.field('Your stop notes',meta.notes||meta.note,{size:9});
+    if(meta.checkIn||meta.checkOut)out.field('Check-in / check-out',`${meta.checkIn||'Not set'} / ${meta.checkOut||'Not set'}`,{size:9});
+    if(meta.note||meta.notes)out.field('Your stop notes',meta.note||meta.notes,{size:9});
     const maps=ref.directionsUrl||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.city,p.state].filter(Boolean).join(', '));
-    if(escUrl(maps))out.link('Open directions in Google Maps',maps,{size:9});
-    const official=ref.officialUrl||ref.sourceUrl;
-    if(!compact&&escUrl(official))out.link('Official park information',official,{size:8.5});
+    out.link('Directions in Google Maps',maps,{size:9});
+    if(!compact){
+      out.link('Official park map',ref.mapUrl,{size:8.5});
+      out.link(ref.agencyLabel||'Official park / DNR information',ref.officialUrl||ref.sourceUrl,{size:8.5});
+      out.label('Notes after visit');
+      out.ruledLines(2);
+      out.checkboxRow(['Would return','Favorite stop']);
+    }
   }
   function quickReference(out,trip,stops,refs,compact){
-    if(compact&&stops.length<=2)return;
-    out.rule(4);out.heading('On-the-road reference',{size:14,reserve:30});
-    const fields=[['Emergency / reference contact',trip.emergencyContact],['Lodging',trip.lodgingNotes],['Fuel / food / resupply',trip.resupplyNotes]];
-    for(const [name,value] of fields)if(String(value||'').trim())out.field(name,value,{size:9.5});
-    const checklist=['Check closures and park alerts','Confirm reservations','Check weather and trail conditions','Save offline maps','Bring booking confirmations'];
+    out.rule(5);
+    out.heading('Logistics & park reference',{size:15,reserve:38});
+    // Preserve all trip-wide fields, including unfilled essential reference fields.
+    out.field('Emergency / reference contact',trip.emergencyContact||'Not entered',{size:9.5});
+    out.field('Trip start / end',`${trip.startLocation||'Not set'}  >  ${trip.endLocation||'Not set'}`,{size:9.5});
+    out.field('Lodging notes',trip.lodgingNotes||'None entered',{size:9.5});
+    out.field('Fuel / food / resupply notes',trip.resupplyNotes||'None entered',{size:9.5});
+    out.label('Park quick reference');
+    for(let i=0;i<stops.length;i++){
+      const s=stops[i],p=s.park,ref=refs[s.slug]||{},m=s.meta||{};
+      out.need(23);
+      out.paragraph(`${i+1}. ${p.name}  |  ${p.city}, ${p.state}`,{bold:true,size:9,lh:4.3,after:0});
+      out.paragraph(ref.address||'Address not verified',{size:8.5,lh:4,after:1});
+      if(m.camping||m.reservation||m.checkIn||m.checkOut){
+        const bits=[m.camping?[m.campground,m.loop,m.campsite].filter(Boolean).join(' / ')||'Camping planned':'',
+          m.reservation?'Reservation '+m.reservation:'',m.checkIn?'In '+m.checkIn:'',m.checkOut?'Out '+m.checkOut:''].filter(Boolean);
+        out.paragraph(bits.join(' | '),{size:8,lh:3.8,after:1});
+      }
+      // In Detailed, preserve separate map/DNR links in addition to navigation.
+      if(!compact){
+        out.link('Directions',ref.directionsUrl||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.city,p.state].filter(Boolean).join(', ')),{size:8});
+        out.link('Official park map',ref.mapUrl,{size:8});
+        out.link(ref.agencyLabel||'Official DNR page',ref.officialUrl||ref.sourceUrl,{size:8});
+      }
+    }
     out.label('Before departure');
-    for(const item of checklist){out.need(6);out.font(9,'normal');out.doc.rect(out.left,out.y-2.6,2.6,2.6);out.doc.text(item,out.left+6,out.y);out.y+=5.3;}
-    out.paragraph('Verify official park conditions, access and reservations shortly before travelling.',{size:8,color:COLORS.muted,after:0});
+    const checklist=['Verify park closures / alerts','Confirm reservations','Check current weather and trail conditions',
+      'Download offline maps as needed','Fuel / resupply before remote stretches','Pack booking confirmations'];
+    for(const item of checklist)out.checkboxRow([item]);
+    if(!compact){
+      out.label('Ideal trip legend');
+      out.paragraph('Weekend - destination-worthy stay; Day Trip - strong standalone visit; On the Way - best as a stop or add-on.',{size:8.5});
+      out.label('Pine rating');
+      out.paragraph('The pine score reflects how well each park delivers its own experience; it is not a universal best-to-worst ranking.',{size:8.5});
+    }
+    out.paragraph('Park conditions, access, closures and reservation rules can change. Confirm current information with official sources before travelling.',{size:8,color:COLORS.muted,after:2});
   }
   function journal(out){
-    out.need(30);out.rule(5);out.heading('Trip notes and highlights',{size:14,reserve:18});
-    for(const name of ['Favorite park','Best campsite / overnight','Biggest surprise','What I would change']){
-      out.need(12);out.label(name);
-      setColor(out.doc,'setDrawColor',COLORS.line);out.doc.line(out.left,out.y+2,out.right,out.y+2);out.y+=9;
-    }
+    // The Detailed version is also a usable paper journal, not just a synopsis.
+    out.need(46);out.rule(5);
+    out.heading('End-of-trip notes & highlights',{size:15,reserve:28});
+    out.paragraph('Write during the trip or after returning home.',{size:9,color:COLORS.muted,after:5});
+    const prompts=[
+      ['Favorite park',2],['Best campsite / overnight',2],['Biggest surprise',2],
+      ['Park to revisit',2],['Best moment',3],['What I would change next time',3],
+      ['General trip notes / memories / recommendations',5]
+    ];
+    for(const [label,count] of prompts){out.label(label);out.ruledLines(count,6);}
   }
   async function sync(){
     try {window.TripDayEditor?.persist?.(false);}catch(err){console.warn('Day editor persistence failed',err);}
@@ -246,14 +308,32 @@
     if(trip.notes)out.field('Trip-wide notes',trip.notes,{size:9.5});
     geographicOverview(out,stops,coords);
     if(stops.length){
-      for(let i=0;i<stops.length;i++){
-        const stop=stops[i];
-        const key=String(stop.meta?.day||'').trim();
-        if(key&&(!i||key!==String(stops[i-1].meta?.day||'').trim())){
-          out.need(20);out.label(`Day ${key}`);
+      // Use itinerary groups, rather than suppressing day detail and flattening stops.
+      // Each park must appear exactly once, including unassigned stops.
+      let n=0;
+      const seen=new Set();
+      for(const day of itinerary.days){
+        out.need(mode==='compact'?20:30);
+        out.rule(4);
+        out.heading(day.label||'Trip stops',{size:14,reserve:22});
+        if(day.date)out.paragraph('Date: '+dayString(day.date),{size:9});
+        if(day.key==='Unassigned')out.paragraph('These parks have not yet been assigned to a numbered trip day.',{size:8.5,color:COLORS.orange});
+        if(day.start||day.overnight){
+          out.paragraph(`Starting point: ${day.start||'Not set'}   |   Overnight: ${day.overnight||'Not set'}`,{size:9});
         }
-        printStop(out,stop,i,index,refs,mode==='compact');
+        if(day.routeAvailable&&escUrl(day.routeUrl))out.link(`${day.label} route in Google Maps`,day.routeUrl,{size:9});
+        else if(day.key!=='Unassigned'&&day.routeMessage)out.paragraph('Route: '+day.routeMessage,{size:8.5,color:COLORS.muted});
+        for(const stop of day.stops){
+          if(seen.has(stop.slug))throw new Error('A park appears twice in the itinerary');
+          seen.add(stop.slug);
+          printStop(out,stop,n++,index,refs,mode==='compact');
+        }
+        if(mode!=='compact'){
+          out.label('Day notes / changes / weather');
+          out.ruledLines(2);
+        }
       }
+      if(seen.size!==stops.length)throw new Error('A park is missing from the itinerary. PDF not generated.');
     }else{out.rule();out.paragraph('No parks added yet. Add parks in the Atlas trip planner before exporting.',{size:11});}
     quickReference(out,trip,stops,refs,mode==='compact');
     if(mode!=='compact')journal(out);
@@ -299,5 +379,5 @@
     if(button){button.dataset.pdfRuntime='native';button.title='Download searchable text PDF';}
   }
   install();
-  window.TripPDFNative={generate,install,version:'1.0.0'};
+  window.TripPDFNative={generate,install,version:'1.1.0-full-detail'};
 })();
