@@ -27,5 +27,5 @@ test('build includes source catalog before workspace script',()=>{
 test('existing trip fields remain manually editable',()=>{
  const s=fs.readFileSync(new URL('./atlas-trip-experience.js',import.meta.url),'utf8');
  for(const id of ['ax2Source-campground','ax2Source-loop','ax2Source-campsite'])assert(s.includes(id));
- assert(s.includes('catalog.suggestions(parkName,cg,loop)'));
+ assert(s.includes('catalog.suggestions(parkName,cg,loop,slug)'));
 });
