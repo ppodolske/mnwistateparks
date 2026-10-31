@@ -2,7 +2,14 @@
    No APIs, storage writes, generated reservations, or geolocation. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.AtlasTripExperienceCore=api;})(typeof window!=='undefined'?window:null,function(){
 'use strict';
-const FIELDS=['bookingStatus','arrivalInstructions','parkingNotes','waterNotes','facilitiesNotes','contactNotes','personalNotes'];
+const FIELDS=['bookingStatus','bookingUrl','arrivalInstructions','parkingNotes','waterNotes','facilitiesNotes','contactNotes','personalNotes'];
+const checklistItems=[
+ ['reservationChecked','Reservation or arrival policy reviewed'],
+ ['arrivalChecked','Arrival details and check-in reviewed'],
+ ['accessChecked','Access, parking and conditions checked'],
+ ['suppliesPacked','Camping supplies prepared'],
+ ['departurePlanned','Checkout and departure planned']
+];
 const statuses=['not-booked','pending','confirmed','first-come','cancelled'];
 const sane=x=>typeof x==='string'?x.trim():'';
 const blank=x=>!sane(x);
@@ -10,7 +17,14 @@ function dossier(trip,slug){const meta=trip?.stopMeta?.[slug]||{};const nested=m
   const out={slug, campground:sane(meta.campground),loop:sane(meta.loop),campsite:sane(meta.campsite),reservation:sane(meta.reservation),checkIn:sane(meta.checkIn),checkOut:sane(meta.checkOut)};
   for(const f of FIELDS)out[f]=sane(nested[f]);
   if(!statuses.includes(out.bookingStatus))out.bookingStatus='not-booked';
+  const raw=nested.checklist&&typeof nested.checklist==='object'&&!Array.isArray(nested.checklist)?nested.checklist:{};
+  out.checklist=Object.fromEntries(checklistItems.map(([key])=>[key,raw[key]===true]));
   return out;
+}
+function dossierProgress(trip,slug){
+ const d=dossier(trip,slug);
+ const complete=checklistItems.filter(([key])=>d.checklist[key]).length;
+ return {complete,total:checklistItems.length,pending:checklistItems.filter(([key])=>!d.checklist[key]).map(([key,title])=>({key,title})),bookingStatus:d.bookingStatus};
 }
 function updateDossier(trip,slug,form){if(!trip||!Array.isArray(trip.parks)||!trip.parks.includes(slug))throw Error('Park is not part of this trip');
   if(!form||typeof form!=='object')throw Error('Invalid campsite dossier');
@@ -18,8 +32,20 @@ function updateDossier(trip,slug,form){if(!trip||!Array.isArray(trip.parks)||!tr
   for(const key of ['campground','loop','campsite','reservation','checkIn','checkOut']){
     const val=sane(form[key]);if(val.length>250)throw Error(key+' is too long');copy[key]=val;
   }
-  const ext={};for(const key of FIELDS){const val=sane(form[key]);if(val.length>1800)throw Error(key+' is too long');ext[key]=val;}
+  const ext={};for(const key of FIELDS){const val=sane(form[key]);
+    if(val.length>(key==='bookingUrl'?500:1800))throw Error(key+' is too long');
+    ext[key]=val;
+  }
   if(!statuses.includes(ext.bookingStatus))throw Error('Invalid booking status');
+  if(ext.bookingUrl){
+    let u;try{u=new URL(ext.bookingUrl)}catch{throw Error('Booking link must be an HTTPS URL')}
+    if(u.protocol!=='https:'||!u.hostname||u.username||u.password)throw Error('Booking link must be an HTTPS URL without credentials');
+  }
+  if(form.checklist!==undefined){
+    if(!form.checklist||typeof form.checklist!=='object'||Array.isArray(form.checklist))throw Error('Invalid campsite checklist');
+    for(const [key] of checklistItems)if(form.checklist[key]!==undefined&&typeof form.checklist[key]!=='boolean')throw Error('Invalid checklist value: '+key);
+    ext.checklist=Object.fromEntries(checklistItems.map(([key])=>[key,form.checklist[key]===true]));
+  }
   copy.dossierV1={...(current.dossierV1||{}),...ext};
   trip.stopMeta={...(trip.stopMeta||{}),[slug]:copy};return copy;
 }
@@ -66,5 +92,5 @@ function snapshot(trip,parks,timeline,routeRows){const p=plan(trip,parks,timelin
   return {version:1,preparedAt:new Date().toISOString(),tripId:trip.id,tripName:p.tripName,start:p.start,end:p.end,
     startLocation:p.startLocation,endLocation:p.endLocation,rows};
 }
-return {dossier,updateDossier,plan,readiness,snapshot,statuses};
+return {dossier,updateDossier,dossierProgress,checklistItems,plan,readiness,snapshot,statuses};
 });
