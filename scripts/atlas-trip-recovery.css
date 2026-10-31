@@ -1,0 +1,5 @@
+/* Namespaced Stage 4.1 recovery controls inside the existing trip empty state. */
+.atlas-trip-recovery{max-width:520px;margin:16px auto 0;text-align:center;color:#234239;font:13px/1.55 Arial,Helvetica,sans-serif}
+.atlas-trip-recovery p{margin:8px 0}.atlas-trip-recovery-note{font-size:12px;color:#5c685d}
+.atlas-trip-recovery-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.atlas-trip-recovery-actions button{font:600 12px Arial,Helvetica,sans-serif;padding:10px 12px;cursor:pointer;border-radius:8px}

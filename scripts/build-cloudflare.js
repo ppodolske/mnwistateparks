@@ -24,6 +24,7 @@ async function main() {
   fs.copyFileSync(path.join(__dirname, 'atlas-account.css'), path.join(out, 'atlas-account.css'));
   fs.copyFileSync(path.join(__dirname, 'atlas-sync-core.mjs'), path.join(out, 'atlas-sync-core.mjs'));
   fs.copyFileSync(path.join(__dirname, 'atlas-trip-sync.mjs'), path.join(out, 'atlas-trip-sync.mjs'));
+  for(const f of ['atlas-trip-recovery.mjs','atlas-trip-recovery.css']) fs.copyFileSync(path.join(__dirname,f),path.join(out,f));
   for(const f of ['atlas-account-vault.js','atlas-saved-sync.mjs','atlas-stage4-ui.mjs','atlas-admin.mjs','atlas-admin.css'])
     fs.copyFileSync(path.join(__dirname,f),path.join(out,f));
   // The Firebase web configuration contains public identifiers, never a private key.
@@ -87,6 +88,8 @@ async function main() {
         // Cloudflare-only: load the searchable text-PDF exporter after existing scripts.
         html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
+      // Only the trip page needs the explicit Stage 4.1 browser/cloud restoration controls.
+      if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-recovery.css"><script type="module" src="/atlas-trip-recovery.mjs"></script></body>');
       // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
       if(!html.includes('</head>'))throw Error('STOP: missing HTML head; cannot install account isolation guard');
       html=html.replace('</head>', '<script src="/atlas-account-vault.js"></script></head>');
