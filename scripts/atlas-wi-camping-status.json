@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "asOf": "2026-10-31",
+  "caveat": "no_camping_listed means no campground found on official park page; it is not an independent regulatory determination that all overnight uses are prohibited.",
+  "parks": [
+    {
+      "slug": "amnicon-falls",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/amnicon-falls/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "aztalan",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/aztalan/recreation",
+      "note": "Park recreation lists no camping facilities"
+    },
+    {
+      "slug": "belmont-mound",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/belmont",
+      "note": "Locally operated historic park; no campground on DNR park page"
+    },
+    {
+      "slug": "big-bay",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/big-bay/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "big-foot-beach",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/big-foot-beach/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "blue-mound",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/blue-mound/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "brunet-island",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/brunet-island/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "buckhorn",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/buckhorn/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "copper-culture",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/copperculture",
+      "note": "Locally operated history/museum park; no campground listed"
+    },
+    {
+      "slug": "copper-falls",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/copper-falls/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "council-grounds",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/council-grounds/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "cross-plains",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/crossplains",
+      "note": "No camping facilities listed on official park information"
+    },
+    {
+      "slug": "devils-lake",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/devils-lake/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "governor-dodge",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/governor-dodge/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "governor-nelson",
+      "state": "WI",
+      "status": "day_use",
+      "source": "https://dnr.wisconsin.gov/topic/parks/govnelson",
+      "note": "DNR explicitly calls this a day-use park"
+    },
+    {
+      "slug": "governor-thompson",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/governor-thompson/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "harrington-beach",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/harrington-beach/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "hartman-creek",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/hartman-creek/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "heritage-hill",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/heritagehill",
+      "note": "Outdoor museum; no camping listed"
+    },
+    {
+      "slug": "high-cliff",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/high-cliff/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "interstate",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/interstate/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "kinnickinnic",
+      "state": "WI",
+      "status": "boat_mooring_only",
+      "source": "https://dnr.wisconsin.gov/topic/parks/kinnickinnic/recreation",
+      "note": "Overnight boat mooring requiring permit, not ground campsite"
+    },
+    {
+      "slug": "kohler-andrae",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/kohler-andrae/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "lake-kegonsa",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/lake-kegonsa/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "lake-wissota",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/lake-wissota/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "lakeshore",
+      "state": "WI",
+      "status": "boat_slip_only",
+      "source": "https://dnr.wisconsin.gov/topic/parks/lakeshore",
+      "note": "Reservable overnight boat slip, not ground campsite"
+    },
+    {
+      "slug": "lizard-mound",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/lizardmound/recreation",
+      "note": "Sacred burial ground; no campground listed"
+    },
+    {
+      "slug": "lost-dauphin",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/lostdauphin",
+      "note": "Picnic and walking park; no campground listed"
+    },
+    {
+      "slug": "merrick",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/merrick/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "mill-bluff",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/mill-bluff/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "mirror-lake",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/mirror-lake/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "natural-bridge",
+      "state": "WI",
+      "status": "day_use",
+      "source": "https://dnr.wisconsin.gov/topic/parks/naturalbridge/recreation",
+      "note": "DNR explicitly calls this a day-use park"
+    },
+    {
+      "slug": "nelson-dewey",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/nelson-dewey/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "new-glarus-woods",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/new-glarus-woods/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "newport",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/newport/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "pattison",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/pattison/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "peninsula",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/peninsula/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "perrot",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/perrot/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "potawatomi",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/potawatomi/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "rib-mountain",
+      "state": "WI",
+      "status": "no_camping_listed",
+      "source": "https://dnr.wisconsin.gov/topic/parks/ribmt/recreation",
+      "note": "Recreation page has no camping section"
+    },
+    {
+      "slug": "roche-a-cri",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/roche-a-cri/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "rock-island",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/rock-island/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "rocky-arbor",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/rocky-arbor/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "straight-lake",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/straight-lake/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "tower-hill",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/tower-hill/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "whitefish-dunes",
+      "state": "WI",
+      "status": "day_use",
+      "source": "https://dnr.wisconsin.gov/events/location/whitefish",
+      "note": "DNR explicitly states this is a day-use park with no camping"
+    },
+    {
+      "slug": "wildcat-mountain",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/wildcat-mountain/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "willow-river",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/willow-river/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "wyalusing",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/wyalusing/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    },
+    {
+      "slug": "yellowstone-lake",
+      "state": "WI",
+      "status": "camping_reference_in_catalog",
+      "source": "https://dnr.wisconsin.gov/topic/parks/yellowstone-lake/maps",
+      "note": "Campground reference catalog contains official DNR park data; campsite-number list may be incomplete."
+    }
+  ]
+}
