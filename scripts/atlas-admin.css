@@ -19,3 +19,10 @@
 .aa-subhead{font-size:12px;margin:14px 0 6px}
 @media(max-width:900px){.ad-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.ad-page{margin:35px auto;padding:0 14px}.ad-grid{gap:8px}.ad-card{min-height:108px;padding:12px}.ad-card strong{font-size:28px}.ad-bar-col{font-size:10px}.ad-trend{padding:12px}}
+
+/* Build 1 readable admin controls: compact chart height is retained. */
+.ad-kicker{font-size:13px}.ad-lede{font-size:16px}
+.ad-action,.ad-page .aa-admin-link{font-size:15px;min-height:40px}
+.ad-card p{font-size:14px}.ad-card small{font-size:13px}
+.ad-trend h2{font-size:19px}.ad-trend-count,.ad-bar-col,.ad-note{font-size:14px}
+@media(max-width:520px){.ad-bar-col{font-size:13px}.ad-trend-count{font-size:14px}}

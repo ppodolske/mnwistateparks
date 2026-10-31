@@ -191,6 +191,13 @@
     if(nightCount>0)first.push(`${nightCount} NIGHT${nightCount===1?'':'S'} IN TIMELINE`);
     if(first.length)b.textLines(first.join('     |     '),{size:9.4,bold:true,leading:4.8,after:3});
     if(booking)b.field('Reservation',booking);
+    const dossier=m.dossierV1&&typeof m.dossierV1==='object'?m.dossierV1:{};
+    if(dossier.bookingStatus&&dossier.bookingStatus!=='not-booked')
+      b.field('Booking status',({confirmed:'Confirmed (self-reported)',pending:'Awaiting confirmation','first-come':'First-come / no booking',cancelled:'Cancelled'})[dossier.bookingStatus]||'Not recorded');
+    for(const [label,key] of [['Arrival instructions','arrivalInstructions'],['Parking / access','parkingNotes'],
+      ['Water','waterNotes'],['Facilities','facilitiesNotes'],['Other stay notes','personalNotes']]){
+      if(dossier[key])b.field(label,dossier[key]);
+    }
     const dates=[note(m.checkIn),note(m.checkOut)].filter(Boolean);
     if(dates.length)b.field('Check-in / check-out',`${note(m.checkIn)||'Not entered'} / ${note(m.checkOut)||'Not entered'}`);
     if(personal)b.field('Your park notes',personal);

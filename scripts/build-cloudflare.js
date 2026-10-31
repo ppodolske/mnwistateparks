@@ -18,6 +18,7 @@ async function main() {
   fs.cpSync(path.join(root, 'public'), out, {recursive: true});
   fs.copyFileSync(path.join(__dirname, 'trip-pdf-native.js'), path.join(out, 'trip-pdf-native.js'));
   fs.copyFileSync(path.join(__dirname, 'atlas-print-reference.js'), path.join(out, 'atlas-print-reference.js'));
+  for(const f of ['atlas-trip-experience-core.js','atlas-trip-experience.js','atlas-trip-experience.css','atlas-trip-mode-sw.js']) fs.copyFileSync(path.join(__dirname,f),path.join(out,f));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-model.js'), path.join(out, 'trip-timeline-model.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-ui.js'), path.join(out, 'trip-timeline-ui.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline.css'), path.join(out, 'trip-timeline.css'));
@@ -91,6 +92,7 @@ async function main() {
       }
       // Only the trip page needs the explicit Stage 4.1 browser/cloud restoration controls.
       if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-recovery.css"><script type="module" src="/atlas-trip-recovery.mjs"></script></body>');
+      if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-experience.css"><script src="/atlas-trip-experience-core.js" defer></script><script src="/atlas-trip-experience.js" defer></script></body>');
       // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
       if(!html.includes('</head>'))throw Error('STOP: missing HTML head; cannot install account isolation guard');
       html=html.replace('</head>', '<script src="/atlas-account-vault.js"></script></head>');
@@ -106,6 +108,8 @@ async function main() {
     let adminHtml=about.replace(matches[0],main).replace(/<title>[^<]*<\/title>/i,'<title>Administration | Atlas Parks</title>');
     adminHtml=adminHtml.replace('</body>','<script type="module" src="/atlas-admin.mjs"></script></body>');
     put('admin/index.html',adminHtml);
+    // Trip Mode is intentionally self-contained: cached shell contains no trip data.
+    put('tripmode/index.html',fs.readFileSync(path.join(__dirname,'atlas-trip-mode-page.html'),'utf8'));
     // Capture script URLs from generated HTML as well as declared server source files.
     // /client.js is dynamically generated and does NOT exist as a file on disk.
     const requiredScripts = new Set();

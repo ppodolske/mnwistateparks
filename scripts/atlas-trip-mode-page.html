@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#244d3e"><title>Atlas · Trip Mode</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{font:16px/1.55 Arial,Helvetica,sans-serif;background:#f8f6f0;color:#263830;margin:0}.wrap{max-width:660px;margin:auto;padding:22px 18px 50px}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #cdd3c9;padding-bottom:15px}.brand{font-weight:800;font-size:21px;color:#20553e}.muted{color:#607166;font-size:14px}.box{padding:17px 0;border-bottom:1px solid #d8ded5}h1{font-size:clamp(26px,5vw,37px);line-height:1.15;margin:9px 0 6px;letter-spacing:-.03em}h2{font-size:19px;margin:2px 0 10px}h3{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#426450;margin:0 0 8px}.controls{display:flex;gap:7px;flex-wrap:wrap}.btn{border:1px solid #426250;border-radius:7px;padding:10px 13px;background:transparent;color:#1f4737;font:600 15px Arial;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:#255441;color:#fff}.btn:disabled{opacity:.4;cursor:default}.note{padding:10px 13px;border-left:3px solid #d3a365;background:#fffbf1;margin-top:12px}.row{padding:10px 0;border-bottom:1px solid #e5e8e2}.row:last-child{border:0}.label{font-size:13px;color:#5d6e62}.value{font-size:17px;font-weight:600;overflow-wrap:anywhere}.links{margin:12px 0;display:flex;gap:9px;flex-wrap:wrap}.hidden{display:none!important}a{color:#1d5640}button:focus-visible,a:focus-visible{outline:3px solid #b28030;outline-offset:3px}#dayCount{font-size:13px;color:#65776c}#info{color:#66532b}
+@media print{body{background:white}.controls,.links,#offlineAction{display:none}.wrap{padding:0;max-width:none}}
+</style></head><body><main class="wrap"><header class="bar"><div><div class="brand">ATLAS.</div><div class="muted">Trip Mode · Private device reference</div></div><a id="back" href="/saved/" class="btn">Back to Atlas</a></header><section class="box"><p class="muted" id="dateSpan"></p><h1 id="tripName">Trip Mode</h1><p class="muted" id="prepared"></p><p id="info" role="status"></p><div class="controls"><button type="button" class="btn" id="prev">Previous day</button><button type="button" class="btn" id="next">Next day</button></div></section><section id="day" class="box"><div class="muted" id="dayCount"></div><h2 id="dayTitle"></h2><div id="details"></div></section><section class="box" id="offlineAction"><h3>Offline availability</h3><p class="muted">Save the screen for this device. Your trip information stays in browser storage; this is not an encrypted vault or a substitute for downloading the PDF.</p><button type="button" class="btn primary" id="offlineButton">Enable offline access</button><p class="muted" id="offlineStatus"></p></section><footer class="muted">External maps and official links may require an internet connection. Always verify actual park conditions independently.</footer></main>
+<script>
+(()=>{'use strict';const $$=x=>document.getElementById(x),params=new URLSearchParams(location.search),id=params.get('id')||'',uid=localStorage.getItem('atlas-vault-active-uid');
+ const safe=x=>String(x??'');const line=(parent,label,value)=>{if(!value)return;const row=document.createElement('div');row.className='row';const a=document.createElement('div');a.className='label';a.textContent=label;const b=document.createElement('div');b.className='value';b.textContent=value;row.append(a,b);parent.append(row)};
+ const link=(parent,label,url)=>{if(!/^https:\/\//.test(url||''))return;const a=document.createElement('a');a.className='btn';a.textContent=label;a.href=url;a.target='_blank';a.rel='noopener';parent.append(a)};
+ let snap=null;try{snap=uid&&id?JSON.parse(localStorage.getItem('atlas-tripmode-v1:'+uid+':'+id)||'null'):null}catch{}
+ if(!snap||snap.version!==1||snap.tripId!==id||!Array.isArray(snap.rows)){
+  $$('info').textContent=uid?'No prepared trip reference for this device. Open the trip planner and select Prepare offline reference.':'Sign in on Atlas before preparing a private offline trip reference.';
+  $$('day').hidden=true;$$('prev').disabled=true;$$('next').disabled=true;$$('offlineAction').hidden=true;return;
+ }
+ $$('back').href='/trip/?id='+encodeURIComponent(id);$$('tripName').textContent=snap.tripName;
+ $$('dateSpan').textContent=(snap.start||'')+' – '+(snap.end||'');
+ $$('prepared').textContent='Prepared '+new Date(snap.preparedAt).toLocaleString()+' · '+(navigator.onLine?'Online':'Offline');
+ let today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Chicago'});let selected=Math.max(0,snap.rows.findIndex(x=>x.date===today));
+ function render(){const r=snap.rows[selected],box=$$('details');box.replaceChildren();$$('dayCount').textContent='Day '+(selected+1)+' of '+snap.rows.length;
+ $$('dayTitle').textContent=r.date||'Trip day';$$('prev').disabled=selected===0;$$('next').disabled=selected===snap.rows.length-1;
+ line(box,'Park visits',(r.visits||[]).map(v=>v.name).join(' · ')||'No park visit recorded');
+ line(box,'Tonight',r.night==='park'?r.nightName:r.night==='other'?r.nightName:r.night==='conflict'?'Overnight conflict — resolve in the planner':r.night==='end'?'Trip ends':'No overnight assigned');
+ if(r.nightDossier){const d=r.nightDossier;line(box,'Campsite',[d.campground,d.loop,d.campsite].filter(Boolean).join(' / ')||'Not recorded');
+ line(box,'Booking status',d.bookingStatus==='confirmed'?'Confirmed (self-reported)':d.bookingStatus==='first-come'?'First-come / no booking':d.bookingStatus==='pending'?'Awaiting confirmation':d.bookingStatus==='cancelled'?'Cancelled':'Not confirmed');
+ line(box,'Reservation reference',d.reservation);line(box,'Check-in / check-out',[d.checkIn,d.checkOut].filter(Boolean).join(' / '));
+ for(const [k,title] of [['arrivalInstructions','Arrival instructions'],['parkingNotes','Parking / access'],['waterNotes','Water notes'],['facilitiesNotes','Facilities'],['contactNotes','Contacts'],['personalNotes','Stay notes']])line(box,title,d[k]);}
+ for(const p of r.notes||[])if(p.notes)line(box,'Park notes',p.notes);
+ const nav=document.createElement('div');nav.className='links';link(nav,'Driving directions',r.route);box.append(nav);
+ if(r.night==='conflict'){const notice=document.createElement('p');notice.className='note';notice.textContent='Two overnight bases overlap in this plan. Return online and choose one before departing.';box.append(notice)}
+ }
+ $$('prev').onclick=()=>{selected=Math.max(0,selected-1);render()};$$('next').onclick=()=>{selected=Math.min(snap.rows.length-1,selected+1);render()};render();
+ $$('offlineButton').onclick=async()=>{const status=$$('offlineStatus');if(!navigator.serviceWorker){status.textContent='This browser does not support offline installation. Save the PDF instead.';return}
+  if(!navigator.onLine){status.textContent='Connect to the internet before enabling offline access.';return}
+  try{const registration=await navigator.serviceWorker.register('/atlas-trip-mode-sw.js',{scope:'/tripmode/'});await navigator.serviceWorker.ready;
+   const c=await caches.open('atlas-trip-mode-shell-v1');const response=await fetch('/tripmode/',{cache:'reload'});if(!response.ok)throw Error('Unable to cache Trip Mode screen');await c.put('/tripmode/',response);
+   status.textContent='Screen cached for this device. Test it in airplane mode before relying on it. Keep a PDF backup.';
+  }catch(err){status.textContent='Offline setup failed: '+err.message}
+ };
+})();
+</script></body></html>

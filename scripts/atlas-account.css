@@ -30,3 +30,16 @@
 .aa-fold-summary:focus-visible{outline:2px solid #234f40;outline-offset:3px}
 .aa-fold>.aa-section{border:0;margin-top:0;padding:9px 2px 13px}
 .aa-fold>.aa-section+.aa-section{border-top:1px solid #e5ded2;padding-top:15px}
+
+/* .aa-type-build1 — accessibility correction; controls retain their behavior. */
+.aa-panel{width:min(470px,calc(100vw - 32px));font-size:15px;line-height:1.55}
+.aa-trigger{font-size:14px}.aa-head{font-size:20px}
+.aa-copy,.aa-trip-list li,.aa-sync-conflict p{font-size:15px}
+.aa-hint,.aa-notice,.aa-confirm,.aa-trip-list small{font-size:14px}
+.aa-section h3{font-size:17px}.aa-fold-summary{font-size:16px}
+.aa-panel .aa-primary,.aa-panel .aa-secondary,.aa-panel .aa-admin-link,.aa-panel .aa-select,
+.aa-panel input,.aa-panel select,.aa-panel textarea{font-size:15px;min-height:40px}
+.aa-management-row,.aa-management-row span{font-size:14px}.aa-subhead{font-size:15px}
+.aa-panel .aa-icon{font-size:20px}
+@media(max-width:700px){.aa-panel{width:calc(100vw - 24px);font-size:15px}.aa-trigger{font-size:14px}}
+/* aa-type-build1 */
