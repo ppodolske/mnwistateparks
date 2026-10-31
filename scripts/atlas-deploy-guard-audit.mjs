@@ -1,0 +1,41 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const script=fs.readFileSync(new URL('./atlas-deploy-guarded.sh',import.meta.url),'utf8');
+const run=(cmd,args,cwd,env={})=>spawnSync(cmd,args,{cwd,env:{...process.env,...env},encoding:'utf8'});
+const ok=(cmd,args,cwd,env)=>{const r=run(cmd,args,cwd,env);assert.equal(r.status,0,r.stderr||r.stdout);return r;};
+test('guard rejects unexpected worktree changes and wrong revision before permitting warning suppression',()=>{
+ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-git-guard-'));
+ try{
+  const repo=path.join(temp,'repo'),bin=path.join(temp,'bin');
+  fs.mkdirSync(path.join(repo,'scripts'),{recursive:true});
+  fs.mkdirSync(path.join(repo,'dist','trip'),{recursive:true});
+  fs.mkdirSync(bin);
+  fs.writeFileSync(path.join(repo,'scripts','atlas-deploy-guarded.sh'),script);
+  fs.writeFileSync(path.join(repo,'.gitignore'),'dist/\npark-coordinates.generated.json\n');
+  fs.writeFileSync(path.join(repo,'dist','index.html'),'<html></html>');
+  fs.writeFileSync(path.join(repo,'dist','trip','index.html'),'<script src="/atlas-campsite-catalog.js"></script><script src="/atlas-trip-experience.js"></script>');
+  for(const file of ['atlas-campsite-catalog.js','atlas-trip-experience.js'])fs.writeFileSync(path.join(repo,'dist',file),'// fixture');
+  ok('git',['init','-q','-b','cloudflare-prep'],repo);
+  ok('git',['config','user.name','Tester'],repo);
+  ok('git',['config','user.email','test@example.com'],repo);
+  ok('git',['add','-A'],repo);ok('git',['commit','-qm','Fixture'],repo);
+  const pin=ok('git',['rev-parse','HEAD'],repo).stdout.trim(),target=path.join(repo,'scripts','atlas-deploy-guarded.sh');
+  assert.match(ok('bash',[target,pin,'--verify-only'],repo).stdout,/verification only/);
+  assert.notEqual(run('bash',[target,'a'.repeat(40),'--verify-only'],repo).status,0);
+  fs.appendFileSync(target,'\n# unexpected\n');
+  const dirty=run('bash',[target,pin,'--verify-only'],repo);
+  assert.notEqual(dirty.status,0);assert.match(dirty.stderr,/unexpected tracked\/untracked changes/);
+  ok('git',['checkout','--','scripts/atlas-deploy-guarded.sh'],repo);
+  const fake=path.join(bin,'npx'),calls=path.join(temp,'calls');
+  fs.writeFileSync(fake,'#!/bin/bash\nprintf "%s\\n" "$@" > "$ATLAS_NPX_CALLS"\n',{mode:0o755});
+  ok('bash',[target,pin,'--deploy','Guard test'],repo,{PATH:bin+path.delimiter+process.env.PATH,ATLAS_NPX_CALLS:calls});
+  const args=fs.readFileSync(calls,'utf8').trim().split('\n');
+  assert(args.includes('--commit-dirty=true'));
+  assert(args.includes('--commit-hash='+pin));
+  assert(args.includes('--project-name=parks'));
+ }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
