@@ -146,7 +146,7 @@ function dossierField(key,title,value,type='text',options={}){
  let field='<label class="ax2-field'+(wide?' ax2-wide':'')+'"><span>'+esc(title)+'</span>';
  if(type==='textarea')field+='<textarea name="'+attr(key)+'" rows="'+(options.rows||2)+'" maxlength="1800">'+esc(value||'')+'</textarea>';
  else if(type==='select')field+='<select name="'+attr(key)+'">'+Object.entries(STATUS_LABELS).map(([v,label])=>'<option value="'+attr(v)+'"'+(v===value?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select>';
- else field+='<input name="'+attr(key)+'" type="'+attr(type)+'" value="'+attr(value||'')+'" maxlength="'+(key==='bookingUrl'?500:250)+'"'+(type==='url'?' placeholder="https://" inputmode="url"':'')+'>';
+ else field+='<input name="'+attr(key)+'" type="'+attr(type)+'" value="'+attr(value||'')+'" maxlength="'+(key==='bookingUrl'?500:250)+'"'+(['campground','loop','campsite'].includes(key)?' list="ax2Source-'+key+'" autocomplete="off"':'')+(type==='url'?' placeholder="https://" inputmode="url"':'')+'>';
  return field+'</label>';
 }
 function stayDrawer(slug){
@@ -164,6 +164,11 @@ function stayDrawer(slug){
  html+=dossierField('campground','Campground',d.campground);
  html+=dossierField('loop','Loop',d.loop);
  html+=dossierField('campsite','Site number',d.campsite);
+ const catalog=window.AtlasCampsiteCatalog,parkName=name(slug);
+ const source=catalog?.findPark(parkName);
+ if(source)html+='<p class="ax2-source-note">Official DNR reference suggestions (not live booking inventory). <a href="'+attr(source.source)+'" target="_blank" rel="noopener noreferrer">View campground source</a>. You may type any value.</p>';
+ else html+='<p class="ax2-source-note">No site-level DNR reference catalogued for this park yet. Enter campground, loop and site manually.</p>';
+ html+='<datalist id="ax2Source-campground"></datalist><datalist id="ax2Source-loop"></datalist><datalist id="ax2Source-campsite"></datalist>';
  html+=dossierField('bookingUrl','Your booking or confirmation link',d.bookingUrl,'url',{wide:true});
  html+='</div>';
  if(d.bookingUrl&&/^https:\/\//i.test(d.bookingUrl)){
@@ -188,6 +193,20 @@ function stayDrawer(slug){
  html+='<div class="ax2-form-actions"><button type="button" class="ax2-btn" data-action="close">Cancel</button><button type="submit" class="ax2-btn ax2-primary"'+(isViewer()?' disabled':'')+'>Save details</button></div></div></form>';
  drawer('CAMPSITE DETAILS',name(slug),html);
  $('#ax2DrawerBody').querySelectorAll('input,select,textarea').forEach(n=>n.disabled=isViewer());
+ const form=$('#ax2StayForm');
+ const updateSuggestions=()=>{
+   if(!catalog)return;
+   const cg=form.elements.namedItem('campground')?.value||'';
+   const loop=form.elements.namedItem('loop')?.value||'';
+   const suggestions=catalog.suggestions(parkName,cg,loop);
+   for(const [field,values] of Object.entries({campground:suggestions.campgrounds,loop:suggestions.loops,campsite:suggestions.sites})){
+     const list=form.querySelector('#ax2Source-'+field);
+     if(list)list.replaceChildren(...values.map(v=>{const el=document.createElement('option');el.value=v;return el;}));
+   }
+ };
+ form.elements.namedItem('campground')?.addEventListener('input',updateSuggestions);
+ form.elements.namedItem('loop')?.addEventListener('input',updateSuggestions);
+ updateSuggestions();
 }
 function nightDrawer(date){const t=trip();if(!t||!T.range(t)?.nights.includes(date))return;drawerDate=date;
  const row=schedule()?.rows.find(r=>r.date===date);const override=t.timelineV1?.nights?.[date];
