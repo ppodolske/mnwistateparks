@@ -19,6 +19,7 @@ async function main() {
   fs.copyFileSync(path.join(__dirname, 'trip-pdf-native.js'), path.join(out, 'trip-pdf-native.js'));
   fs.copyFileSync(path.join(__dirname, 'atlas-print-reference.js'), path.join(out, 'atlas-print-reference.js'));
   fs.copyFileSync(path.join(__dirname, 'atlas-campsite-catalog.js'), path.join(out, 'atlas-campsite-catalog.js'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-mn-reservation-facilities.js'), path.join(out, 'atlas-mn-reservation-facilities.js'));
   for(const f of ['atlas-trip-experience-core.js','atlas-trip-experience.js','atlas-trip-experience.css','atlas-trip-mode-sw.js']) fs.copyFileSync(path.join(__dirname,f),path.join(out,f));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-model.js'), path.join(out, 'trip-timeline-model.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-ui.js'), path.join(out, 'trip-timeline-ui.js'));
@@ -93,7 +94,7 @@ async function main() {
       }
       // Only the trip page needs the explicit Stage 4.1 browser/cloud restoration controls.
       if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-recovery.css"><script type="module" src="/atlas-trip-recovery.mjs"></script></body>');
-      if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-experience.css"><script src="/atlas-trip-experience-core.js" defer></script><script src="/atlas-campsite-catalog.js" defer></script><script src="/atlas-trip-experience.js" defer></script></body>');
+      if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-experience.css"><script src="/atlas-trip-experience-core.js" defer></script><script src="/atlas-mn-reservation-facilities.js" defer></script><script src="/atlas-campsite-catalog.js" defer></script><script src="/atlas-trip-experience.js" defer></script></body>');
       // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
       if(!html.includes('</head>'))throw Error('STOP: missing HTML head; cannot install account isolation guard');
       html=html.replace('</head>', '<script src="/atlas-account-vault.js"></script></head>');
