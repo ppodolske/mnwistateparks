@@ -10,6 +10,9 @@
   document.head.appendChild(style);
 
   function removeRedundant(){
+    // Workspace 2 owns the mounted editors once it has passed its DOM preflight.
+    // Do not move them out of their in-context editing host after saves.
+    if(page.classList.contains('ax-ws2-active'))return;
     ['tripRouteOverview','dayPlanHelp','workspaceStops','itineraryModelPanel'].forEach(id=>document.getElementById(id)?.remove());
     document.querySelectorAll('#workspaceLogistics .trip-legacy-logistics').forEach(el=>el.remove());
 
