@@ -15,18 +15,9 @@ const entries=[
   campgrounds:[{name:'Main Campground',sites:numberRange(1,38)},{name:'Cart-in Sites',sites:numberRange(1,4)}]},
  {park:'Gooseberry Falls State Park',state:'MN',source:'https://files.dnr.state.mn.us/maps/state_parks/spk00172_camp.pdf',sourceType:'Official MN DNR campground map',checked:'2026-10-31',
   campgrounds:[{name:'Main Campground',sites:numberRange(1,70)}]},
- {park:'Forestville/Mystery Cave State Park',aliases:['Forestville Mystery Cave State Park','Forestville State Park'],state:'MN',source:'https://files.dnr.state.mn.us/maps/state_parks/spk00148_camp.pdf',sourceType:'Official MN DNR campground map',checked:'2026-10-31',
-  campgrounds:[{name:'Main Campground',sites:numberRange(1,73)},{name:'Equestrian Campground',sites:[]},{name:'Primitive Group Camp',sites:[]}]},
- {park:'Whitewater State Park',state:'MN',source:'https://files.dnr.state.mn.us/maps/state_parks/spk00280_camp.pdf',sourceType:'Official MN DNR campground map',checked:'2026-10-31',
-  campgrounds:[{name:'Cedar Hill Campground',sites:[]},{name:'Minneiska Campground',sites:[]},{name:'Gooseberry Glen Cart-in Sites',sites:[]},{name:'Walk-in Sites',sites:numberRange(241,244)}]},
- {park:'Peninsula State Park',state:'WI',source:'https://dnr.wisconsin.gov/topic/parks/peninsula/recreation/camping',sourceType:'Official Wisconsin DNR camping page',checked:'2026-10-31',
-  campgrounds:[{name:'North Nicolet Bay Campground',sites:[]},{name:'South Nicolet Bay Campground',sites:[]},{name:'Tennison Bay Campground',sites:[]},{name:'Weborg Point Campground',sites:[]},{name:"Welcker's Point Campground",sites:[]}]},
  {park:'Potawatomi State Park',state:'WI',source:'https://dnr.wisconsin.gov/topic/parks/potawatomi/recreation/camping',sourceType:'Official Wisconsin DNR camping page',checked:'2026-10-31',
   campgrounds:[{name:'Daisy Field Campground',loops:[{name:'North Loop',sites:[]},{name:'South Loop',sites:[]}]}]},
- {park:'Big Foot Beach State Park',state:'WI',source:'https://dnr.wisconsin.gov/topic/parks/bigfoot/recreation/camping',sourceType:'Official Wisconsin DNR camping page',checked:'2026-10-31',
-  campgrounds:[{name:'Campground',loops:[{name:'Upper Loop',sites:[]},{name:'Lower Loop',sites:[]}]}]},
- {park:'Governor Thompson State Park',state:'WI',source:'https://dnr.wisconsin.gov/topic/parks/govthompson/recreation/camping',sourceType:'Official Wisconsin DNR camping page',checked:'2026-10-31',
-  campgrounds:[{name:'Family Campground',loops:[{name:'East Loop',sites:[]},{name:'North Loop',sites:[]},{name:'South Loop',sites:[]}]},{name:'Boat-in Sites',sites:[]}]}
+
 ];
 const norm=x=>String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').replace(/\bstate park\b/g,'').trim();
 function findPark(parkName){
