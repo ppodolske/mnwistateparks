@@ -21,4 +21,10 @@ const before=M.clone(trip);trip.endDate='2026-11-02';assert.equal(M.schedule(tri
 assert.equal(M.validDate('2026-02-30'),false);assert.equal(M.range({...trip,endDate:'2026-10-30'}),null);
 const noDate={id:'legacy',parks:['rice'],stopMeta:{rice:{day:'2',note:'Old'}}};assert.equal(M.initialize(noDate),null);assert.equal(noDate.timelineV1,undefined);
 const snap=M.clone(before);assert.deepEqual(snap,before);
+const fs=require('node:fs');
+const ui=fs.readFileSync(require('node:path').join(__dirname,'trip-timeline-ui.js'),'utf8');
+assert(ui.includes("document.getElementById('tripDayEditor')"),'Live day-editor anchor must be supported');
+assert(ui.includes("dayEditor.insertAdjacentElement('beforebegin',root)"),'Timeline must mount before existing day editor');
+assert(ui.includes("else if(section)section.prepend(root)"),'Workspace wrapper fallback must remain');
+new Function(ui);
 console.log('PASS: 8 calendar days, 7 nights, existing reservations preserved, drag span semantics, base-camp routing, conflicts, night override, unschedule, short date ranges, and no-date fallback.');
