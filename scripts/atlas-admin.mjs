@@ -25,10 +25,15 @@ async function render(){
   const now=new Date(d.asOf||Date.now()),monthly=new Map((d.monthlyTrips||[]).map(x=>[x.month,Number(x.trips)||0]));
   const months=[];
   for(let i=5;i>=0;i--){const dt=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-i,1));months.push({key:dt.toISOString().slice(0,7),label:dt.toLocaleString('en-AU',{month:'short',timeZone:'UTC'})})}
-  const max=Math.max(1,...months.map(m=>monthly.get(m.key)||0));const chart=document.createElement('div');chart.className='ad-bars';
+  const max=Math.max(1,...months.map(m=>monthly.get(m.key)||0));
+  const recentTotal=months.reduce((total,m)=>total+(monthly.get(m.key)||0),0);
+  const count=document.createElement('p');count.className='ad-trend-count';
+  count.textContent=`${recentTotal} new trip${recentTotal===1?'':'s'} over the last six months`;
+  block.append(count);
+  const chart=document.createElement('div');chart.className='ad-bars';
   for(const m of months){const col=document.createElement('div');col.className='ad-bar-col';
    const value=monthly.get(m.key)||0;const n=document.createElement('strong');n.textContent=String(value);
-   const bar=document.createElement('div');bar.className='ad-bar';bar.style.height=(8+Math.round(148*value/max))+'px';bar.setAttribute('aria-label',`${m.label}: ${value} trips`);
+   const bar=document.createElement('div');bar.className='ad-bar';bar.style.height=(value?Math.max(8,Math.round(35*value/max)):2)+'px';bar.setAttribute('aria-label',`${m.label}: ${value} trips`);
    const label=document.createElement('span');label.textContent=m.label;col.append(n,bar,label);chart.append(col)}
   block.append(chart);root.append(block);
   const info=document.createElement('p');info.className='ad-note';info.textContent=`Last refreshed ${new Date(d.asOf).toLocaleString('en-AU')}. ${d.storageNote} This dashboard deliberately excludes emails and trip contents.`;root.append(info);

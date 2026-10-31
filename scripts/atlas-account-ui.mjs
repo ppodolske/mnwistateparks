@@ -5,6 +5,7 @@ const TRIPS='mnwiTripCollections';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&quot;'}[c]));
 const shorten=s=>String(s||'').slice(0,110);
 let auth,fb,user=null,profile=null,cloud=[],imports=[],panel,trigger,notice='',working=false;
+const openGroups=Object.create(null);
 const inviteToken=()=>/^#invite=([a-f0-9]{64})$/.exec(location.hash)?.[1]||'';
 const localTrips=()=>{try{const x=JSON.parse(localStorage.getItem(TRIPS)||'[]');return Array.isArray(x)?x:[]}catch{return[]}};
 const validSources=()=>localTrips().filter(t=>t&&typeof t==='object'&&Array.isArray(t.parks)&&typeof t.id==='string'&&t.id.length>0&&t.id.length<=128&&/^[\w.:~-]+$/.test(t.id));
@@ -29,6 +30,41 @@ async function refresh(){
   render();
 }
 function create(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+function foldPanel(panel,{pending,conflicts,vault}){
+  // Only group already-rendered account sections. Existing forms and event handlers
+  // are moved, not cloned. No credentials or invitation contents are stored.
+  const categories={
+    'Import browser trips':'Data & recovery',
+    'Preserved browser trips & parks':'Data & recovery',
+    'Guest browser data':'Data & recovery',
+    'Share a cloud trip':'Sharing',
+    'Manage trip access':'Sharing',
+    'Trip synchronisation':'Synchronisation',
+    'Saved parks sync':'Synchronisation',
+    'Administration':'Administration',
+    'Admin summary':'Administration'
+  };
+  const defaults={
+    'Data & recovery':pending.length>0||!!vault?.legacyAvailable||!!vault?.guestAvailable,
+    'Sharing':false,
+    'Synchronisation':conflicts>0||!!window.AtlasSavedSync?.status?.().conflict,
+    'Administration':false
+  };
+  const groups=new Map();
+  for(const section of [...panel.querySelectorAll(':scope > section.aa-section')]){
+    const heading=section.querySelector('h3')?.textContent||'';
+    const group=categories[heading];if(!group)continue;
+    let details=groups.get(group);
+    if(!details){
+      details=create('details','aa-fold');
+      details.open=Object.hasOwn(openGroups,group)?openGroups[group]:defaults[group];
+      const summary=create('summary','aa-fold-summary',group);
+      summary.addEventListener('click',()=>{openGroups[group]=!details.open});
+      details.append(summary);section.before(details);groups.set(group,details);
+    }
+    details.append(section);
+  }
+}
 function render(){
   if(!trigger||!panel)return;
   const conflicts=window.AtlasCloudSync?.getStatus?.().conflicts||0;
@@ -119,6 +155,7 @@ function render(){
   if(profile.admin){const admin=create('section','aa-section');admin.append(create('h3','','Admin summary'));const btn=create('button','aa-secondary','Load aggregate counts');btn.onclick=()=>perform(async()=>{
     const r=await api('/api/v1/admin/summary');const d=r.summary;btn.textContent=`${d.users} users · ${d.trips} trips · ${d.scheduled_trips} scheduled`;
   });admin.append(btn);panel.append(admin)}
+  foldPanel(panel,{pending,conflicts,vault});
   const foot=create('div','aa-footer');const signout=create('button','aa-secondary','Sign out');signout.onclick=()=>perform(()=>fb.signOut(auth));foot.append(signout);panel.append(foot);
 }
 async function perform(fn){if(working)return;working=true;render();try{await fn()}catch(err){notice=err?.message||'Request failed'}finally{working=false;render()}}

@@ -73,7 +73,19 @@
       nights=Math.max(0,(built?.plannedDays||0)-1);
     }
     const unscheduled=dated?stops.filter(s=>!calendar.blocks.some(b=>b.slug===s.slug&&b.start&&b.end)):[];
-    return {trip,bySlug,stops,rows,calendar,dated,conflictCount,nights,unscheduled,dates:dated?
+    // Reference pages follow first visit, not the original trip collection order.
+    // Unscheduled visits follow scheduled ones. Equal dates retain original order.
+    const referenceOrder=stops.slice().sort((a,b)=>{
+      if(dated){
+        const first=s=>calendar.blocks.find(x=>x.slug===s.slug)?.start||'';
+        const aDate=first(a),bDate=first(b);
+        if(aDate&&bDate)return aDate.localeCompare(bDate);
+        return aDate?-1:bDate?1:0;
+      }
+      const order=s=>Number(s.meta?.day)>0?Number(s.meta.day):Infinity;
+      return order(a)-order(b);
+    });
+    return {trip,bySlug,stops:referenceOrder,rows,calendar,dated,conflictCount,nights,unscheduled,dates:dated?
       [calendar.start,calendar.end]:[trip.startDate||trip.date||'',trip.endDate||'']};
   }
   const color=(d,method,rgb)=>d[method](...rgb);

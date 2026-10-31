@@ -19,3 +19,14 @@
 .aa-admin-link{display:inline-block;color:#194d40;font-weight:700;font-size:12px;padding:8px 0}
 .aa-select{box-sizing:border-box;width:100%;padding:8px;margin:8px 0;border:1px solid #b8c5bd;border-radius:7px;background:#fff;color:#19352c}
 .aa-management-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px;border-bottom:1px solid #e5ded2;padding:8px 0;font-size:11px}.aa-management-row span{flex:1;min-width:125px;overflow-wrap:anywhere}.aa-management-row select{max-width:110px;margin:0}.aa-management-row button{margin:0}.aa-subhead{font-size:12px;margin:14px 0 6px}
+
+
+/* Compact, accessible group disclosure. No extra filled colour panels. */
+.aa-fold{border-top:1px solid #dfd7c7;margin:7px 0 0;padding:0}
+.aa-fold-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:14px 2px;font-size:13px;font-weight:700;color:#24473b}
+.aa-fold-summary::-webkit-details-marker{display:none}
+.aa-fold-summary:after{content:"+";font-size:19px;line-height:1;font-weight:400;color:#4e7062}
+.aa-fold[open]>.aa-fold-summary:after{content:"−"}
+.aa-fold-summary:focus-visible{outline:2px solid #234f40;outline-offset:3px}
+.aa-fold>.aa-section{border:0;margin-top:0;padding:9px 2px 13px}
+.aa-fold>.aa-section+.aa-section{border-top:1px solid #e5ded2;padding-top:15px}
