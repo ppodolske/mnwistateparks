@@ -23,7 +23,12 @@
  if(r.nightDossier){const d=r.nightDossier;line(box,'Campsite',[d.campground,d.loop,d.campsite].filter(Boolean).join(' / ')||'Not recorded');
  line(box,'Booking status',d.bookingStatus==='confirmed'?'Confirmed (self-reported)':d.bookingStatus==='first-come'?'First-come / no booking':d.bookingStatus==='pending'?'Awaiting confirmation':d.bookingStatus==='cancelled'?'Cancelled':'Not confirmed');
  line(box,'Reservation reference',d.reservation);line(box,'Check-in / check-out',[d.checkIn,d.checkOut].filter(Boolean).join(' / '));
- for(const [k,title] of [['arrivalInstructions','Arrival instructions'],['parkingNotes','Parking / access'],['waterNotes','Water notes'],['facilitiesNotes','Facilities'],['contactNotes','Contacts'],['personalNotes','Stay notes']])line(box,title,d[k]);}
+ for(const [k,title] of [['arrivalInstructions','Arrival instructions'],['parkingNotes','Parking / access'],['waterNotes','Water notes'],['facilitiesNotes','Facilities'],['contactNotes','Contacts'],['personalNotes','Stay notes']])line(box,title,d[k]);
+ if(d.bookingUrl&&/^https:\\/\\/[^\\s@]+/i.test(d.bookingUrl)){const booking=document.createElement('div');booking.className='links';link(booking,'Saved booking link',d.bookingUrl);box.append(booking);}
+ const prepared=d.checklist&&typeof d.checklist==='object'?d.checklist:{};
+ const steps=[['reservationChecked','Reservation or arrival policy reviewed'],['arrivalChecked','Arrival details and check-in reviewed'],['accessChecked','Access, parking and conditions checked'],['suppliesPacked','Camping supplies prepared'],['departurePlanned','Checkout and departure planned']];
+ line(box,'Preparation checked',steps.filter(([key])=>prepared[key]===true).map(([,label])=>label).join(' · '));
+ }
  for(const p of r.notes||[])if(p.notes)line(box,'Park notes',p.notes);
  const nav=document.createElement('div');nav.className='links';link(nav,'Driving directions',r.route);box.append(nav);
  if(r.night==='conflict'){const notice=document.createElement('p');notice.className='note';notice.textContent='Two overnight bases overlap in this plan. Return online and choose one before departing.';box.append(notice)}
