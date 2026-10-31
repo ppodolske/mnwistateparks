@@ -166,7 +166,8 @@ function stayDrawer(slug){
  html+=dossierField('campsite','Site number',d.campsite);
  const catalog=window.AtlasCampsiteCatalog,parkName=name(slug);
  const source=catalog?.findPark(parkName);
- if(source)html+='<p class="ax2-source-note">DNR reference suggestions; coverage is partial and campsite labels may change. Not live availability. <a href="'+attr(source.source)+'" target="_blank" rel="noopener noreferrer">View campground source</a>. You may type any value.</p>';
+ const suggestionsAtPark=catalog?.suggestions(parkName,'','',slug);
+ if(suggestionsAtPark?.source)html+='<p class="ax2-source-note">Partial DNR reference suggestions, not campsite availability. <a href="'+attr(suggestionsAtPark.source)+'" target="_blank" rel="noopener noreferrer">Official DNR source</a>. Type any value if yours is not listed.</p>';
  else html+='<p class="ax2-source-note">No site-level DNR reference catalogued for this park yet. Enter campground, loop and site manually.</p>';
  html+='<datalist id="ax2Source-campground"></datalist><datalist id="ax2Source-loop"></datalist><datalist id="ax2Source-campsite"></datalist>';
  html+=dossierField('bookingUrl','Your booking or confirmation link',d.bookingUrl,'url',{wide:true});
@@ -198,7 +199,7 @@ function stayDrawer(slug){
    if(!catalog)return;
    const cg=form.elements.namedItem('campground')?.value||'';
    const loop=form.elements.namedItem('loop')?.value||'';
-   const suggestions=catalog.suggestions(parkName,cg,loop);
+   const suggestions=catalog.suggestions(parkName,cg,loop,slug);
    for(const [field,values] of Object.entries({campground:suggestions.campgrounds,loop:suggestions.loops,campsite:suggestions.sites})){
      const list=form.querySelector('#ax2Source-'+field);
      if(list)list.replaceChildren(...values.map(v=>{const el=document.createElement('option');el.value=v;return el;}));
