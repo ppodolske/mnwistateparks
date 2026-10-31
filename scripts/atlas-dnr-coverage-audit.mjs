@@ -37,3 +37,22 @@ test('scripts and static build order preserve existing data sources',()=>{
  assert(ui.includes('catalog.suggestions(parkName,cg,loop,slug)'));
  assert(ui.includes("type=\"'+attr(type)+'\""));
 });
+
+test('all 50 Wisconsin parks have sourced status and no synthetic site numbers',()=>{
+ const wi=JSON.parse(fs.readFileSync(new URL('./atlas-wi-camping-status.json',import.meta.url),'utf8'));
+ assert.equal(wi.parks.length,50);
+ const all=inventory.parks.filter(x=>x.state==='WI');
+ assert.equal(new Set(wi.parks.map(x=>x.slug)).size,50);
+ assert(all.every(p=>wi.parks.some(w=>w.slug===p.slug)));
+ assert(wi.parks.filter(p=>p.status==='camping_reference_in_catalog').length===37);
+ assert(wi.parks.filter(p=>p.status!=='camping_reference_in_catalog').length===13);
+ const window={};
+ vm.runInNewContext(fs.readFileSync(new URL('./atlas-wi-park-status.js',import.meta.url),'utf8'),{window});
+ assert.equal(Object.keys(window.AtlasWIParkStatus).length,50);
+ vm.runInNewContext(fs.readFileSync(new URL('./atlas-campsite-catalog.js',import.meta.url),'utf8'),{window,module:{exports:{}}});
+ const c=window.AtlasCampsiteCatalog;
+ const day=c.suggestions('Whitefish Dunes State Park','','','whitefish-dunes');
+ assert.equal(day.sourceStatus,'day_use');
+ assert.equal(day.sites.length,0);
+ assert(day.source.startsWith('https://dnr.wisconsin.gov/'));
+});
