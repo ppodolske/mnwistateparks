@@ -123,6 +123,8 @@ const entries=[
  {park:'Wildcat Mountain State Park',state:'WI',campgrounds:['Family Campground','Cart-in Campsites','Horse Campground','Outdoor Group Campground'],sites:['1','2','3'],source:'https://dnr.wisconsin.gov/topic/parks/wildcat/recreation/camping',notes:'Group sites 1, 2, 3 explicitly documented; not necessarily unique in other camping categories.'},
  {park:'Lake Kegonsa State Park',state:'WI',campgrounds:['Campground'],sites:[],source:'https://dnr.wisconsin.gov/topic/parks/lakekegonsa/recreation',notes:'Camping and accessible campsites confirmed in official recreation page; exact campground and sites need map.'},
  {park:'Lake Wissota State Park',state:'WI',campgrounds:['Campground'],sites:[],source:'https://dnr.wisconsin.gov/topic/parks/lakewissota',notes:'Camping confirmed, individual campground/site labels need map inspection.'}
+,
+ {park:'Governor Thompson State Park',state:'WI',campgrounds:['Family Campground'],sites:[],source:'https://dnr.wisconsin.gov/topic/parks/govthompson',notes:'Wisconsin DNR confirms a family campground but does not enumerate campsite IDs on the main park page.'}
 
 ];
 const norm=x=>String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').replace(/\bstate park\b/g,'').trim();
