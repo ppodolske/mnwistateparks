@@ -137,10 +137,12 @@ function findPark(parkName){
 function suggestions(parkName,campground='',loop='',slug=''){
  const entry=findPark(parkName);
  const officialMN=mnNames(slug);
+ const wiStatus=typeof window!=='undefined'?window.AtlasWIParkStatus?.[slug]:null;
  const campgrounds=unique([...(entry?.campgrounds||[]),...officialMN]);
  return {entry:entry||null,campgrounds,loops:unique(entry?.loops||[]),sites:unique((entry?.sites||[]).map(String)),
-  source:officialMN.length?'https://www.dnr.state.mn.us/data/reservation.html':entry?.source||'',
-  sourceStatus:officialMN.length?'official_facilities_listed':entry?'partial_reference':'unverified'};
+  source:officialMN.length?'https://www.dnr.state.mn.us/data/reservation.html':entry?.source||wiStatus?.source||'',
+  sourceStatus:officialMN.length?'official_facilities_listed':entry?'partial_reference':wiStatus?.status||'unverified',
+  sourceNote:entry?.notes||wiStatus?.note||''};
 }
 return {version:3,reviewedAt:DATE,entries,findPark,suggestions};
 });
