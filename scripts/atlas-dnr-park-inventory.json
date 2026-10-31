@@ -1,0 +1,934 @@
+{
+  "version": 1,
+  "source": "Atlas 116-park inventory (park-review-text.js), canonical slug keys; officialIndex for WI is candidate URL, not checked.",
+  "parks": [
+    {
+      "slug": "afton",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "banning",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "bear-head-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "beaver-creek-valley",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "big-stone-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "blue-mounds",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "buffalo-river",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "camden",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "carley",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "cascade-river",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "charles-a-lindbergh",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "crow-wing",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "father-hennepin",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "flandrau",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "forestville-mystery-cave",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "fort-ridgely",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "fort-snelling",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "franz-jevne",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "frontenac",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "george-h-crosby-manitou",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "glacial-lakes",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "glendalough",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "gooseberry-falls",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "grand-portage",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "great-river-bluffs",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "hayes-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "hill-annex-mine",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "interstate",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "itasca",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "jay-cooke",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "john-a-latsch",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "judge-c-r-magney",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "kilen-woods",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lac-qui-parle",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-bemidji",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-bronson",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-carlos",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-louise",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-maria",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-shetek",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-vermilion-soudan-underground-mine",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "maplewood",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "mccarthy-beach",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "mille-lacs-kathio",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "minneopa",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "monson-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "moose-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "myre-big-island",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "nerstrand-big-woods",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "old-mill",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "rice-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "sakatah-lake",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "savanna-portage",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "scenic",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "schoolcraft",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "sibley",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "split-rock-creek",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "split-rock-lighthouse",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "st-croix",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "temperance-river",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "tettegouche",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "upper-sioux-agency",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "whitewater",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "wild-river",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "william-o-brien",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "zippel-bay",
+      "state": "MN",
+      "officialIndex": "https://www.dnr.state.mn.us/data/reservation.html",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "amnicon-falls",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/amnicon-falls/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "aztalan",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/aztalan/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "belmont-mound",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/belmont-mound/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "big-bay",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/big-bay/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "big-foot-beach",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/big-foot-beach/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "blue-mound",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/blue-mound/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "brunet-island",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/brunet-island/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "buckhorn",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/buckhorn/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "copper-culture",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/copper-culture/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "copper-falls",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/copper-falls/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "council-grounds",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/council-grounds/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "cross-plains",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/cross-plains/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "devils-lake",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/devils-lake/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "governor-dodge",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/governor-dodge/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "governor-nelson",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/governor-nelson/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "governor-thompson",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/governor-thompson/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "harrington-beach",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/harrington-beach/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "hartman-creek",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/hartman-creek/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "heritage-hill",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/heritage-hill/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "high-cliff",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/high-cliff/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "interstate",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/interstate/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "kinnickinnic",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/kinnickinnic/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "kohler-andrae",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/kohler-andrae/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-kegonsa",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/lake-kegonsa/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lake-wissota",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/lake-wissota/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lakeshore",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/lakeshore/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lizard-mound",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/lizard-mound/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "lost-dauphin",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/lost-dauphin/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "merrick",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/merrick/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "mill-bluff",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/mill-bluff/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "mirror-lake",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/mirror-lake/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "natural-bridge",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/natural-bridge/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "nelson-dewey",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/nelson-dewey/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "new-glarus-woods",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/new-glarus-woods/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "newport",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/newport/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "pattison",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/pattison/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "peninsula",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/peninsula/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "perrot",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/perrot/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "potawatomi",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/potawatomi/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "rib-mountain",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/rib-mountain/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "roche-a-cri",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/roche-a-cri/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "rock-island",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/rock-island/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "rocky-arbor",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/rocky-arbor/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "straight-lake",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/straight-lake/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "tower-hill",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/tower-hill/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "whitefish-dunes",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/whitefish-dunes/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "wildcat-mountain",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/wildcat-mountain/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "willow-river",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/willow-river/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "wyalusing",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/wyalusing/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    },
+    {
+      "slug": "yellowstone-lake",
+      "state": "WI",
+      "officialIndex": "https://dnr.wisconsin.gov/topic/parks/yellowstone-lake/maps",
+      "sourceStatus": "not-yet-verified",
+      "campgrounds": [],
+      "sites": []
+    }
+  ]
+}
