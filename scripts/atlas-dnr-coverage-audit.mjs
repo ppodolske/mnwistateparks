@@ -56,3 +56,11 @@ test('all 50 Wisconsin parks have sourced status and no synthetic site numbers',
  assert.equal(day.sites.length,0);
  assert(day.source.startsWith('https://dnr.wisconsin.gov/'));
 });
+
+test('116-park coverage report explicitly flags incomplete site identifiers',()=>{
+ const csv=fs.readFileSync(new URL('./atlas-dnr-coverage-report.csv',import.meta.url),'utf8');
+ const rows=csv.trim().split(/\r?\n/);
+ assert.equal(rows.length,117);
+ assert(rows[0].includes('site_list_complete'));
+ assert(rows.slice(1).every(x=>x.includes(',"NO",')));
+});
