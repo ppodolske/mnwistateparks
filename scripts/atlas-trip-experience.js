@@ -19,7 +19,7 @@ const short=slug=>name(slug).replace(/ State Park$/i,'');
 const fmt=date=>/^\d{4}-\d{2}-\d{2}$/.test(date||'')?new Date(date+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'}):'';
 const weekday=date=>new Date(date+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'}).toUpperCase();
 const formatFull=date=>/^\d{4}-\d{2}-\d{2}$/.test(date||'')?new Date(date+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}):'';
-const paths={"chevron-right": "<path d=\"m9 18 6-6-6-6\"/>", "chevron-down": "<path d=\"m6 9 6 6 6-6\"/>", "calendar-days": "<path d=\"M8 2v4M16 2v4M3 10h18\"/><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01\"/>", "map-pin": "<path d=\"M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/>", "route": "<circle cx=\"6\" cy=\"19\" r=\"2\"/><path d=\"M9 19h10.5a1.5 1.5 0 0 0 0-3h-7a1.5 1.5 0 0 1 0-3h2a4 4 0 0 0 0-8H9\"/><circle cx=\"6\" cy=\"5\" r=\"2\"/>", "file-down": "<path d=\"M14 2v6h6\"/><path d=\"M4 22h14a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v3\"/><path d=\"m4 15 4 4 4-4M8 11v8\"/>", "settings-2": "<path d=\"M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6\"/>", "cloud-check": "<path d=\"m17 15-3 3-2-2\"/><path d=\"M20 16.6A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 16.25\"/>", "circle-alert": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 8v4m0 4h.01\"/>", "tent-tree": "<path d=\"m14 20 3-8 3 8M17 12V3m-3 4 3-4 3 4M3 20l5-9 5 9ZM8 11v9\"/>", "tent": "<path d=\"M3 20 12 4l9 16ZM12 4v16M4 20h16\"/>", "flag": "<path d=\"M4 22V4a2 2 0 0 1 2-2m-2 4c4-4 8 4 12 0v11c-4 4-8-4-12 0\"/>", "navigation": "<polygon points=\"3 11 22 2 13 21 11 13 3 11\"/>", "check-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m8 12 3 3 5-6\"/>", "x": "<path d=\"M18 6 6 18M6 6l12 12\"/>", "file-text": "<path d=\"M14 2v6h6\"/><path d=\"M4 22h14a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2Z\"/><path d=\"M8 13h8M8 17h8\"/>", "external-link": "<path d=\"M15 3h6v6M10 14 21 3M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4m0-4h.01\"/>", "arrow-left": "<path d=\"m12 19-7-7 7-7M19 12H5\"/>", "arrow-right": "<path d=\"m12 5 7 7-7 7M5 12h14\"/>", "edit-3": "<path d=\"M12 20h9\"/><path d=\"M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z\"/>", "printer": "<path d=\"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 14h12v8H6z\"/>"};
+const paths={"chevron-right": "<path d=\"m9 18 6-6-6-6\"/>", "chevron-down": "<path d=\"m6 9 6 6 6-6\"/>", "calendar-days": "<path d=\"M8 2v4M16 2v4M3 10h18\"/><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01\"/>", "map-pin": "<path d=\"M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/>", "route": "<circle cx=\"6\" cy=\"19\" r=\"2\"/><path d=\"M9 19h10.5a1.5 1.5 0 0 0 0-3h-7a1.5 1.5 0 0 1 0-3h2a4 4 0 0 0 0-8H9\"/><circle cx=\"6\" cy=\"5\" r=\"2\"/>", "file-down": "<path d=\"M14 2v6h6\"/><path d=\"M4 22h14a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v3\"/><path d=\"m4 15 4 4 4-4M8 11v8\"/>", "settings-2": "<path d=\"M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6\"/>", "cloud-check": "<path d=\"m17 15-3 3-2-2\"/><path d=\"M20 16.6A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 16.25\"/>", "circle-alert": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 8v4m0 4h.01\"/>", "tent-tree": "<path d=\"m14 20 3-8 3 8M17 12V3m-3 4 3-4 3 4M3 20l5-9 5 9ZM8 11v9\"/>", "tent": "<path d=\"M3 20 12 4l9 16ZM12 4v16M4 20h16\"/>", "flag": "<path d=\"M4 22V4a2 2 0 0 1 2-2m-2 4c4-4 8 4 12 0v11c-4 4-8-4-12 0\"/>", "navigation": "<polygon points=\"3 11 22 2 13 21 11 13 3 11\"/>", "check-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m8 12 3 3 5-6\"/>", "x": "<path d=\"M18 6 6 18M6 6l12 12\"/>", "file-text": "<path d=\"M14 2v6h6\"/><path d=\"M4 22h14a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2Z\"/><path d=\"M8 13h8M8 17h8\"/>", "external-link": "<path d=\"M15 3h6v6M10 14 21 3M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4m0-4h.01\"/>", "arrow-left": "<path d=\"m12 19-7-7 7-7M19 12H5\"/>", "arrow-right": "<path d=\"m12 5 7 7-7 7M5 12h14\"/>", "edit-3": "<path d=\"M12 20h9\"/><path d=\"M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z\"/>", "printer": "<path d=\"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><path d=\"M6 14h12v8H6z\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>"};
 const icon=(n)=>`<svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[n]||paths.info}</svg>`;
 function isViewer(){const uid=window.AtlasAccountVault?.getState?.().activeUid||window.AtlasAccountBridge?.getUid?.();if(!uid)return false;
  try{const m=JSON.parse(localStorage.getItem('atlas-sync-v1:'+uid)||'{}');return Object.values(m).some(x=>x.localId===tripId&&x.role==='viewer')}catch{return true}}
@@ -37,11 +37,11 @@ root.innerHTML=`<div class="ax2-header"><div class="ax2-title"><p class="ax2-eye
 <a class="ax2-btn ax2-primary" id="ax2Mode" href="#">${icon('map-pin')} Trip Mode</a><button type="button" class="ax2-btn" data-action="pdf">${icon('file-down')} Print reference</button><button type="button" class="ax2-btn" data-action="details">${icon('settings-2')} Trip details</button></div></div>
 <div class="ax2-facts"><div class="ax2-stats" id="ax2Stats"></div><span id="ax2Sync" class="ax2-sync" aria-live="polite"></span></div>
 <div class="ax2-readiness" id="ax2Readiness" role="status"></div><div class="ax2-issues" id="ax2Issues" hidden></div>
-<div class="ax2-layout"><div class="ax2-main"><div class="ax2-section-head"><div><h2>Trip timeline</h2><p>Days, visits, overnight bases and actions in one place.</p></div><button type="button" class="ax2-text-btn" data-action="schedule">${icon('edit-3')} Edit schedule</button></div>
+<div class="ax2-layout"><div class="ax2-main"><div class="ax2-section-head"><div><h2>Trip timeline</h2><p>Days, visits, overnight bases and actions in one place.</p></div><div class="ax2-section-actions"><button type="button" class="ax2-btn ax2-primary" data-action="add-park">${icon('plus')} Add park</button><button type="button" class="ax2-btn" data-action="schedule">${icon('edit-3')} Edit schedule</button></div></div>
 <div id="ax2Days" class="ax2-days"></div><div id="ax2Unscheduled" class="ax2-unscheduled" hidden></div></div><aside class="ax2-rail" aria-label="Trip essentials"><div class="ax2-rail-card"><h3>Trip essentials</h3><div id="ax2Essentials"></div></div><div class="ax2-rail-card"><h3>Quick access</h3>
-<button class="ax2-rail-action" data-action="schedule">${icon('calendar-days')} Edit dates and overnights</button><button class="ax2-rail-action" data-action="offline">${icon('file-down')} Prepare offline reference</button><button class="ax2-rail-action" data-action="pdf">${icon('printer')} Download trip PDF</button><p class="ax2-footnote" id="ax2OfflineStatus" aria-live="polite"></p></div></aside></div>
+<button class="ax2-rail-action" data-action="add-park">${icon('plus')} Add a park</button><button class="ax2-rail-action" data-action="schedule">${icon('calendar-days')} Edit dates and overnights</button><button class="ax2-rail-action" data-action="offline">${icon('file-down')} Prepare offline reference</button><button class="ax2-rail-action" data-action="pdf">${icon('printer')} Download trip PDF</button><p class="ax2-footnote" id="ax2OfflineStatus" aria-live="polite"></p></div></aside></div>
 <div class="ax2-overlay" id="ax2Overlay" hidden></div><section class="ax2-drawer" id="ax2Drawer" hidden role="dialog" aria-modal="true" aria-labelledby="ax2DrawerTitle"><div class="ax2-drawer-head"><div><p id="ax2DrawerEyebrow" class="ax2-eyebrow"></p><h2 id="ax2DrawerTitle"></h2></div><button class="ax2-close" type="button" data-action="close" aria-label="Close panel">${icon('x')}</button></div><div id="ax2DrawerBody" class="ax2-drawer-body"></div></section>
-<div class="ax2-editor" id="ax2Editor" hidden><div class="ax2-editor-head"><div><p class="ax2-eyebrow">CANONICAL DATE EDITOR</p><h2>Edit schedule and overnight choices</h2><p>Move, extend or schedule park visits, and resolve overnight bases. Changes automatically update the trip above.</p></div><button class="ax2-btn" type="button" data-action="close-schedule">${icon('x')} Close editor</button></div><div id="ax2EditorHost"></div></div>`;
+<section class="ax2-editor" id="ax2Editor" role="dialog" aria-modal="true" aria-labelledby="ax2ScheduleTitle" tabindex="-1" hidden><div class="ax2-editor-head"><div><p class="ax2-eyebrow">TRIP PLANNING</p><h2 id="ax2ScheduleTitle">Edit your schedule</h2><p>Drag park visits across dates or adjust the overnight base. The timeline updates as you edit.</p></div><button class="ax2-btn" type="button" data-action="close-schedule">${icon('x')} Done</button></div><div class="ax2-editor-scroll"><div id="ax2EditorHost"></div></div></section>`;
 // Progressive enhancement: if the trip or original editors are missing, leave the accepted page untouched.
 // The accepted Cloudflare page uses the v1.22.10 quick editor and day editor.
  // Older wrappers may still expose workspaceLogistics/workspaceItinerary.
@@ -54,18 +54,24 @@ const originalItinerary=document.getElementById('workspaceItinerary')||
 if(!trip()||!originalLogistics||!originalItinerary)return;
 page.prepend(root);
 const editorHost=root.querySelector('#ax2EditorHost');
- // Keep the accepted drag-and-resize timeline together with its original editor.
- // Moving the actual nodes retains their listeners, rather than creating a second owner.
- const legacyTimeline=document.getElementById('atlasTripTimeline');
- if(legacyTimeline&&legacyTimeline!==originalItinerary)editorHost.appendChild(legacyTimeline);
- editorHost.appendChild(originalItinerary);
+// Move the existing live timeline and advanced editor, not a clone. Keep all listeners.
+const legacyTimeline=document.getElementById('atlasTripTimeline');
+if(legacyTimeline&&legacyTimeline!==originalItinerary)editorHost.appendChild(legacyTimeline);
+if(originalItinerary===legacyTimeline){editorHost.appendChild(originalItinerary)}
+else {
+ const advanced=document.createElement('details');
+ advanced.className='ax2-advanced';advanced.id='ax2Advanced';
+ const heading=document.createElement('summary');
+ heading.textContent='Advanced day-by-day fields';advanced.appendChild(heading);
+ advanced.appendChild(originalItinerary);editorHost.appendChild(advanced);
+}
 // The original logistics form is moved to the context drawer only when opened.
 // Keeping the DOM element alive preserves its save handlers and values.
 const oldParent=originalLogistics.parentElement;
 let pdfControlsHome=null,pdfButtonHome=null,printControl=null,printButton=null;
 const legacyNext=document.getElementById('tripNextActions');if(legacyNext)legacyNext.remove();
 page.classList.add('ax-ws2-active');
-let openDay=new Set(),allIssuesOpen=false,drawerMode='',drawerSlug='',drawerDate='',focusReturn=null,editorOpen=false;
+let openDay=new Set(),allIssuesOpen=false,drawerMode='',drawerSlug='',drawerDate='',focusReturn=null,editorOpen=false,scheduleFocusReturn=null;
 const $=id=>root.querySelector((id.startsWith('#')?'':'#')+id);
 function schedule(){const t=trip();if(!t)return null;return T.schedule(JSON.parse(JSON.stringify(t)))}
 function findings(){const t=trip();return t?C.readiness(t,parks,T):[]}
@@ -112,7 +118,9 @@ function render(){const t=trip();if(!t)return;const {c,items}=summary();
  const unscheduled=t.parks.filter(slug=>!c.blocks.some(b=>b.slug===slug&&b.start&&b.end));
  const un=$('#ax2Unscheduled');un.hidden=!unscheduled.length;un.innerHTML=unscheduled.length?`<strong>${unscheduled.length} unscheduled park${unscheduled.length===1?'':'s'}</strong> ${unscheduled.map(x=>esc(name(x))).join(', ')} <button class="ax2-text-btn" data-action="schedule">Assign dates</button>`:'';
 }
-function drawer(eyebrow,title,content){focusReturn=document.activeElement;drawerMode=eyebrow;
+function drawer(eyebrow,title,content){
+ if(editorOpen)closeSchedule(false);
+ focusReturn=document.activeElement;drawerMode=eyebrow;
  $('#ax2DrawerEyebrow').textContent=eyebrow;$('#ax2DrawerTitle').textContent=title;$('#ax2DrawerBody').replaceChildren();
  if(typeof content==='string')$('#ax2DrawerBody').innerHTML=content;else if(content)$('#ax2DrawerBody').append(content);
  $('#ax2Overlay').hidden=false;$('#ax2Drawer').hidden=false;document.body.classList.add('ax2-drawer-open');
@@ -163,9 +171,66 @@ function pdfDrawer(){const controls=document.getElementById('bookletExportContro
  const host=document.createElement('div');host.className='ax2-print-form';host.innerHTML='<p class="ax2-help">The existing searchable, printer-friendly Atlas PDF is unchanged. Choose paper and detail level below.</p>';
  host.append(controls,button);drawer('PRINT REFERENCE','Download trip PDF',host);
 }
-function scheduleEditor(){closeDrawer();editorOpen=!editorOpen;const ed=$('#ax2Editor');ed.hidden=!editorOpen;
- if(editorOpen){const host=$('#ax2EditorHost');if(!host.contains(originalItinerary))host.append(originalItinerary);ed.scrollIntoView({behavior:'smooth',block:'start'});}
- else root.scrollIntoView({behavior:'smooth',block:'start'});
+function closeSchedule(restoreFocus=true){
+ if(!editorOpen)return;
+ editorOpen=false;$('#ax2Editor').hidden=true;
+ $('#ax2Overlay').hidden=true;
+ document.body.classList.remove('ax2-drawer-open');
+ if(restoreFocus)scheduleFocusReturn?.focus?.();
+ scheduleFocusReturn=null;
+}
+function scheduleEditor(){
+ if(editorOpen){closeSchedule();return;}
+ if(!$('#ax2Drawer').hidden)closeDrawer();
+ scheduleFocusReturn=document.activeElement;
+ editorOpen=true;
+ $('#ax2Overlay').hidden=false;$('#ax2Editor').hidden=false;
+ document.body.classList.add('ax2-drawer-open');
+ $('#ax2Editor').querySelector('[data-action="close-schedule"]')?.focus();
+}
+// Parks are selected from the existing canonical park list, then appended unassigned
+// to the current trip. No default dates, nights, or bookings are fabricated.
+function availableParks(query=''){
+ const t=trip(),chosen=new Set(t?.parks||[]);
+ const q=query.trim().toLocaleLowerCase();
+ return parks.filter(p=>p&&bySlug.has(p.slug)&&!chosen.has(p.slug)&&
+   (!q||[p.name,p.city,p.state].filter(Boolean).join(' ').toLocaleLowerCase().includes(q)))
+   .sort((a,b)=>name(a.slug).localeCompare(name(b.slug)));
+}
+function renderParkResults(){
+ const box=$('#ax2ParkResults');if(!box)return;
+ const list=availableParks($('#ax2ParkSearch')?.value||'');
+ const shown=list.slice(0,30);
+ box.innerHTML=shown.map(p=>`<button type="button" class="ax2-park-result" data-action="choose-park" data-slug="${attr(p.slug)}"><span><strong>${esc(name(p.slug))}</strong><small>${esc([p.city,p.state].filter(Boolean).join(', '))}</small></span>${icon('plus')}</button>`).join('')||
+ '<p class="ax2-park-empty">No matching parks available to add.</p>';
+ const status=$('#ax2ParkCount');if(status)status.textContent=list.length>shown.length?
+   `Showing ${shown.length} of ${list.length} parks. Search to narrow results.`:`${list.length} available park${list.length===1?'':'s'}`;
+}
+function addParkDrawer(){
+ if(isViewer()){drawer('TRIP PARKS','Add park','<p class="ax2-help">This shared trip is read-only.</p>');return;}
+ const panel=document.createElement('div');panel.className='ax2-park-picker';
+ panel.innerHTML='<p class="ax2-help">Find a Minnesota or Wisconsin state park and add it to this trip. Schedule its visit when ready.</p>'+
+ '<label class="ax2-field" for="ax2ParkSearch"><span>Search parks</span><input id="ax2ParkSearch" type="search" placeholder="Park name, city, or state" autocomplete="off"></label>'+
+ '<p id="ax2ParkCount" class="ax2-park-count" aria-live="polite"></p>'+
+ '<div id="ax2ParkResults" class="ax2-park-results"></div>'+
+ '<p id="ax2ParkStatus" class="ax2-park-status" role="status" aria-live="polite"></p>';
+ drawer('TRIP PARKS','Add park',panel);
+ renderParkResults();$('#ax2ParkSearch')?.focus();
+}
+function choosePark(slug){
+ const park=bySlug.get(slug);
+ if(!park||!parks.some(p=>p.slug===slug))return;
+ try{
+  if(trip()?.parks?.includes(slug)){renderParkResults();return;}
+  mutate(t=>{if(!Array.isArray(t.parks))t.parks=[];
+   if(t.parks.includes(slug))throw Error('This park is already in the trip');
+   t.parks.push(slug);
+  });
+  const status=$('#ax2ParkStatus');
+  if(status)status.textContent=name(slug)+' added. Schedule its dates with Edit schedule.';
+  if($('#ax2ParkSearch'))$('#ax2ParkSearch').value='';
+  renderParkResults();
+ }catch(err){const status=$('#ax2ParkStatus');if(status)status.textContent='Unable to add park: '+err.message;}
 }
 function offline(){try{const t=trip(),uid=window.AtlasAccountVault?.getState?.().activeUid;
  if(!t)throw Error('Trip unavailable');if(!uid||uid!==window.AtlasAccountBridge?.getUid?.())throw Error('Sign in to prepare a private offline reference');
@@ -187,6 +252,8 @@ root.addEventListener('click',ev=>{const b=ev.target.closest('[data-action],[dat
  if(action==='issue-direct'){const f=effectiveIssues().find(x=>x.code===b.dataset.code&&x.date===b.dataset.date&&(!x.slug||x.slug===b.dataset.slug));if(!f)return;const idx=effectiveIssues().findIndex(x=>x===f||x.code===f.code&&x.date===f.date&&x.slug===f.slug);jumpIssue(idx);return;}
  if(action==='issues'){allIssuesOpen=!allIssuesOpen;render();return;}
  if(action==='schedule'||action==='close-schedule'){scheduleEditor();return;}
+ if(action==='add-park'){addParkDrawer();return;}
+ if(action==='choose-park'){choosePark(b.dataset.slug);return;}
  if(action==='details'){detailsDrawer();return;}
  if(action==='pdf'){pdfDrawer();return;}
  if(action==='offline'){offline();return;}
@@ -203,8 +270,14 @@ root.addEventListener('submit',ev=>{if(ev.target.id==='ax2StayForm'){
  else throw Error('Invalid overnight choice');
  });closeDrawer();render();}catch(err){alert('Overnight not saved: '+err.message)}
  }});
-$('#ax2Overlay').addEventListener('click',closeDrawer);
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#ax2Drawer').hidden)closeDrawer();if(ev.key==='Tab'&&!$('#ax2Drawer').hidden){const els=[...$('#ax2Drawer').querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled])')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus()}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus()}}});
+root.addEventListener('input',ev=>{
+ if(ev.target?.id==='ax2ParkSearch'){renderParkResults();const status=$('#ax2ParkStatus');if(status)status.textContent='';}
+});
+$('#ax2Overlay').addEventListener('click',()=>editorOpen?closeSchedule():closeDrawer());
+document.addEventListener('keydown',ev=>{
+ const modal=editorOpen?$('#ax2Editor'):!$('#ax2Drawer').hidden?$('#ax2Drawer'):null;
+ if(ev.key==='Escape'&&modal){ev.preventDefault();editorOpen?closeSchedule():closeDrawer();return;}
+ if(ev.key==='Tab'&&modal){const els=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus()}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus()}}});
 let queued=false;function update(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;if(root.isConnected)render()});}
 for(const event of ['atlas-timeline-updated','trip-logistics-saved','trip-days-changed','atlas-sync-status','atlas-account-changed'])document.addEventListener(event,update);
 document.addEventListener('trip-logistics-saved',ev=>{
