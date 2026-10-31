@@ -1,5 +1,6 @@
 import {identity,fail,ApiError} from './auth.mjs';
 import {bootstrapAdmin,isAdmin,stage2Route} from './stage2.mjs';
+import {stage4Route} from './stage4.mjs';
 const MAX=262144;
 const json=(obj,status=200)=>Response.json(obj,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const now=()=>Date.now();
@@ -59,6 +60,8 @@ export async function handle(context,{authOptions}={}){
   await bootstrapAdmin(db,env,user);
   const stage2=await stage2Route({request,db,user,method,path});
   if(stage2)return stage2;
+  const stage4=await stage4Route({request,db,user,env,method,path});
+  if(stage4)return stage4;
   if(path==='/api/v1/account'&&method==='GET')return json({uid:user.uid,admin:await isAdmin(db,env,user)});
   if(path==='/api/v1/trips'&&method==='GET'){
     const list=await dbAll(db,`SELECT t.id,t.title,t.revision,t.updated_at,
@@ -154,7 +157,7 @@ export async function handle(context,{authOptions}={}){
 export async function safeHandle(context,options){
   try{
     // Only API requests of a supported method may reach the data layer.
-    if(!['GET','POST','PUT','DELETE'].includes(context.request.method))return json({error:'Method not allowed'},405);
+    if(!['GET','POST','PUT','DELETE','PATCH'].includes(context.request.method))return json({error:'Method not allowed'},405);
     return await handle(context,options);
   }catch(err){
     if(err instanceof ApiError)return json({error:err.message},err.status);

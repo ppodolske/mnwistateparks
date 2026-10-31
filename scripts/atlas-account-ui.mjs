@@ -99,6 +99,23 @@ function render(){
     })};share.append(form,result);panel.append(share);
   }
   window.AtlasCloudSync?.appendPanel?.(panel);
+  window.AtlasSavedSync?.appendPanel?.(panel);
+  window.AtlasStage4UI?.appendPanel?.(panel,{profile,cloud,api});
+  const vault=window.AtlasAccountVault?.getState?.();
+  if(vault?.legacyAvailable){
+    const restore=create('section','aa-section');restore.append(create('h3','','Preserved browser trips & parks'));
+    restore.append(create('p','aa-copy','Your pre-update browser data was saved before account isolation. Choose Restore to associate it with this signed-in account. Cloud trip revisions still require normal conflict checks.'));
+    const b=create('button','aa-primary','Restore preserved browser data');
+    b.onclick=()=>perform(async()=>{if(!confirm('Associate the preserved trips and saved parks with this Google account? Existing cloud data will not be overwritten.'))return;window.AtlasAccountVault.claimLegacy()});
+    restore.append(b);panel.append(restore);
+  }
+  if(vault?.guestAvailable){
+    const guest=create('section','aa-section');guest.append(create('h3','','Guest browser data'));
+    guest.append(create('p','aa-copy','Saved while signed out. You can explicitly attach these browser trips and parks to this account.'));
+    const button=create('button','aa-primary','Restore guest browser data');
+    button.onclick=()=>perform(async()=>{if(!confirm('Associate guest browser data with this signed-in account?'))return;window.AtlasAccountVault.claimGuest()});
+    guest.append(button);panel.append(guest);
+  }
   if(profile.admin){const admin=create('section','aa-section');admin.append(create('h3','','Admin summary'));const btn=create('button','aa-secondary','Load aggregate counts');btn.onclick=()=>perform(async()=>{
     const r=await api('/api/v1/admin/summary');const d=r.summary;btn.textContent=`${d.users} users · ${d.trips} trips · ${d.scheduled_trips} scheduled`;
   });admin.append(btn);panel.append(admin)}
@@ -123,8 +140,13 @@ async function init(){
     getToken:async()=>auth.currentUser?.getIdToken()||null
   });
   document.addEventListener('atlas-sync-status',()=>render());
+  document.addEventListener('atlas-saved-sync-status',()=>render());
+  document.addEventListener('atlas-stage4-refresh',()=>render());
   document.addEventListener('atlas-sync-cloud-created',()=>refresh());
-  authLib.onAuthStateChanged(auth,async u=>{user=u;await refresh();document.dispatchEvent(new Event('atlas-account-changed'))});
+  authLib.onAuthStateChanged(auth,async u=>{
+    if(window.AtlasAccountVault?.switchAccount?.(u?.uid||null))return;
+    user=u;await refresh();document.dispatchEvent(new Event('atlas-account-changed'));
+  });
   render();
 }
 init().catch(err=>console.error('Atlas Accounts unavailable:',err));

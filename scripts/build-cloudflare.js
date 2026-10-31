@@ -24,6 +24,8 @@ async function main() {
   fs.copyFileSync(path.join(__dirname, 'atlas-account.css'), path.join(out, 'atlas-account.css'));
   fs.copyFileSync(path.join(__dirname, 'atlas-sync-core.mjs'), path.join(out, 'atlas-sync-core.mjs'));
   fs.copyFileSync(path.join(__dirname, 'atlas-trip-sync.mjs'), path.join(out, 'atlas-trip-sync.mjs'));
+  for(const f of ['atlas-account-vault.js','atlas-saved-sync.mjs','atlas-stage4-ui.mjs','atlas-admin.mjs','atlas-admin.css'])
+    fs.copyFileSync(path.join(__dirname,f),path.join(out,f));
   // The Firebase web configuration contains public identifiers, never a private key.
   // Absent configuration must leave all account UI disabled, not break the Parks site.
   const clientConfigPath=path.join(root, 'config', 'atlas-firebase-web.json');
@@ -86,14 +88,24 @@ async function main() {
         html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
       // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
-      html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-account.css"><script type="module" src="/atlas-account-ui.mjs"></script><script type="module" src="/atlas-trip-sync.mjs"></script></body>');
+      if(!html.includes('</head>'))throw Error('STOP: missing HTML head; cannot install account isolation guard');
+      html=html.replace('</head>', '<script src="/atlas-account-vault.js"></script></head>');
+      html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-account.css"><link rel="stylesheet" href="/atlas-admin.css"><script type="module" src="/atlas-account-ui.mjs"></script><script type="module" src="/atlas-trip-sync.mjs"></script><script type="module" src="/atlas-saved-sync.mjs"></script><script type="module" src="/atlas-stage4-ui.mjs"></script></body>');
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
       put(url === '/' ? 'index.html' : `${url.slice(1)}/index.html`, html);
     }
+    // Admin lives at /admin and preserves the canonical Parks header and navigation.
+    const about=fs.readFileSync(path.join(out,'about','index.html'),'utf8');
+    const main='<main class="ad-page"><section class="ad-head"><div><div class="ad-kicker">ATLAS / ADMINISTRATION</div><h1>Accounts overview</h1><p class="ad-lede">Private, aggregate-only usage statistics. No names, emails, or trip details.</p></div><button type="button" id="atlasAdminRefresh" class="ad-action">Refresh statistics</button></section><div id="atlasAdminRoot" aria-live="polite">Sign in with your administrator account to view this dashboard.</div></main>';
+    const matches=about.match(/<main\b[^>]*>[\s\S]*?<\/main>/gi)||[];
+    if(matches.length!==1)throw Error('STOP: Admin page shell changed; expected one main element');
+    let adminHtml=about.replace(matches[0],main).replace(/<title>[^<]*<\/title>/i,'<title>Administration | Atlas Parks</title>');
+    adminHtml=adminHtml.replace('</body>','<script type="module" src="/atlas-admin.mjs"></script></body>');
+    put('admin/index.html',adminHtml);
     // Capture script URLs from generated HTML as well as declared server source files.
     // /client.js is dynamically generated and does NOT exist as a file on disk.
     const requiredScripts = new Set();
-    const htmlFiles = routes.map(url => path.join(out, url === '/' ? 'index.html' : url.slice(1) + '/index.html'));
+    const htmlFiles = [...routes.map(url => path.join(out, url === '/' ? 'index.html' : url.slice(1) + '/index.html')),path.join(out,'admin','index.html')];
     for (const file of htmlFiles) {
       const html = fs.readFileSync(file, 'utf8');
       for (const match of html.matchAll(/<script\b[^>]*?\bsrc=[\"'](\/[^\"']+)[\"']/gi)) {
@@ -126,7 +138,7 @@ async function main() {
     put('cloudflare-parks.json', JSON.stringify(index));
     fs.copyFileSync(path.join(__dirname, 'cloudflare-query.js'), path.join(out, 'cloudflare-query.js'));
     put('_headers', '/*.html\n  Cache-Control: no-cache\n');
-    const candidates = [...routes.map(url => path.join(out, url === '/' ? 'index.html' : url.slice(1) + '/index.html'))];
+    const candidates = [...routes.map(url => path.join(out, url === '/' ? 'index.html' : url.slice(1) + '/index.html')),path.join(out,'admin','index.html')];
     const missing = new Set();
     for (const file of candidates) {
       const html = fs.readFileSync(file, 'utf8');

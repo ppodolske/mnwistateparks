@@ -14,3 +14,8 @@
 .aa-sync-conflict{padding:12px;margin:10px 0;border:1px solid #c78865;border-radius:8px;background:#fff9f3}
 .aa-sync-conflict p{font-size:12px;line-height:1.4;margin:0 0 8px}
 .aa-sync-conflict button{margin:2px 5px 2px 0}
+
+/* Stage 4 management controls */
+.aa-admin-link{display:inline-block;color:#194d40;font-weight:700;font-size:12px;padding:8px 0}
+.aa-select{box-sizing:border-box;width:100%;padding:8px;margin:8px 0;border:1px solid #b8c5bd;border-radius:7px;background:#fff;color:#19352c}
+.aa-management-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px;border-bottom:1px solid #e5ded2;padding:8px 0;font-size:11px}.aa-management-row span{flex:1;min-width:125px;overflow-wrap:anywhere}.aa-management-row select{max-width:110px;margin:0}.aa-management-row button{margin:0}.aa-subhead{font-size:12px;margin:14px 0 6px}
