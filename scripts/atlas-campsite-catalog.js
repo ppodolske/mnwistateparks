@@ -87,7 +87,21 @@ const entries=[
  {park:'Big Foot Beach State Park',state:'WI',
   campgrounds:['Campground'],loops:['Upper Loop','Lower Loop'],sites:[],
   source:'https://dnr.wisconsin.gov/topic/parks/bigfoot/recreation/camping',
-  notes:'Loop names confirmed; 100 sites is a capacity, not a site list.'}
+  notes:'Loop names confirmed; 100 sites is a capacity, not a site list.'},
+ {park:'Yellowstone Lake State Park',state:'WI',
+  campgrounds:['Family Campground','Group Camp'],
+  sites:['42','49','201','202','203','204','206'],
+  source:'https://dnr.wisconsin.gov/topic/parks/yellowstone/recreation/camping',
+  notes:'DNR explicitly identifies accessible family sites 42/49 and group sites 201–204 and 206. The 128-site campground capacity is not expanded.'},
+ {park:'Hartman Creek State Park',state:'WI',
+  campgrounds:['Family Campground','Group Camp'],sites:[],
+  source:'https://dnr.wisconsin.gov/topic/parks/hartmancreek',
+  notes:'Camping confirmed on park page; campground map is linked separately. Site labels not transcribed.'},
+ {park:'Buckhorn State Park',state:'WI',
+  campgrounds:['Family Campground','Group Camp','Cart-in Camping'],sites:[],
+  source:'https://dnr.wisconsin.gov/topic/parks/buckhorn',
+  notes:'Family, group and cart-in camping confirmed on official park page, site labels not transcribed.'}
+
 ];
 const norm=x=>String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').replace(/\bstate park\b/g,'').trim();
 function mnNames(slug){
