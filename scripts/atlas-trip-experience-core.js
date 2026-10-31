@@ -1,4 +1,4 @@
-/* Atlas Parks Build 1: pure, testable Trip Mode/Campsite Dossier/Readiness model.
+/* Atlas Parks: pure, testable Trip Mode/Campsite Details/Readiness model.
    No APIs, storage writes, generated reservations, or geolocation. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.AtlasTripExperienceCore=api;})(typeof window!=='undefined'?window:null,function(){
 'use strict';
@@ -27,7 +27,7 @@ function dossierProgress(trip,slug){
  return {complete,total:checklistItems.length,pending:checklistItems.filter(([key])=>!d.checklist[key]).map(([key,title])=>({key,title})),bookingStatus:d.bookingStatus};
 }
 function updateDossier(trip,slug,form){if(!trip||!Array.isArray(trip.parks)||!trip.parks.includes(slug))throw Error('Park is not part of this trip');
-  if(!form||typeof form!=='object')throw Error('Invalid campsite dossier');
+  if(!form||typeof form!=='object')throw Error('Invalid campsite details');
   const current=trip.stopMeta?.[slug]||{};const copy={...current};
   for(const key of ['campground','loop','campsite','reservation','checkIn','checkOut']){
     const val=sane(form[key]);if(val.length>250)throw Error(key+' is too long');copy[key]=val;
