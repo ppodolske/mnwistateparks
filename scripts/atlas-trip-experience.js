@@ -111,8 +111,8 @@ function render(){const t=trip();if(!t)return;const {c,items}=summary();
   const issues=items.filter(f=>f.targetDate===ds&&(!['campground-missing','site-missing','cancelled-stay','reservation-unverified'].includes(f.code)||!f.targetSlug||dateFirst.get(f.targetSlug)===ds));
   const cols=issues.map(f=>`<div class="ax2-inline ${f.severity==='blocker'?'ax2-inline-block':''}">${icon('circle-alert')}<span>${esc(f.description)}</span><button type="button" data-action="issue-direct" data-code="${attr(f.code)}" data-date="${attr(ds)}" data-slug="${attr(f.targetSlug)}">Review</button></div>`).join('');
   const dateObj=new Date(ds+'T12:00:00Z'),day=String(dateObj.getUTCDate()).padStart(2,'0');const month=dateObj.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'}).toUpperCase();
-  const isExpanded=openDay.has(ds);const nights=show?`<strong>${esc(nightText(row))}</strong>${d?.campground?`<span> / ${esc([d.campground,d.loop,d.campsite].filter(Boolean).join(' · '))}</span>`:''}`:esc(nightText(row));
-  return `<article class="ax2-day ${issues.length?'ax2-hasissue':''} ${isExpanded?'ax2-expanded':''}" id="ax2-date-${ds}" data-date="${ds}"><div class="ax2-day-date"><span>${weekday(ds)}</span><strong>${day}</strong><span>${month}</span></div><div class="ax2-day-card"><div class="ax2-day-main"><button type="button" class="ax2-day-toggle" data-action="toggle-day" data-date="${ds}" aria-expanded="${isExpanded}"><span><small>DAY ${i+1} · ${esc(fmt(ds))}</small><strong>${esc(titleForRow(row))}</strong></span>${icon('chevron-down')}</button><div class="ax2-night"><span>${icon(show?'tent':'map-pin')} ${nights}</span>${row.night?`<button type="button" class="ax2-text-btn" data-action="${show?'stay':'night'}" data-${show?'slug':'date'}="${attr(show?slug:ds)}">${show?'Edit stay':'Select night'}</button>`:''}</div>${cols}</div><div class="ax2-day-details" ${isExpanded?'':'hidden'}><div class="ax2-day-actions">${/^https:\/\/www\.google\.com\/maps\//.test(routes[i]?.url||'')?`<a href="${attr(routes[i].url)}" target="_blank" rel="noopener noreferrer">${icon('navigation')} Directions</a>`:''}<button data-action="schedule">${icon('edit-3')} Edit dates</button>${row.night?`<button data-action="night" data-date="${ds}">${icon('tent')} Change overnight</button>`:''}${row.visits.map(v=>`<button data-action="stay" data-slug="${attr(v.slug)}">${icon('file-text')} ${esc(short(v.slug))} details</button>`).join('')}</div></div></div></article>`;
+  const isExpanded=openDay.has(ds);const nights=show?`<strong>${esc(nightText(row))}</strong>${d?.campground?`<span> / ${esc([d.campground,d.loop,d.campsite].filter(Boolean).join(' · '))}</span>`:''}${d?.bookingStatus&&d.bookingStatus!=='not-booked'?`<span class="ax2-stay-state">${esc(STATUS_LABELS[d.bookingStatus])}</span>`:''}`:esc(nightText(row));
+  return `<article class="ax2-day ${issues.length?'ax2-hasissue':''} ${isExpanded?'ax2-expanded':''}" id="ax2-date-${ds}" data-date="${ds}"><div class="ax2-day-date"><span>${weekday(ds)}</span><strong>${day}</strong><span>${month}</span></div><div class="ax2-day-card"><div class="ax2-day-main"><button type="button" class="ax2-day-toggle" data-action="toggle-day" data-date="${ds}" aria-expanded="${isExpanded}"><span><small>DAY ${i+1} · ${esc(fmt(ds))}</small><strong>${esc(titleForRow(row))}</strong></span>${icon('chevron-down')}</button><div class="ax2-night"><span>${icon(show?'tent':'map-pin')} ${nights}</span>${row.night?`<button type="button" class="ax2-text-btn" data-action="${show?'stay':'night'}" data-${show?'slug':'date'}="${attr(show?slug:ds)}">${show?'Campsite dossier':'Select night'}</button>`:''}</div>${cols}</div><div class="ax2-day-details" ${isExpanded?'':'hidden'}><div class="ax2-day-actions">${/^https:\/\/www\.google\.com\/maps\//.test(routes[i]?.url||'')?`<a href="${attr(routes[i].url)}" target="_blank" rel="noopener noreferrer">${icon('navigation')} Directions</a>`:''}<button data-action="schedule">${icon('edit-3')} Edit dates</button>${row.night?`<button data-action="night" data-date="${ds}">${icon('tent')} Change overnight</button>`:''}${row.visits.map(v=>`<button data-action="stay" data-slug="${attr(v.slug)}">${icon('file-text')} ${esc(short(v.slug))} details</button>`).join('')}</div></div></div></article>`;
  }).join('');
  rootDays.innerHTML=rows;
  const unscheduled=t.parks.filter(slug=>!c.blocks.some(b=>b.slug===slug&&b.start&&b.end));
@@ -134,16 +134,59 @@ function closeDrawer(){if($('#ax2Drawer').hidden)return;
  if(printControl&&$('#ax2DrawerBody').contains(printControl))pdfControlsHome?.append(printControl);
  if(printButton&&$('#ax2DrawerBody').contains(printButton))pdfButtonHome?.append(printButton);
  $('#ax2DrawerBody').replaceChildren();$('#ax2Drawer').hidden=true;$('#ax2Overlay').hidden=true;document.body.classList.remove('ax2-drawer-open');drawerMode='';drawerSlug='';drawerDate='';focusReturn?.focus?.();}
-const FIELDS=[['campground','Campground','text'],['loop','Loop','text'],['campsite','Site number','text'],['reservation','Reservation reference','text'],['bookingStatus','Booking status','select'],['checkIn','Check-in time','time'],['checkOut','Check-out time','time'],['arrivalInstructions','Arrival instructions','textarea'],['parkingNotes','Parking / access','textarea'],['waterNotes','Water availability notes','textarea'],['facilitiesNotes','Facilities notes','textarea'],['contactNotes','Contact / booking notes','textarea'],['personalNotes','Other stay notes','textarea']];
-function stayDrawer(slug){const t=trip();if(!t?.parks?.includes(slug))return;drawerSlug=slug;const d=C.dossier(t,slug);
- let html=`<p class="ax2-help">Booking information is recorded by you, not verified against a reservation provider.</p><form id="ax2StayForm"><div class="ax2-form-grid">`;
- for(const [key,label,type] of FIELDS){const v=d[key]||'';html+=`<label class="ax2-field ${type==='textarea'?'ax2-wide':''}"><span>${esc(label)}</span>`;
-  if(type==='textarea')html+=`<textarea name="${key}" rows="2" maxlength="1800">${esc(v)}</textarea>`;
-  else if(type==='select')html+=`<select name="${key}">${[['not-booked','Not booked / unknown'],['pending','Awaiting confirmation'],['confirmed','Confirmed (self-reported)'],['first-come','First-come / no booking'],['cancelled','Cancelled']].map(([id,title])=>`<option value="${id}" ${v===id?'selected':''}>${title}</option>`).join('')}</select>`;
-  else html+=`<input name="${key}" type="${type}" value="${attr(v)}" maxlength="250">`;
-  html+='</label>';
+const STATUS_LABELS={
+ 'not-booked':'Not booked / not confirmed',
+ pending:'Awaiting confirmation',
+ confirmed:'Confirmed (recorded by you)',
+ 'first-come':'First-come / no reservation',
+ cancelled:'Cancelled'
+};
+function dossierField(key,title,value,type='text',options={}){
+ const wide=type==='textarea'||options.wide;
+ let field='<label class="ax2-field'+(wide?' ax2-wide':'')+'"><span>'+esc(title)+'</span>';
+ if(type==='textarea')field+='<textarea name="'+attr(key)+'" rows="'+(options.rows||2)+'" maxlength="1800">'+esc(value||'')+'</textarea>';
+ else if(type==='select')field+='<select name="'+attr(key)+'">'+Object.entries(STATUS_LABELS).map(([v,label])=>'<option value="'+attr(v)+'"'+(v===value?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select>';
+ else field+='<input name="'+attr(key)+'" type="'+attr(type)+'" value="'+attr(value||'')+'" maxlength="'+(key==='bookingUrl'?500:250)+'"'+(type==='url'?' placeholder="https://" inputmode="url"':'')+'>';
+ return field+'</label>';
+}
+function stayDrawer(slug){
+ const t=trip();if(!t?.parks?.includes(slug))return;
+ drawerSlug=slug;
+ const d=C.dossier(t,slug),progress=C.dossierProgress(t,slug),c=schedule();
+ const dates=c?.rows?.filter(r=>r.visits.some(v=>v.slug===slug)||r.night?.slug===slug).map(r=>r.date)||[];
+ const when=dates.length?(dates.length===1?fmt(dates[0]):fmt(dates[0])+' – '+fmt(dates[dates.length-1])):'Not scheduled yet';
+ const recorded=d.bookingStatus==='confirmed'||d.bookingStatus==='pending'||d.bookingStatus==='first-come';
+ let html='<div class="ax2-dossier-intro"><div><p class="ax2-dossier-kicker">CAMPSITE RECORD</p><p class="ax2-dossier-dates">'+esc(when)+'</p></div><div class="ax2-dossier-status">'+esc(STATUS_LABELS[d.bookingStatus]||STATUS_LABELS['not-booked'])+'</div></div>';
+ html+='<p class="ax2-dossier-disclaimer">All booking details and preparation checks are entered by you. Atlas does not independently verify reservations, park access or current conditions.</p>';
+ html+='<div class="ax2-dossier-meter"><div><strong>'+progress.complete+' of '+progress.total+'</strong> preparation checks recorded</div><div class="ax2-dossier-track" aria-hidden="true"><span style="width:'+(progress.complete*100/progress.total)+'%"></span></div></div>';
+ html+='<form id="ax2StayForm"><fieldset class="ax2-dossier-group"><legend>Booking &amp; site</legend><div class="ax2-form-grid">';
+ html+=dossierField('bookingStatus','Reservation status',d.bookingStatus,'select');
+ html+=dossierField('reservation','Reservation reference',d.reservation);
+ html+=dossierField('campground','Campground',d.campground);
+ html+=dossierField('loop','Loop',d.loop);
+ html+=dossierField('campsite','Site number',d.campsite);
+ html+=dossierField('bookingUrl','Your booking or confirmation link',d.bookingUrl,'url',{wide:true});
+ html+='</div>';
+ if(d.bookingUrl&&/^https:\/\//i.test(d.bookingUrl)){
+   html+='<a class="ax2-dossier-link" href="'+attr(d.bookingUrl)+'" target="_blank" rel="noopener noreferrer">'+icon('external-link')+' Open saved booking link</a>';
  }
- html+=`</div><div class="ax2-form-actions"><button type="button" class="ax2-btn" data-action="close">Cancel</button><button type="submit" class="ax2-btn ax2-primary" ${isViewer()?'disabled':''}>Save campsite</button></div></form>`;
+ html+='</fieldset><fieldset class="ax2-dossier-group"><legend>Arrival &amp; access</legend><div class="ax2-form-grid">';
+ html+=dossierField('checkIn','Check-in time',d.checkIn,'time');
+ html+=dossierField('checkOut','Check-out time',d.checkOut,'time');
+ html+=dossierField('arrivalInstructions','Arrival instructions',d.arrivalInstructions,'textarea');
+ html+=dossierField('parkingNotes','Parking, road and access notes',d.parkingNotes,'textarea');
+ html+='</div></fieldset><fieldset class="ax2-dossier-group"><legend>On-site essentials</legend><div class="ax2-form-grid">';
+ html+=dossierField('waterNotes','Water availability',d.waterNotes,'textarea');
+ html+=dossierField('facilitiesNotes','Toilets, showers and facilities',d.facilitiesNotes,'textarea');
+ html+=dossierField('contactNotes','Contacts &amp; booking notes',d.contactNotes,'textarea');
+ html+=dossierField('personalNotes','Personal campsite notes',d.personalNotes,'textarea',{rows:3});
+ html+='</div></fieldset><fieldset class="ax2-dossier-group"><legend>Before you go</legend><p class="ax2-dossier-subcopy">Mark each item only after you have checked it. Unchecked items are not proof of an issue.</p><div class="ax2-dossier-checks">';
+ for(const [key,title] of C.checklistItems){
+   html+='<label class="ax2-dossier-check"><input type="checkbox" name="check-'+attr(key)+'"'+(d.checklist[key]?' checked':'')+'><span>'+esc(title)+'</span></label>';
+ }
+ html+='</div></fieldset>';
+ html+='<div class="ax2-dossier-bottom"><a class="ax2-dossier-link" href="/parks/'+encodeURIComponent(slug)+'/" target="_blank" rel="noopener noreferrer">'+icon('external-link')+' Park review</a>';
+ html+='<div class="ax2-form-actions"><button type="button" class="ax2-btn" data-action="close">Cancel</button><button type="submit" class="ax2-btn ax2-primary"'+(isViewer()?' disabled':'')+'>Save dossier</button></div></div></form>';
  drawer('CAMPSITE DOSSIER',name(slug),html);
  $('#ax2DrawerBody').querySelectorAll('input,select,textarea').forEach(n=>n.disabled=isViewer());
 }
@@ -260,7 +303,7 @@ root.addEventListener('click',ev=>{const b=ev.target.closest('[data-action],[dat
  if(action==='close'){closeDrawer();return;}
 });
 root.addEventListener('submit',ev=>{if(ev.target.id==='ax2StayForm'){
- ev.preventDefault();const data=Object.fromEntries(new FormData(ev.target));try{mutate(t=>C.updateDossier(t,drawerSlug,data));closeDrawer();render();}catch(err){alert('Campsite not saved: '+err.message)}
+ ev.preventDefault();const form=new FormData(ev.target),data=Object.fromEntries(form);data.checklist=Object.fromEntries(C.checklistItems.map(([key])=>[key,form.has('check-'+key)]));try{mutate(t=>C.updateDossier(t,drawerSlug,data));closeDrawer();render();}catch(err){alert('Campsite not saved: '+err.message)}
  }else if(ev.target.id==='ax2NightForm'){
  ev.preventDefault();const data=new FormData(ev.target);try{mutate(t=>{
  const choice=data.get('choice');if(choice==='auto')T.setNight(t,drawerDate,null);
