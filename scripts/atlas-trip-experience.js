@@ -166,7 +166,7 @@ function stayDrawer(slug){
  html+=dossierField('campsite','Site number',d.campsite);
  const catalog=window.AtlasCampsiteCatalog,parkName=name(slug);
  const source=catalog?.findPark(parkName);
- if(source)html+='<p class="ax2-source-note">Official DNR reference suggestions (not live booking inventory). <a href="'+attr(source.source)+'" target="_blank" rel="noopener noreferrer">View campground source</a>. You may type any value.</p>';
+ if(source)html+='<p class="ax2-source-note">DNR reference suggestions; coverage is partial and campsite labels may change. Not live availability. <a href="'+attr(source.source)+'" target="_blank" rel="noopener noreferrer">View campground source</a>. You may type any value.</p>';
  else html+='<p class="ax2-source-note">No site-level DNR reference catalogued for this park yet. Enter campground, loop and site manually.</p>';
  html+='<datalist id="ax2Source-campground"></datalist><datalist id="ax2Source-loop"></datalist><datalist id="ax2Source-campsite"></datalist>';
  html+=dossierField('bookingUrl','Your booking or confirmation link',d.bookingUrl,'url',{wide:true});
