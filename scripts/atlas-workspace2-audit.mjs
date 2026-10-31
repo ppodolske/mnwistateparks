@@ -36,3 +36,14 @@ test('new controller is single presentation owner and retains old editors and ex
  const cleanup=fs.readFileSync(new URL('../trip-workspace-cleanup.js',import.meta.url),'utf8');
  assert(cleanup.includes("if(page.classList.contains('ax-ws2-active'))return;"));
 });
+
+test('Workspace 2.1 uses a modal editor and an independent searchable park picker',()=>{
+ const js=fs.readFileSync(new URL('./atlas-trip-experience.js',import.meta.url),'utf8');
+ const css=fs.readFileSync(new URL('./atlas-trip-experience.css',import.meta.url),'utf8');
+ for(const key of ['data-action="add-park"','data-action="choose-park"','function availableParks','function choosePark','function closeSchedule','ax2ParkSearch','ax2ScheduleTitle','aria-modal="true"','ax2-advanced']) assert(js.includes(key),key);
+ assert(js.includes("if(t.parks.includes(slug))throw Error('This park is already in the trip')"));
+ assert(js.includes("if(isViewer()){drawer('TRIP PARKS'"));
+ assert(js.includes("editorHost.appendChild(legacyTimeline)"));
+ assert(!js.includes("ed.scrollIntoView"),'schedule must not open beneath timeline');
+ assert(css.includes('.ax2-editor{position:fixed')&&css.includes('.ax2-park-result'));
+});
