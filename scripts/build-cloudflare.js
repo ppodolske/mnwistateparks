@@ -20,6 +20,21 @@ async function main() {
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-model.js'), path.join(out, 'trip-timeline-model.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-ui.js'), path.join(out, 'trip-timeline-ui.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline.css'), path.join(out, 'trip-timeline.css'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-account-ui.mjs'), path.join(out, 'atlas-account-ui.mjs'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-account.css'), path.join(out, 'atlas-account.css'));
+  // The Firebase web configuration contains public identifiers, never a private key.
+  // Absent configuration must leave all account UI disabled, not break the Parks site.
+  const clientConfigPath=path.join(root, 'config', 'atlas-firebase-web.json');
+  let authConfig={enabled:false};
+  if(fs.existsSync(clientConfigPath)){
+    const c=JSON.parse(fs.readFileSync(clientConfigPath,'utf8'));
+    for(const key of ['apiKey','authDomain','projectId','appId']){
+      if(typeof c[key]!=='string'||!c[key].trim()||c[key].includes('YOUR_')||c[key].includes('FIREBASE_WEB_'))
+        throw new Error('STOP: Invalid Firebase web config: '+key);
+    }
+    authConfig={enabled:true,apiKey:c.apiKey,authDomain:c.authDomain,projectId:c.projectId,appId:c.appId};
+  }
+  fs.writeFileSync(path.join(out,'atlas-firebase-config.json'),JSON.stringify(authConfig));
   const server = site.createServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
@@ -68,6 +83,8 @@ async function main() {
         // Cloudflare-only: load the searchable text-PDF exporter after existing scripts.
         html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
+      // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
+      html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-account.css"><script type="module" src="/atlas-account-ui.mjs"></script></body>');
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
       put(url === '/' ? 'index.html' : `${url.slice(1)}/index.html`, html);
     }
@@ -114,7 +131,7 @@ async function main() {
       const assetRe = /<(?:script|link)\b[^>]*?\b(?:src|href)=[\"'](\/[^\"']+)[\"']/gi;
       for (const match of html.matchAll(assetRe)) {
         const asset = match[1].split(/[?#]/)[0];
-        if (!/\.(?:js|css|svg)$/.test(asset)) continue;
+        if (!/\.(?:js|mjs|css|svg)$/.test(asset)) continue;
         if (!fs.existsSync(path.join(out, asset.slice(1)))) missing.add(asset);
       }
     }

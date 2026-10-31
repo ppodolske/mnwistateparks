@@ -1,3 +1,4 @@
 dist/
 park-coordinates.generated.json
 node_modules/
+config/atlas-firebase-web.json

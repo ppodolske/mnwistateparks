@@ -1,4 +1,5 @@
 import {identity,fail,ApiError} from './auth.mjs';
+import {bootstrapAdmin,isAdmin,stage2Route} from './stage2.mjs';
 const MAX=262144;
 const json=(obj,status=200)=>Response.json(obj,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const now=()=>Date.now();
@@ -55,7 +56,10 @@ export async function handle(context,{authOptions}={}){
   const user=await identity(request,env,authOptions),db=env.ATLAS_DB;
   // User rows exist for all verified requests, so invitations can reference both parties.
   await account(db,user);
-  if(path==='/api/v1/account'&&method==='GET')return json({uid:user.uid,admin:!!env.ATLAS_ADMIN_UID&&env.ATLAS_ADMIN_UID===user.uid});
+  await bootstrapAdmin(db,env,user);
+  const stage2=await stage2Route({request,db,user,method,path});
+  if(stage2)return stage2;
+  if(path==='/api/v1/account'&&method==='GET')return json({uid:user.uid,admin:await isAdmin(db,env,user)});
   if(path==='/api/v1/trips'&&method==='GET'){
     const list=await dbAll(db,`SELECT t.id,t.title,t.revision,t.updated_at,
       CASE WHEN t.owner_uid=? THEN 'owner' ELSE m.role END role
@@ -111,7 +115,7 @@ export async function handle(context,{authOptions}={}){
     await dbRun(db,`INSERT INTO trip_invitations(id,trip_id,email,role,token_hash,created_by,created_at,expires_at)
       VALUES(?,?,?,?,?,?,?,?)`,id,params.id,email,role,await hash(secret),user.uid,now(),expiry);
     // The one-time token is not stored in plaintext. Send the link yourself in v1.
-    return json({invitationId:id,inviteUrl:`${url.origin}/trip#invite=${secret}`,expiresAt:expiry},201);
+    return json({invitationId:id,inviteUrl:`${url.origin}/#invite=${secret}`,expiresAt:expiry},201);
   }
   params=match(path,'/api/v1/trips/:id/invitations/:inviteId');
   if(params&&method==='DELETE'){
@@ -136,7 +140,7 @@ export async function handle(context,{authOptions}={}){
     return json({tripId:invite.trip_id,role:invite.role});
   }
   if(path==='/api/v1/admin/summary'&&method==='GET'){
-    if(!env.ATLAS_ADMIN_UID||env.ATLAS_ADMIN_UID!==user.uid)fail(403,'Administrator access required');
+    if(!(await isAdmin(db,env,user)))fail(403,'Administrator access required');
     const stats=await dbGet(db,`SELECT (SELECT count(*) FROM users) users,
       (SELECT count(*) FROM users WHERE last_active_at>=?) active_users_30d,
       (SELECT count(*) FROM trips) trips,

@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "apiKey": "FIREBASE_WEB_API_KEY",
+  "authDomain": "YOUR_FIREBASE_PROJECT.firebaseapp.com",
+  "projectId": "YOUR_FIREBASE_PROJECT",
+  "appId": "FIREBASE_WEB_APP_ID"
+}

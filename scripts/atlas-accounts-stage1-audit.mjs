@@ -22,7 +22,7 @@ function sign(uid,email,overrides={},fake=false){
  return data+'.'+(fake?b64('forgery'):rsaSign('RSA-SHA256',Buffer.from(data),privateKey).toString('base64url'));
 }
 class D1 {
- constructor(){this.sqlite=new DatabaseSync(':memory:');this.sqlite.exec('PRAGMA foreign_keys=ON;');this.sqlite.exec(readFileSync(dbFile,'utf8'))}
+ constructor(){this.sqlite=new DatabaseSync(':memory:');this.sqlite.exec('PRAGMA foreign_keys=ON;');this.sqlite.exec(readFileSync(dbFile,'utf8'));this.sqlite.exec(readFileSync(resolve(import.meta.dirname,'../migrations/0002_atlas_accounts_stage2.sql'),'utf8'))}
  prepare(sql){const db=this.sqlite;let args=[];return {bind(...values){args=values;return this},first(){return db.prepare(sql).get(...args)||null},all(){return {results:db.prepare(sql).all(...args)}},run(){const info=db.prepare(sql).run(...args);return {meta:{changes:Number(info.changes)}}}}}
  async batch(statements){this.sqlite.exec('BEGIN IMMEDIATE');try{const results=statements.map(s=>s.run());this.sqlite.exec('COMMIT');return results}catch(e){this.sqlite.exec('ROLLBACK');throw e}}
 }
