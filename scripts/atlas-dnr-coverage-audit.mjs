@@ -1,0 +1,39 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const inventory=JSON.parse(fs.readFileSync(new URL('./atlas-dnr-park-inventory.json',import.meta.url),'utf8'));
+const mn=JSON.parse(fs.readFileSync(new URL('./atlas-mn-official-reservation-facilities.json',import.meta.url),'utf8'));
+const catalog=require('./atlas-campsite-catalog.js');
+test('all Atlas parks accounted for, Minnesota reservation feed mapped exactly',()=>{
+ assert.equal(inventory.parks.length,116);
+ const m=inventory.parks.filter(p=>p.state==='MN'),w=inventory.parks.filter(p=>p.state==='WI');
+ assert.equal(m.length,66);assert.equal(w.length,50);
+ assert.equal(Object.keys(mn.parks).length,66);
+ assert(m.every(p=>Object.hasOwn(mn.parks,p.slug)),'all Minnesota parks have an explicit facility-data status');
+});
+test('Minnesota reservation facility names load in browser into park-level picker',()=>{
+ const window={};
+ const js=fs.readFileSync(new URL('./atlas-mn-reservation-facilities.js',import.meta.url),'utf8');
+ vm.runInNewContext(js,{window});
+ assert.equal(Object.keys(window.AtlasMNReservationFacilities).length,66);
+ const source=fs.readFileSync(new URL('./atlas-campsite-catalog.js',import.meta.url),'utf8');
+ vm.runInNewContext(source,{window,module:{exports:{}}});
+ const a=window.AtlasCampsiteCatalog;
+ const list=a.suggestions('Lake Carlos State Park','','','lake-carlos');
+ assert(list.campgrounds.includes('Upper Campground'));
+ assert(list.campgrounds.includes('Lower Campground'));
+ assert.deepEqual(JSON.stringify(list.sites),JSON.stringify([]));
+ const none=a.suggestions('Unnamed Park','','','missing');
+ assert.equal(none.campgrounds.length,0);
+});
+test('scripts and static build order preserve existing data sources',()=>{
+ const b=fs.readFileSync(new URL('./build-cloudflare.js',import.meta.url),'utf8');
+ const ui=fs.readFileSync(new URL('./atlas-trip-experience.js',import.meta.url),'utf8');
+ assert(b.includes("fs.copyFileSync(path.join(__dirname, 'atlas-mn-reservation-facilities.js')"));
+ assert(b.indexOf('/atlas-mn-reservation-facilities.js') < b.indexOf('/atlas-campsite-catalog.js'));
+ assert(ui.includes('catalog.suggestions(parkName,cg,loop,slug)'));
+ assert(ui.includes("type=\"'+attr(type)+'\""));
+});
