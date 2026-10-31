@@ -101,6 +101,12 @@ const entries=[
   campgrounds:['Family Campground','Group Camp','Cart-in Camping'],sites:[],
   source:'https://dnr.wisconsin.gov/topic/parks/buckhorn',
   notes:'Family, group and cart-in camping confirmed on official park page, site labels not transcribed.'}
+,
+ {park:'Amnicon Falls State Park',state:'WI',campgrounds:['Campground'],sites:[],source:'https://dnr.wisconsin.gov/topic/parks/amnicon/recreation/camping',notes:'36 family campsites, including two walk-in sites; numbers not listed in source.'},
+ {park:'Big Bay State Park',state:'WI',campgrounds:['Family Campground','Outdoor Group Camp'],sites:['26','27','28','29','30'],source:'https://dnr.wisconsin.gov/topic/parks/bigbay/recreation/camping',notes:'Five winter plowed campsite IDs. Other 55 sites require map extraction; park campground closure may apply in 2026-27.'},
+ {park:'Blue Mound State Park',state:'WI',campgrounds:['Family Campground','Bike/Hike-in Sites'],sites:['28','30','32'],source:'https://dnr.wisconsin.gov/topic/parks/bluemound/recreation/camping',notes:'28 and 32 listed as accessible; site 30 referenced as nearby shower facility. Other campsite identifiers not enumerated.'},
+ {park:'Council Grounds State Park',state:'WI',campgrounds:['Family Campground','Group Campground'],sites:['A','B','C'],source:'https://dnr.wisconsin.gov/topic/parks/councilgrounds/recreation/camping',notes:'Group sites A, B, C verified; family site numbering not on page.'},
+ {park:'Harrington Beach State Park',state:'WI',campgrounds:['Family Campground','Group Campsite','Kayak Campsite'],sites:['100'],source:'https://dnr.wisconsin.gov/topic/parks/harringtonbeach/recreation/camping',notes:'Site 100 identified as campground-host site; all other site identifiers need map inspection.'}
 
 ];
 const norm=x=>String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').replace(/\bstate park\b/g,'').trim();
