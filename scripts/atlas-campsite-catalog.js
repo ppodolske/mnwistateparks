@@ -90,14 +90,21 @@ const entries=[
   notes:'Loop names confirmed; 100 sites is a capacity, not a site list.'}
 ];
 const norm=x=>String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').replace(/\bstate park\b/g,'').trim();
+function mnNames(slug){
+ const record=typeof window!=='undefined'?window.AtlasMNReservationFacilities?.[slug]:null;
+ return record?.facilityNames||[];
+}
 function findPark(parkName){
  const key=norm(parkName);if(!key)return null;
  return entries.find(x=>[x.park,...(x.aliases||[])].some(y=>norm(y)===key))||null;
 }
-function suggestions(parkName){
+function suggestions(parkName,campground='',loop='',slug=''){
  const entry=findPark(parkName);
- return entry?{entry,campgrounds:unique(entry.campgrounds),loops:unique(entry.loops),sites:unique((entry.sites||[]).map(String))}:
- {entry:null,campgrounds:[],loops:[],sites:[]};
+ const officialMN=mnNames(slug);
+ const campgrounds=unique([...(entry?.campgrounds||[]),...officialMN]);
+ return {entry:entry||null,campgrounds,loops:unique(entry?.loops||[]),sites:unique((entry?.sites||[]).map(String)),
+  source:officialMN.length?'https://www.dnr.state.mn.us/data/reservation.html':entry?.source||'',
+  sourceStatus:officialMN.length?'official_facilities_listed':entry?'partial_reference':'unverified'};
 }
-return {version:2,reviewedAt:DATE,entries,findPark,suggestions};
+return {version:3,reviewedAt:DATE,entries,findPark,suggestions};
 });
