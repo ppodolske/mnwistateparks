@@ -122,8 +122,20 @@
    else if(action==='reset-night'){mutate(t=>M.setNight(t,selectedNight,null));selectedNight='';draw();}
    else if(action==='undo'&&lastSnapshot){localStorage.setItem(KEY,lastSnapshot);lastSnapshot=null;selectedNight='';selectedSlug='';draw();}
  }
- function mount(){const section=document.getElementById('workspaceItinerary');if(!section||root)return;
-   root=document.createElement('div');root.id='atlasTripTimeline';root.className='atlas-tl';section.prepend(root);
+ function mount(){
+   if(root&&root.isConnected)return;
+   // Cloudflare trip HTML can omit #workspaceItinerary while retaining the day editor.
+   // Anchor at the real editor first, preserving layout and existing stored trip data.
+   const dayEditor=document.getElementById('tripDayEditor');
+   const section=document.getElementById('workspaceItinerary');
+   root=document.createElement('div');root.id='atlasTripTimeline';root.className='atlas-tl';
+   if(dayEditor?.parentElement)dayEditor.insertAdjacentElement('beforebegin',root);
+   else if(section)section.prepend(root);
+   else {
+     const summary=document.getElementById('tripSummary');
+     if(summary?.parentElement)summary.insertAdjacentElement('afterend',root);
+     else page.prepend(root);
+   }
    root.addEventListener('click',onClick);
    root.addEventListener('change',e=>{if(selectedSlug&&e.target.closest('.tl-form'))autosaveVisit();});
 
