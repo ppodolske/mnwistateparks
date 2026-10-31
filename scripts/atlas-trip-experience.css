@@ -77,3 +77,6 @@
 .ax2-dossier-bottom .ax2-form-actions{margin-top:15px}
 .ax2-stay-state{font-size:12px;line-height:1.4;color:#587365;font-weight:600}
 @media(max-width:660px){.ax2-dossier-group{padding:18px 0 21px}.ax2-dossier-intro{gap:8px}.ax2-dossier-status{max-width:none}.ax2-dossier-bottom .ax2-form-actions .ax2-btn{flex:1}}
+
+/* Official DNR reference suggestions: not a booking or availability service. */
+.ax2-source-note{grid-column:1/-1;font:400 12px/1.55 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#63756a;margin:3px 0 9px}.ax2-source-note a{color:#205b40;text-decoration:underline;text-underline-offset:2px}
