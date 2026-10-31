@@ -53,7 +53,12 @@ const originalItinerary=document.getElementById('workspaceItinerary')||
   document.getElementById('atlasTripTimeline');
 if(!trip()||!originalLogistics||!originalItinerary)return;
 page.prepend(root);
-const editorHost=root.querySelector('#ax2EditorHost');editorHost.appendChild(originalItinerary);
+const editorHost=root.querySelector('#ax2EditorHost');
+ // Keep the accepted drag-and-resize timeline together with its original editor.
+ // Moving the actual nodes retains their listeners, rather than creating a second owner.
+ const legacyTimeline=document.getElementById('atlasTripTimeline');
+ if(legacyTimeline&&legacyTimeline!==originalItinerary)editorHost.appendChild(legacyTimeline);
+ editorHost.appendChild(originalItinerary);
 // The original logistics form is moved to the context drawer only when opened.
 // Keeping the DOM element alive preserves its save handlers and values.
 const oldParent=originalLogistics.parentElement;
