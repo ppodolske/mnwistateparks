@@ -31,7 +31,8 @@ async function refresh(){
 function create(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
 function render(){
   if(!trigger||!panel)return;
-  trigger.textContent=user?'Account':'Sign in';
+  const conflicts=window.AtlasCloudSync?.getStatus?.().conflicts||0;
+  trigger.textContent=user?(conflicts?`Account · ${conflicts} conflict${conflicts===1?'':'s'}`:'Account'):'Sign in';
   const open=panel.dataset.open==='true';panel.hidden=!open;
   if(!open)return;
   const done=new Set(imports.map(x=>x.source_id)),local=validSources(),pending=local.filter(t=>!done.has(t.id));
@@ -55,14 +56,17 @@ function render(){
     accept.onclick=()=>perform(async()=>{
       const out=await api('/api/v1/invitations/accept',{method:'POST',body:{token:inviteToken()}});
       history.replaceState(null,'',location.pathname+location.search);
-      await refresh();notice='Invitation accepted ('+out.role+'). Your shared trip appears below.';
+      await refresh();document.dispatchEvent(new Event('atlas-cloud-data-changed'));notice='Invitation accepted ('+out.role+'). Your shared trip appears below.';
     });invite.append(accept);panel.append(invite);
   }
   const trips=create('section','aa-section');trips.append(create('h3','',`Cloud trips · ${cloud.length}`));
-  trips.append(create('p','aa-hint','Cloud trips are read-only in Stage 2. Automatic editing and syncing are scheduled for Stage 3.'));
+  trips.append(create('p','aa-hint','Signed-in trips synchronize automatically when online. Shared viewers cannot publish edits. Conflicts require your decision.'));
   if(cloud.length){
     const list=create('ul','aa-trip-list');for(const trip of cloud){
-      const li=create('li');li.append(create('span','',shorten(trip.title)));li.append(create('small','',trip.role));list.append(li)
+      const li=create('li');const localId=window.AtlasCloudSync?.getLocalId?.(trip.id);
+      if(localId){const link=create('a','',shorten(trip.title));link.href='/trip?id='+encodeURIComponent(localId);li.append(link)}
+      else li.append(create('span','',shorten(trip.title)));
+      li.append(create('small','',trip.role));list.append(li)
     }trips.append(list)
   }else trips.append(create('p','aa-copy','No cloud trips yet.'));
   panel.append(trips);
@@ -70,12 +74,12 @@ function render(){
   migrate.append(create('p','aa-copy',`${pending.length} available to copy to your cloud account; ${local.length-pending.length} previously imported on this browser.`));
   if(pending.length){
     const list=create('ul','aa-trip-list');for(const t of pending.slice(0,20))list.append(create('li','',shorten(t.name||t.title||'Untitled trip')));migrate.append(list);
-    const confirm=create('label','aa-confirm');const check=create('input');check.type='checkbox';check.id='aa-import-check';confirm.append(check,document.createTextNode(' I understand this makes a cloud copy. Local editing will not sync until Stage 3.'));migrate.append(confirm);
+    const confirm=create('label','aa-confirm');const check=create('input');check.type='checkbox';check.id='aa-import-check';confirm.append(check,document.createTextNode(' I understand this makes a cloud copy. Atlas will reconcile edits with the original browser trip before enabling sync.'));migrate.append(confirm);
     const btn=create('button','aa-primary',`Copy ${pending.length} trip${pending.length===1?'':'s'} to cloud`);btn.disabled=working;
     btn.onclick=()=>perform(async()=>{
       if(!check.checked)throw Error('Confirm the import details first');
       let count=0;for(const t of pending){await api('/api/v1/migrations',{method:'POST',body:{sourceId:t.id,document:t}});count++}
-      await refresh();notice=`${count} trip${count===1?'':'s'} copied. Your local versions were not changed.`;
+      await refresh();document.dispatchEvent(new Event('atlas-cloud-data-changed'));notice=`${count} trip${count===1?'':'s'} copied. Your local versions were not changed.`;
     });migrate.append(btn)
   }else migrate.append(create('p','aa-hint','Nothing to import from this browser.'));
   panel.append(migrate);
@@ -94,6 +98,7 @@ function render(){
       const button=create('button','aa-secondary','Copy link');button.type='button';button.onclick=async()=>{try{await navigator.clipboard.writeText(copy.value);button.textContent='Copied'}catch{copy.select()}};result.append(button);
     })};share.append(form,result);panel.append(share);
   }
+  window.AtlasCloudSync?.appendPanel?.(panel);
   if(profile.admin){const admin=create('section','aa-section');admin.append(create('h3','','Admin summary'));const btn=create('button','aa-secondary','Load aggregate counts');btn.onclick=()=>perform(async()=>{
     const r=await api('/api/v1/admin/summary');const d=r.summary;btn.textContent=`${d.users} users · ${d.trips} trips · ${d.scheduled_trips} scheduled`;
   });admin.append(btn);panel.append(admin)}
@@ -113,7 +118,13 @@ async function init(){
   panel=create('aside','aa-panel');panel.id='atlasAccountPanel';panel.dataset.open=inviteToken()?'true':'false';panel.hidden=true;panel.setAttribute('aria-label','Atlas account settings');
   trigger.onclick=()=>{panel.dataset.open=panel.dataset.open==='true'?'false':'true';render()};
   document.body.append(trigger,panel);
-  authLib.onAuthStateChanged(auth,async u=>{user=u;await refresh()});
+  window.AtlasAccountBridge=Object.freeze({
+    getUid:()=>auth.currentUser?.uid||null,
+    getToken:async()=>auth.currentUser?.getIdToken()||null
+  });
+  document.addEventListener('atlas-sync-status',()=>render());
+  document.addEventListener('atlas-sync-cloud-created',()=>refresh());
+  authLib.onAuthStateChanged(auth,async u=>{user=u;await refresh();document.dispatchEvent(new Event('atlas-account-changed'))});
   render();
 }
 init().catch(err=>console.error('Atlas Accounts unavailable:',err));

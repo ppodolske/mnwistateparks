@@ -9,3 +9,8 @@
 .aa-primary,.aa-secondary{display:inline-block;margin-top:8px;cursor:pointer;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:700;border:1px solid #315c51}.aa-primary{background:#194d40;color:#fff}.aa-secondary{background:transparent;color:#194d40}
 .aa-primary:disabled,.aa-secondary:disabled{opacity:.55;cursor:wait}.aa-link{display:grid;gap:5px;margin-top:10px}.aa-notice{border-radius:8px;background:#fff0d5;color:#5d4018;padding:9px;font-size:11px}.aa-confirm{font-size:11px;display:flex;align-items:flex-start;gap:7px;margin:10px 0}.aa-confirm input{margin-top:2px}.aa-footer{text-align:right;padding-top:8px}
 @media(max-width:700px){.aa-trigger{top:auto;bottom:16px;right:14px}.aa-panel{top:12px;bottom:60px;max-height:calc(100vh - 80px);right:12px;width:calc(100vw - 24px)}}
+
+/* Stage 3 cloud-sync status and conflict controls */
+.aa-sync-conflict{padding:12px;margin:10px 0;border:1px solid #c78865;border-radius:8px;background:#fff9f3}
+.aa-sync-conflict p{font-size:12px;line-height:1.4;margin:0 0 8px}
+.aa-sync-conflict button{margin:2px 5px 2px 0}

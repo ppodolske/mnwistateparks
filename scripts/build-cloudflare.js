@@ -22,6 +22,8 @@ async function main() {
   fs.copyFileSync(path.join(__dirname, 'trip-timeline.css'), path.join(out, 'trip-timeline.css'));
   fs.copyFileSync(path.join(__dirname, 'atlas-account-ui.mjs'), path.join(out, 'atlas-account-ui.mjs'));
   fs.copyFileSync(path.join(__dirname, 'atlas-account.css'), path.join(out, 'atlas-account.css'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-sync-core.mjs'), path.join(out, 'atlas-sync-core.mjs'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-trip-sync.mjs'), path.join(out, 'atlas-trip-sync.mjs'));
   // The Firebase web configuration contains public identifiers, never a private key.
   // Absent configuration must leave all account UI disabled, not break the Parks site.
   const clientConfigPath=path.join(root, 'config', 'atlas-firebase-web.json');
@@ -84,7 +86,7 @@ async function main() {
         html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
       // Optional Accounts shell: does nothing until a local public Firebase config is supplied.
-      html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-account.css"><script type="module" src="/atlas-account-ui.mjs"></script></body>');
+      html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-account.css"><script type="module" src="/atlas-account-ui.mjs"></script><script type="module" src="/atlas-trip-sync.mjs"></script></body>');
       if (!html.includes('</html>')) throw new Error(`STOP: Invalid HTML at ${url}`);
       put(url === '/' ? 'index.html' : `${url.slice(1)}/index.html`, html);
     }
