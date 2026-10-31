@@ -43,8 +43,14 @@ root.innerHTML=`<div class="ax2-header"><div class="ax2-title"><p class="ax2-eye
 <div class="ax2-overlay" id="ax2Overlay" hidden></div><section class="ax2-drawer" id="ax2Drawer" hidden role="dialog" aria-modal="true" aria-labelledby="ax2DrawerTitle"><div class="ax2-drawer-head"><div><p id="ax2DrawerEyebrow" class="ax2-eyebrow"></p><h2 id="ax2DrawerTitle"></h2></div><button class="ax2-close" type="button" data-action="close" aria-label="Close panel">${icon('x')}</button></div><div id="ax2DrawerBody" class="ax2-drawer-body"></div></section>
 <div class="ax2-editor" id="ax2Editor" hidden><div class="ax2-editor-head"><div><p class="ax2-eyebrow">CANONICAL DATE EDITOR</p><h2>Edit schedule and overnight choices</h2><p>Move, extend or schedule park visits, and resolve overnight bases. Changes automatically update the trip above.</p></div><button class="ax2-btn" type="button" data-action="close-schedule">${icon('x')} Close editor</button></div><div id="ax2EditorHost"></div></div>`;
 // Progressive enhancement: if the trip or original editors are missing, leave the accepted page untouched.
-const originalLogistics=document.getElementById('workspaceLogistics');
-const originalItinerary=document.getElementById('workspaceItinerary');
+// The accepted Cloudflare page uses the v1.22.10 quick editor and day editor.
+ // Older wrappers may still expose workspaceLogistics/workspaceItinerary.
+ // Reuse whichever real, event-bound editor exists; never clone it.
+const originalLogistics=document.getElementById('workspaceLogistics')||
+  document.getElementById('tripQuickEditorV12210');
+const originalItinerary=document.getElementById('workspaceItinerary')||
+  document.getElementById('tripDayEditor')||
+  document.getElementById('atlasTripTimeline');
 if(!trip()||!originalLogistics||!originalItinerary)return;
 page.prepend(root);
 const editorHost=root.querySelector('#ax2EditorHost');editorHost.appendChild(originalItinerary);
@@ -108,7 +114,10 @@ function drawer(eyebrow,title,content){focusReturn=document.activeElement;drawer
  root.querySelector('[data-action="close"]').focus();
 }
 function closeDrawer(){if($('#ax2Drawer').hidden)return;
- if(originalLogistics&&$('#ax2DrawerBody').contains(originalLogistics))oldParent?.append(originalLogistics);
+ if(originalLogistics&&$('#ax2DrawerBody').contains(originalLogistics)){
+   if(originalLogistics.id==='tripQuickEditorV12210')originalLogistics.classList.remove('open');
+   oldParent?.append(originalLogistics);
+ }
  if(printControl&&$('#ax2DrawerBody').contains(printControl))pdfControlsHome?.append(printControl);
  if(printButton&&$('#ax2DrawerBody').contains(printButton))pdfButtonHome?.append(printButton);
  $('#ax2DrawerBody').replaceChildren();$('#ax2Drawer').hidden=true;$('#ax2Overlay').hidden=true;document.body.classList.remove('ax2-drawer-open');drawerMode='';drawerSlug='';drawerDate='';focusReturn?.focus?.();}
@@ -132,7 +141,17 @@ function nightDrawer(date){const t=trip();if(!t||!T.range(t)?.nights.includes(da
  drawer('OVERNIGHT',fmt(date),`<form id="ax2NightForm"><p class="ax2-help">Choose one overnight base for this date. This doesn't erase the other park visits or reservations.</p><label class="ax2-field"><span>Overnight location</span><select name="choice">${choices.map(([v,l])=>`<option value="${attr(v)}" ${v===selected?'selected':''}>${esc(l)}</option>`).join('')}</select></label><label class="ax2-field"><span>Other accommodation (if selected)</span><input name="other" maxlength="180" value="${attr(override?.label||'')}"></label>${row?.night?.type==='conflict'?`<p class="ax2-warning">Multiple park visits claim this night. Selecting one resolves the conflict for the selected date.</p>`:''}<div class="ax2-form-actions"><button type="button" class="ax2-btn" data-action="close">Cancel</button><button type="submit" class="ax2-btn ax2-primary" ${isViewer()?'disabled':''}>Save overnight</button></div></form>`);
  $('#ax2DrawerBody').querySelectorAll('input,select').forEach(n=>n.disabled=isViewer());
 }
-function detailsDrawer(){drawer('TRIP INFORMATION','Trip details',originalLogistics);if(isViewer())originalLogistics.querySelectorAll('input,textarea,select,button').forEach(n=>n.disabled=true);}
+function detailsDrawer(){
+ if(originalLogistics.id==='tripQuickEditorV12210'){
+   // Run the accepted editor's own field-population handler before moving it.
+   originalLogistics.classList.remove('open');
+   const edit=document.getElementById('editTripTopV12210');
+   if(edit)edit.click();
+   else originalLogistics.classList.add('open');
+ }
+ drawer('TRIP INFORMATION','Trip details',originalLogistics);
+ if(isViewer())originalLogistics.querySelectorAll('input,textarea,select,button').forEach(n=>n.disabled=true);
+}
 function pdfDrawer(){const controls=document.getElementById('bookletExportControls'),button=document.getElementById('printTripBtn');
  if(!controls||!button){drawer('PRINT REFERENCE','Download PDF','<p>Export controls are unavailable. Reload the trip and try again.</p>');return;}
  pdfControlsHome=controls.parentElement;pdfButtonHome=button.parentElement;printControl=controls;printButton=button;
@@ -155,7 +174,7 @@ function jumpIssue(i){const f=effectiveIssues()[i];if(!f)return;allIssuesOpen=fa
  if(f.slug){stayDrawer(f.slug);return;}
  if(f.date){openDay.add(f.date);render();root.querySelector('#ax2-date-'+f.date)?.scrollIntoView({behavior:'smooth',block:'center'});}else detailsDrawer();}
 root.addEventListener('click',ev=>{const b=ev.target.closest('[data-action],[data-issue]');if(!b)return;
- if(b.closest('#workspaceItinerary,#workspaceLogistics,#bookletExportControls'))return;
+ if(b.closest('#workspaceItinerary,#workspaceLogistics,#bookletExportControls,#atlasTripTimeline,#tripDayEditor,#tripQuickEditorV12210'))return;
  const action=b.dataset.action;if(b.dataset.issue!==undefined){jumpIssue(Number(b.dataset.issue));return;}
  if(action==='toggle-day'){const d=b.dataset.date;openDay.has(d)?openDay.delete(d):openDay.add(d);render();return;}
  if(action==='stay'){stayDrawer(b.dataset.slug);return;}
@@ -183,6 +202,9 @@ $('#ax2Overlay').addEventListener('click',closeDrawer);
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#ax2Drawer').hidden)closeDrawer();if(ev.key==='Tab'&&!$('#ax2Drawer').hidden){const els=[...$('#ax2Drawer').querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled])')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus()}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus()}}});
 let queued=false;function update(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;if(root.isConnected)render()});}
 for(const event of ['atlas-timeline-updated','trip-logistics-saved','trip-days-changed','atlas-sync-status','atlas-account-changed'])document.addEventListener(event,update);
+document.addEventListener('trip-logistics-saved',ev=>{
+ if(ev.detail?.source==='quick-editor-v12210'&&drawerMode==='TRIP INFORMATION')closeDrawer();
+});
 window.addEventListener('storage',ev=>{if(ev.key===KEY)update()});
 render();window.AtlasTripExperience={version:'2.0',refresh:update};window.AtlasTripWorkspace2={refresh:update,openStay:stayDrawer,openNight:nightDrawer};
 })();
