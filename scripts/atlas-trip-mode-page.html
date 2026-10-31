@@ -24,7 +24,7 @@
  line(box,'Booking status',d.bookingStatus==='confirmed'?'Confirmed (self-reported)':d.bookingStatus==='first-come'?'First-come / no booking':d.bookingStatus==='pending'?'Awaiting confirmation':d.bookingStatus==='cancelled'?'Cancelled':'Not confirmed');
  line(box,'Reservation reference',d.reservation);line(box,'Check-in / check-out',[d.checkIn,d.checkOut].filter(Boolean).join(' / '));
  for(const [k,title] of [['arrivalInstructions','Arrival instructions'],['parkingNotes','Parking / access'],['waterNotes','Water notes'],['facilitiesNotes','Facilities'],['contactNotes','Contacts'],['personalNotes','Stay notes']])line(box,title,d[k]);
- if(d.bookingUrl&&/^https:\\/\\/[^\\s@]+/i.test(d.bookingUrl)){const booking=document.createElement('div');booking.className='links';link(booking,'Saved booking link',d.bookingUrl);box.append(booking);}
+ if(typeof d.bookingUrl==='string'&&d.bookingUrl.startsWith('https://')){const booking=document.createElement('div');booking.className='links';link(booking,'Saved booking link',d.bookingUrl);box.append(booking);}
  const prepared=d.checklist&&typeof d.checklist==='object'?d.checklist:{};
  const steps=[['reservationChecked','Reservation or arrival policy reviewed'],['arrivalChecked','Arrival details and check-in reviewed'],['accessChecked','Access, parking and conditions checked'],['suppliesPacked','Camping supplies prepared'],['departurePlanned','Checkout and departure planned']];
  line(box,'Preparation checked',steps.filter(([key])=>prepared[key]===true).map(([,label])=>label).join(' · '));
