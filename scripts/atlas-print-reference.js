@@ -198,6 +198,12 @@
       ['Water','waterNotes'],['Facilities','facilitiesNotes'],['Other stay notes','personalNotes']]){
       if(dossier[key])b.field(label,dossier[key]);
     }
+    if(dossier.contactNotes)b.field('Contacts and booking notes',dossier.contactNotes);
+    if(dossier.bookingUrl&&validUrl(dossier.bookingUrl))b.field('Saved booking link',dossier.bookingUrl);
+    const checklist=dossier.checklist&&typeof dossier.checklist==='object'&&!Array.isArray(dossier.checklist)?dossier.checklist:{};
+    const preparations=[['reservationChecked','Reservation or arrival policy reviewed'],['arrivalChecked','Arrival details and check-in reviewed'],['accessChecked','Access, parking and conditions checked'],['suppliesPacked','Camping supplies prepared'],['departurePlanned','Checkout and departure planned']];
+    const completed=preparations.filter(([key])=>checklist[key]===true);
+    if(completed.length)b.field('Preparation checked',completed.map(([,label])=>label).join(' | '));
     const dates=[note(m.checkIn),note(m.checkOut)].filter(Boolean);
     if(dates.length)b.field('Check-in / check-out',`${note(m.checkIn)||'Not entered'} / ${note(m.checkOut)||'Not entered'}`);
     if(personal)b.field('Your park notes',personal);
