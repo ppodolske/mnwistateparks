@@ -168,7 +168,8 @@ function stayDrawer(slug){
  const source=catalog?.findPark(parkName);
  const suggestionsAtPark=catalog?.suggestions(parkName,'','',slug);
  if(suggestionsAtPark?.source)html+='<p class="ax2-source-note">Partial DNR reference suggestions, not campsite availability. <a href="'+attr(suggestionsAtPark.source)+'" target="_blank" rel="noopener noreferrer">Official DNR source</a>. Type any value if yours is not listed.</p>';
- else html+='<p class="ax2-source-note">No site-level DNR reference catalogued for this park yet. Enter campground, loop and site manually.</p>';
+ else html+='<p class="ax2-source-note">No campsite reference catalogued for this park. Enter details manually only after checking the official park information.</p>';
+ if(suggestionsAtPark?.sourceNote&&['day_use','no_camping_listed','boat_mooring_only','boat_slip_only'].includes(suggestionsAtPark.sourceStatus))html+='<p class="ax2-source-note">'+esc(suggestionsAtPark.sourceNote)+'</p>';
  html+='<datalist id="ax2Source-campground"></datalist><datalist id="ax2Source-loop"></datalist><datalist id="ax2Source-campsite"></datalist>';
  html+=dossierField('bookingUrl','Your booking or confirmation link',d.bookingUrl,'url',{wide:true});
  html+='</div>';
