@@ -17,6 +17,7 @@ async function main() {
   fs.mkdirSync(out, {recursive: true});
   fs.cpSync(path.join(root, 'public'), out, {recursive: true});
   fs.copyFileSync(path.join(__dirname, 'trip-pdf-native.js'), path.join(out, 'trip-pdf-native.js'));
+  fs.copyFileSync(path.join(__dirname, 'atlas-print-reference.js'), path.join(out, 'atlas-print-reference.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-model.js'), path.join(out, 'trip-timeline-model.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline-ui.js'), path.join(out, 'trip-timeline-ui.js'));
   fs.copyFileSync(path.join(__dirname, 'trip-timeline.css'), path.join(out, 'trip-timeline.css'));
@@ -86,7 +87,7 @@ async function main() {
           throw new Error('STOP: Canonical trip day editor missing, duplicated, or out of load order');
         }
         // Cloudflare-only: load the searchable text-PDF exporter after existing scripts.
-        html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
+        html = html.replace('</body>', '<link rel="stylesheet" href="/trip-timeline.css"><script src="/trip-timeline-model.js" defer></script><script src="/trip-timeline-ui.js" defer></script><script src="/atlas-print-reference.js" defer></script><script src="/trip-pdf-native.js" defer></script></body>');
       }
       // Only the trip page needs the explicit Stage 4.1 browser/cloud restoration controls.
       if(url === '/trip') html=html.replace('</body>', '<link rel="stylesheet" href="/atlas-trip-recovery.css"><script type="module" src="/atlas-trip-recovery.mjs"></script></body>');
